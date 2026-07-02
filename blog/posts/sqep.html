@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Stochastic Queens Elimination — Blog — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="A stochastic, elimination-based variant of the n-queens problem: an MDP formulation, a provable approximation guarantee for a greedy heuristic, and a MIP for the deterministic case.">
+  <meta name="theme-color" content="#15181d">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+
+  <!-- MathJax, for the formulas in this post only -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body class="post-royal">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="branding-text">
+          <span class="brand-name">Artin Kavoosi</span>
+          <span class="brand-aff">University of Tehran</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../../index.html#about">About</a>
+        <a href="../index.html" class="active">Blog</a>
+        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner" style="grid-template-columns: 1fr; max-width: 760px;">
+      <div class="content">
+
+        <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+        <article class="post-article">
+
+          <span class="featured-badge"><i class="fas fa-crown" aria-hidden="true"></i> Featured write-up</span>
+
+          <div class="post-hero">
+            <div class="post-hero-art">
+              <img src="../assets/sqep/queen-hero.png" alt="A wood-carved queen chess piece wearing sunglasses and holding a gold pistol, styled as a playful mascot for the paper.">
+            </div>
+            <div class="post-hero-text">
+              <span class="post-meta">Working paper &middot; Operations Research / MDPs</span>
+              <h1>Stochastic Queens Elimination</h1>
+              <p class="post-tagline">Queens don't compete. They eliminate.</p>
+            </div>
+          </div>
+
+          <div class="post-article-body">
+
+            <p>
+              The classical <em>n</em>-queens puzzle asks how to place <em>n</em> queens on a board so that no two
+              attack each other &mdash; a static, deterministic question with a fixed answer (92 solutions for
+              <em>n</em> = 8). This paper asks a different kind of question: what if the queens are already on
+              the board, already attacking each other, and one by one they start eliminating their rivals
+              &mdash; but every elimination attempt only succeeds with some probability <em>p</em>? Who should
+              act, and in what order, to clear the board as efficiently as possible?
+            </p>
+
+            <p>
+              I call this the <strong>Stochastic Sequential Queens Elimination Problem (S-SQEP)</strong>. It turns
+              a combinatorial placement puzzle into a sequential decision problem: an activation policy chooses
+              which queen acts next, that queen simultaneously attacks every rival in its unblocked line of
+              sight, and each attack independently succeeds with probability <em>p</em>. The goal is to minimize
+              the expected cumulative number of conflicts along the way &mdash; not just at the end.
+            </p>
+
+            <figure class="post-figure">
+              <img src="../assets/sqep/sqep_acg_trajectory.gif" alt="Animated board showing a queen configuration shrinking step by step as queens are activated and eliminate their neighbors, with the conflict count decreasing at each frame.">
+              <figcaption>
+                A sample trajectory under the paper's proposed policy on an 8&times;8 board. Each frame is one
+                activation step: a queen is chosen, its unblocked neighbors are attacked independently with
+                probability <em>p</em>, and the conflict count <em>&kappa;</em> shrinks until the board reaches
+                an absorbing, conflict-free state.
+              </figcaption>
+            </figure>
+
+            <h2>Why the multi-kill structure matters</h2>
+            <p>
+              The key modeling twist is that activation is a <strong>simultaneous multi-kill event</strong>. When a
+              queen is activated, every queen in its unblocked neighborhood is attacked at once, each
+              independently &mdash; so a single step can eliminate zero, one, or several rivals together. This is
+              different from sequential single-target capture models, where an activated agent removes exactly
+              one opponent. The multi-kill structure creates combinatorial dependence between conflict pairs
+              and a much richer space of transitions, which is what makes the problem interesting as an MDP
+              rather than a simple shortest-path recursion.
+            </p>
+
+            <h2>Formulating it as an MDP</h2>
+            <p>
+              The board state is the surviving set of queens together with their (fixed) positions. The
+              <em>conflict count</em> of a state, written \(\kappa(s)\), counts the unordered pairs of queens
+              that can still attack each other with a clear line of sight. A policy \(\pi\) incurs the current
+              conflict count as a stage cost at every step, and the process stops once the board reaches a
+              conflict-free state. The objective is the total expected conflict incurred along the way:
+            </p>
+
+            <div class="thm-box">
+              <span class="thm-label">Objective</span>
+              <p>
+                \[
+                \Psi(\pi, p) := \sum_{t=0}^{\tau - 1} \kappa\big(S^{(t)}\big), \qquad
+                V^{*}(s) := \inf_{\pi} \; \mathbb{E}_{\pi}\big[\Psi(\pi, p) \mid S^{(0)} = s\big].
+                \]
+              </p>
+              <p>
+                Here \(\tau\) is the (random) stopping time at which the board becomes conflict-free. Minimizing
+                \(\Psi\) means caring about the whole trajectory, not only how many queens are left when the
+                process ends.
+              </p>
+            </div>
+
+            <p>
+              The paper shows this process always terminates: under any policy that never wastes a turn on an
+              idle queen (an <em>admissible</em> policy), the board reaches a conflict-free state almost surely,
+              with expected stopping time at most \((n-1)/p\). On the finite reachable state space, the problem
+              satisfies the standard stochastic-shortest-path regularity conditions, which gives existence of an
+              optimal stationary deterministic policy and a Bellman optimality equation in the usual sense.
+            </p>
+
+            <h2>The obvious heuristic isn't optimal</h2>
+            <p>
+              A natural first guess is to always activate whichever queen currently threatens the most
+              rivals &mdash; a greedy-by-degree policy. It turns out this is provably suboptimal for \(p < 1\):
+              the paper gives an explicit four-queen configuration where activating the highest-degree queen
+              leaves a strictly larger expected cost than activating a lower-degree one, because degree alone
+              ignores how much overlap there is between a queen's targets and the rest of the conflict graph.
+              Getting the trade-off right requires looking at the entire trajectory cost, not just the
+              immediate neighborhood size.
+            </p>
+
+            <h2>Adaptive Coverage Greedy (ACG)</h2>
+            <p>
+              To fix this, the paper introduces <strong>Adaptive Coverage Greedy (ACG)</strong>: instead of
+              maximizing raw degree, ACG activates the queen that maximizes the <em>expected one-step conflict
+              reduction</em>,
+            </p>
+
+            <div class="thm-box">
+              <span class="thm-label">Definition &middot; ACG score</span>
+              <p>
+                \[
+                G(s, a) := \mathbb{E}\Big[\kappa(s) - \kappa\big(s \setminus Y^{(t)}\big) \;\Big|\; S^{(t)} = s,\ \sigma_t = a\Big],
+                \]
+              </p>
+              <p>
+                which has a clean closed form: a conflict pair contributes \(1-(1-p)^2\) to the score if
+                <em>both</em> its queens are in the acting queen's neighborhood, exactly \(p\) if only one is,
+                and \(0\) otherwise. This closed form is what lets ACG correctly discount the double-counting
+                that trips up the plain greedy-by-degree rule.
+              </p>
+            </div>
+
+            <p>
+              The central theoretical result is that ACG comes with a provable performance guarantee, not just
+              good empirical behavior:
+            </p>
+
+            <div class="thm-box">
+              <span class="thm-label">Theorem &middot; ACG approximation ratio</span>
+              <p>
+                For every non-absorbing initial state and every \(p \in (0, 1]\),
+                \[
+                \mathbb{E}_{\pi_{\mathrm{ACG}}}\big[\Psi(\pi_{\mathrm{ACG}}, p)\big] \;\le\; \frac{n}{2p}\, V^{*}(s_0).
+                \]
+              </p>
+              <p>
+                The proof rests on a gain lower bound &mdash; a pigeonhole argument on the attack graph shows
+                that the best available score is always at least \(\tfrac{2p}{n}\kappa(s)\) &mdash; which turns
+                into a geometric decay bound on the expected conflict count and, after summing over the
+                trajectory, the ratio above. The bound is tight: it is approached exactly when the conflict
+                graph looks like a perfect matching and \(p \to 0^+\).
+              </p>
+            </div>
+
+            <figure class="post-figure">
+              <img src="../assets/sqep/fig_kappa_decay.png" alt="Log-scale plot showing average conflict count decaying over steps for random, greedy-degree, and ACG policies, with ACG decaying fastest.">
+              <figcaption>
+                Average conflict count per step, averaged over 800 trials at \(p = 0.5\). ACG (green) drives the
+                conflict count down faster than the greedy-degree heuristic (orange) and a random admissible
+                policy (gray), consistent with the geometric decay rate implied by the gain lower bound.
+              </figcaption>
+            </figure>
+
+            <figure class="post-figure">
+              <img src="../assets/sqep/fig_policy_vs_p.png" alt="Line chart comparing expected cumulative conflict cost of the exact optimal policy, random admissible policy, greedy-degree policy, and ACG policy, across kill probability p, on an 8-queens board.">
+              <figcaption>
+                On an 8&times;8 board small enough to solve exactly, ACG tracks the true optimal value
+                \(V^{*}(s_0)\) closely across the whole range of \(p\), while a random admissible policy is
+                noticeably worse.
+              </figcaption>
+            </figure>
+
+            <figure class="post-figure">
+              <img src="../assets/sqep/fig_acg_bound.png" alt="Log-scale plot comparing ACG's empirical expected cost against the exact optimum and against the theoretical n over 2p bound, showing the bound is valid but loose in this regime.">
+              <figcaption>
+                The empirical check of the approximation guarantee: ACG's realized cost (green) sits far below
+                the worst-case \(\tfrac{n}{2p}V^{*}(s_0)\) bound (red, dashed) for this board, and almost exactly
+                on top of the true optimum (blue, dotted) &mdash; the theorem is a valid but conservative
+                worst-case guarantee, not a tight prediction of typical-case behavior.
+              </figcaption>
+            </figure>
+
+            <h2>The deterministic case, exactly</h2>
+            <p>
+              Setting \(p = 1\) collapses S-SQEP to a deterministic elimination problem, for which the paper
+              gives a mixed-integer programming formulation. Binary variables track which queens survive, which
+              queen is activated at each step, and which attacking pairs are currently unblocked, with a set of
+              linear constraints proven to encode the blocking logic exactly. Solving this MIP gives an exact
+              optimal elimination order for \(p=1\) and, since \(\Psi^{\star}(1) \le \Psi^{\star}(p)\) for all
+              \(p<1\), also supplies a valid lower bound usable for pruning in stochastic instances.
+            </p>
+
+            <h2>Takeaways</h2>
+            <p>
+              Three things I find compelling about this formulation: first, the multi-kill mechanism is a small
+              modeling change with real structural consequences &mdash; it's what breaks simple greedy
+              heuristics and forces a genuinely trajectory-aware analysis. Second, ACG shows that you can get a
+              closed-form, cheap-to-compute heuristic that still carries a worst-case approximation guarantee,
+              which is a nice middle ground between exact MDP solving and unprincipled heuristics. Third, the
+              \(n\)-queens board turns out to be a surprisingly clean testbed for this kind of stochastic,
+              elimination-based decision-making &mdash; simple enough to reason about exactly for small boards,
+              rich enough that the greedy baseline already fails.
+            </p>
+
+          </div>
+
+          <div class="post-attachments">
+            <h3>Attachments</h3>
+            <a class="attachment-link" href="../files/SQEP-manuscript.pdf" target="_blank" rel="noopener">
+              <i class="fas fa-file-pdf" aria-hidden="true"></i>
+              <span>Full manuscript (PDF)</span>
+            </a>
+          </div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>
