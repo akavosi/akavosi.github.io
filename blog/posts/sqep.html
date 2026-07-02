@@ -78,19 +78,19 @@
 
             <p>
               The classical <em>n</em>-queens puzzle asks how to place <em>n</em> queens on a board so that no two
-              attack each other &mdash; a static, deterministic question with a fixed answer (92 solutions for
+              attack each other; a static, deterministic question with a fixed answer (92 solutions for
               <em>n</em> = 8). This paper asks a different kind of question: what if the queens are already on
-              the board, already attacking each other, and one by one they start eliminating their rivals
-              &mdash; but every elimination attempt only succeeds with some probability <em>p</em>? Who should
+              the board, already attacking each other, and one by one they start eliminating their rivals; 
+              but every elimination attempt only succeeds with some probability <em>p</em>? Who should
               act, and in what order, to clear the board as efficiently as possible?
             </p>
 
             <p>
-              I call this the <strong>Stochastic Sequential Queens Elimination Problem (S-SQEP)</strong>. It turns
-              a combinatorial placement puzzle into a sequential decision problem: an activation policy chooses
+              We may call this the <strong>Stochastic Sequential Queens Elimination Problem (S-SQEP)</strong>. It turns
+              a combinatorial placement puzzle into a sequential decision problem, where an activation policy chooses
               which queen acts next, that queen simultaneously attacks every rival in its unblocked line of
               sight, and each attack independently succeeds with probability <em>p</em>. The goal is to minimize
-              the expected cumulative number of conflicts along the way &mdash; not just at the end.
+              the expected cumulative number of conflicts along the way; not just at the end.
             </p>
 
             <figure class="post-figure">
@@ -107,7 +107,7 @@
             <p>
               The key modeling twist is that activation is a <strong>simultaneous multi-kill event</strong>. When a
               queen is activated, every queen in its unblocked neighborhood is attacked at once, each
-              independently &mdash; so a single step can eliminate zero, one, or several rivals together. This is
+              independently; so a single step can eliminate zero, one, or several rivals together. This is
               different from sequential single-target capture models, where an activated agent removes exactly
               one opponent. The multi-kill structure creates combinatorial dependence between conflict pairs
               and a much richer space of transitions, which is what makes the problem interesting as an MDP
@@ -139,7 +139,7 @@
             </div>
 
             <p>
-              The paper shows this process always terminates: under any policy that never wastes a turn on an
+              The paper shows this process always terminates, where under any policy that never wastes a turn on an
               idle queen (an <em>admissible</em> policy), the board reaches a conflict-free state almost surely,
               with expected stopping time at most \((n-1)/p\). On the finite reachable state space, the problem
               satisfies the standard stochastic-shortest-path regularity conditions, which gives existence of an
@@ -149,7 +149,7 @@
             <h2>The obvious heuristic isn't optimal</h2>
             <p>
               A natural first guess is to always activate whichever queen currently threatens the most
-              rivals &mdash; a greedy-by-degree policy. It turns out this is provably suboptimal for \(p < 1\):
+              rivals; a greedy-by-degree policy. It turns out this is provably suboptimal for \(p < 1\):
               the paper gives an explicit four-queen configuration where activating the highest-degree queen
               leaves a strictly larger expected cost than activating a lower-degree one, because degree alone
               ignores how much overlap there is between a queen's targets and the rest of the conflict graph.
@@ -193,8 +193,8 @@
                 \]
               </p>
               <p>
-                The proof rests on a gain lower bound &mdash; a pigeonhole argument on the attack graph shows
-                that the best available score is always at least \(\tfrac{2p}{n}\kappa(s)\) &mdash; which turns
+                The proof rests on a gain lower bound; a pigeonhole argument on the attack graph shows
+                that the best available score is always at least \(\tfrac{2p}{n}\kappa(s)\); which turns
                 into a geometric decay bound on the expected conflict count and, after summing over the
                 trajectory, the ratio above. The bound is tight: it is approached exactly when the conflict
                 graph looks like a perfect matching and \(p \to 0^+\).
@@ -224,7 +224,7 @@
               <figcaption>
                 The empirical check of the approximation guarantee: ACG's realized cost (green) sits far below
                 the worst-case \(\tfrac{n}{2p}V^{*}(s_0)\) bound (red, dashed) for this board, and almost exactly
-                on top of the true optimum (blue, dotted) &mdash; the theorem is a valid but conservative
+                on top of the true optimum (blue, dotted); the theorem is a valid but conservative
                 worst-case guarantee, not a tight prediction of typical-case behavior.
               </figcaption>
             </figure>
@@ -242,12 +242,12 @@
             <h2>Takeaways</h2>
             <p>
               Three things I find compelling about this formulation: first, the multi-kill mechanism is a small
-              modeling change with real structural consequences &mdash; it's what breaks simple greedy
+              modeling change with real structural consequences; it's what breaks simple greedy
               heuristics and forces a genuinely trajectory-aware analysis. Second, ACG shows that you can get a
               closed-form, cheap-to-compute heuristic that still carries a worst-case approximation guarantee,
               which is a nice middle ground between exact MDP solving and unprincipled heuristics. Third, the
               \(n\)-queens board turns out to be a surprisingly clean testbed for this kind of stochastic,
-              elimination-based decision-making &mdash; simple enough to reason about exactly for small boards,
+              elimination-based decision-making; simple enough to reason about exactly for small boards,
               rich enough that the greedy baseline already fails.
             </p>
 
