@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>On average reward criterion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Notes on the average-reward Markov Decision Process criterion: why it is less popular than discounted formulations, and a short PDF collecting justifications from the literature.">
+  <meta name="theme-color" content="#15181d">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="branding-text">
+          <span class="brand-name">Artin Kavoosi</span>
+          <span class="brand-aff">University of Tehran</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../../index.html#about">About</a>
+        <a href="../index.html" class="active">Blog</a>
+        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner" style="grid-template-columns: 1fr; max-width: 760px;">
+      <div class="content">
+
+        <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+        <article class="post-article">
+          <header class="post-article-header">
+            <span class="post-meta">September 2025</span>
+            <h1>On average reward criterion</h1>
+          </header>
+
+          <div class="post-article-body">
+            <p>
+              At first view, the average-reward Markov Decision Process (MDP) feels like the natural choice, 
+              especially next to discounted formulations that often need extra real-world justification. In practice, though, 
+              the average-criterion approach hasn’t become as popular: subtle technical assumptions, multichain behavior, and 
+              delicate limit arguments make it less straightforward than it appears.
+
+            </p>
+
+            <p>
+              Last year I took Stochastic Dynamic Programming with Prof. Mohammad Yazdi at Sharif U, 
+              where we worked through Professor Ross’s book. Prof. Yazdi’s mentorship was the backbone of the course; 
+              he pushed us to be precise, patiently untangled murky arguments, and consistently turned intuition into rigorous proofs. 
+              That course sharpened my appreciation for why working through the technical details is worth the effort.
+            </p>
+
+            <p>
+              I’ve put together a short PDF here, where I collect some justifications from the literature on the average-criterion MDP. 
+              If you’re interested in MDPs, you might find it useful.
+            </p>
+          </div>
+
+          <div class="post-attachments">
+            <h3>Attachments</h3>
+            <a class="attachment-link" href="../files/MDP.pdf" target="_blank" rel="noopener">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+              <span>Proof</span>
+            </a>
+          </div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>

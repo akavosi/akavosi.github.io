@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- TODO: set the page title -->
+  <title>Post Title — Blog — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- TODO: one or two sentence summary -->
+  <meta name="description" content="Post summary goes here.">
+  <meta name="theme-color" content="#15181d">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="branding-text">
+          <span class="brand-name">Artin Kavoosi</span>
+          <span class="brand-aff">University of Tehran</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../../index.html#about">About</a>
+        <a href="../index.html" class="active">Blog</a>
+        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner" style="grid-template-columns: 1fr; max-width: 760px;">
+      <div class="content">
+
+        <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+        <article class="post-article">
+          <header class="post-article-header">
+            <!-- TODO: set the date -->
+            <span class="post-meta">Month Year</span>
+            <!-- TODO: set the heading -->
+            <h1>Post Title</h1>
+          </header>
+
+          <div class="post-article-body">
+            <!-- TODO: write the post body. Plain HTML: <p>, <h2>, <h3>, <ul>, <blockquote>, <code>, <pre>, <img> all work. -->
+            <p>
+              Start writing here. Replace this paragraph with your content.
+            </p>
+
+            <h2>A subheading</h2>
+            <p>
+              You can add as many paragraphs and subheadings as you like.
+            </p>
+          </div>
+
+          <!-- Optional: attach files (PDFs, datasets, slides, etc.)
+               Put the files in blog/files/ and list them here. Delete this
+               block entirely if a post has no attachments. -->
+          <div class="post-attachments">
+            <h3>Attachments</h3>
+            <a class="attachment-link" href="../files/example.pdf" target="_blank" rel="noopener">
+              <i class="fas fa-paperclip" aria-hidden="true"></i>
+              <span>example.pdf</span>
+            </a>
+          </div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>
