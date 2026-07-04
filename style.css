@@ -1,9 +1,6 @@
 /* =========================================================
-   Artin Kavoosi — Academic Homepage
-   Modern academic dark theme
+   Artin Kavoosi 
    ========================================================= */
-
-/* ---------- Tokens ---------- */
 :root {
   --bg-base:        #15181d;
   --bg-elevated:    #1d2229;
@@ -307,17 +304,6 @@ strong { color: var(--text-primary); font-weight: 600; }
   margin: 0 0 0.35rem;
   letter-spacing: -0.015em;
 }
-
-.profile-tagline {
-  text-align: center;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.86rem;
-  color: var(--accent-bright);
-  margin: 0.1rem 0 0.7rem;
-  line-height: 1.4;
-}
-.profile-tagline i { margin-right: 0.4rem; opacity: 0.7; }
 
 .profile-role {
   text-align: center;
@@ -699,6 +685,20 @@ strong { color: var(--text-primary); font-weight: 600; }
 .project-card-cta { text-align: center; border: 1px dashed var(--rule-strong); background: transparent; }
 .project-card-cta .project-desc { color: var(--text-muted); font-style: italic; font-family: var(--font-display); }
 
+.project-card-foot-centered { justify-content: center; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .timeline {
   list-style: none;
   padding: 0;
@@ -843,38 +843,6 @@ strong { color: var(--text-primary); font-weight: 600; }
   gap: 0.6rem;
   flex-wrap: wrap;
 }
-
-.footer-disclaimer::before {
-  content: "\2022";
-  margin-right: 0.6rem;
-  color: var(--rule-strong);
-}
-
-.scholar-note {
-  font-size: 0.86rem;
-  color: var(--text-muted);
-  margin: -0.3rem 0 1rem;
-}
-.scholar-note a { color: var(--accent); }
-
-.pub-links {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-top: 0.35rem;
-}
-
-.doi-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--accent);
-  border-bottom: 1px solid var(--accent-line);
-}
-.doi-link:hover, .doi-link:focus-visible { color: var(--accent-bright); border-bottom-color: var(--accent-bright); }
 
 .footer-sep { color: var(--text-faint); }
 
