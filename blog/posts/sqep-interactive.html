@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>An interactive S-SQEP policy simulator — Blog — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A live, in-browser replay of the Stochastic Queens Elimination Problem: step through Random-admissible, Greedy-degree, and Adaptive Coverage Greedy on the same n=8 instance used in the main post, and compare each against the exact optimal value V*(s0).">
+  <meta name="theme-color" content="#15181d">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+
+  <!-- MathJax, for the one or two inline formulas in this post -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A&middot;K</span>
+        <span class="branding-text">
+          <span class="brand-name">Artin Kavoosi</span>
+          <span class="brand-aff">University of Tehran</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../../index.html#about">About</a>
+        <a href="../index.html" class="active">Blog</a>
+        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV &#8599;</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner" style="grid-template-columns: 1fr; max-width: 760px;">
+      <div class="content">
+
+        <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+        <article class="post-article">
+          <header class="post-article-header">
+            <span class="post-meta">July 2026<span class="series-badge">SQEP series &middot; Interactive companion</span></span>
+            <h1>An interactive S-SQEP policy simulator</h1>
+          </header>
+
+          <div class="post-article-body">
+
+            <p>
+              The <a href="sqep.html">main post</a> on the Stochastic Sequential Queens Elimination Problem
+              (S-SQEP) makes a fairly specific empirical claim: that Adaptive Coverage Greedy (ACG) tracks the
+              true optimal value \(V^{*}(s_0)\) closely across the whole range of kill probabilities \(p\), while
+              a plain greedy-by-degree rule and a random admissible policy fall further behind. Table 2 and
+              Figure 3 of the manuscript back this up with numbers, but a static table is a strange way to
+              present a sequential decision process. This post is a small widget that lets you drive the
+              process yourself.
+            </p>
+
+            <p>
+              Pick a policy (Random-admissible, Greedy-degree, or ACG) and a kill probability \(p\), then step
+              or play through the trajectory one activation at a time. At every step you can see which queen was
+              chosen, which of its unblocked neighbors were actually eliminated (a coin flip per neighbor,
+              independently, at probability \(p\)), and how the conflict count \(\kappa(S^{(t)})\) and the
+              cumulative cost \(\Psi\) evolve. The right-hand panel shows the same Monte Carlo comparison as
+              Figure 3, with the currently selected \(p\) marked, so you can see exactly where the run you're
+              watching sits relative to the aggregate statistics.
+            </p>
+
+            <h2>Why the browser never simulates anything itself</h2>
+            <p>
+              Everything in this widget; the exact value \(V^{*}(s_0)\), the Monte Carlo means and standard
+              errors, and every frame of every replay; is computed once in Python, directly from the same
+              reference implementation behind the paper's own experiments
+              (<code>sqep_model.py</code>, <code>sqep_algorithms.py</code>): \(V^{*}\) via the backward
+              induction of Theorem 12 over the 256 reachable states, and ACG's activation choice via the
+              closed-form gain of Lemma 17. The browser only replays those precomputed results; it does not
+              reimplement any part of the model in JavaScript. That was a deliberate choice: a hand-rolled JS
+              port of the attack/blocking logic could quietly drift from the paper's own code, and there would
+              be no easy way to notice. Baking the computation into a static JSON payload means the widget can
+              never show a trajectory the reference implementation itself wouldn't produce.
+            </p>
+
+            <p>
+              The instance is the same \(n=8\), seed-7 board already used for
+              <code>fig_kappa_decay.png</code>, <code>fig_policy_vs_p.png</code>, and
+              <code>fig_acg_bound.png</code> in the main post \(\kappa(s_0) = 9\) so the numbers below are
+              directly comparable to those static figures rather than a different random instance.
+            </p>
+
+<div class="sqep-widget">
+  <div class="sqep-board-col">
+    <svg id="sqep-board" viewBox="0 0 336 336" role="img" aria-label="S-SQEP board replay"></svg>
+    <div class="sqep-controls">
+      <label>Policy
+        <select id="sqep-policy"></select>
+      </label>
+      <label>Kill probability p
+        <select id="sqep-p"></select>
+      </label>
+      <div class="sqep-buttons">
+        <button id="sqep-step" type="button">Step</button>
+        <button id="sqep-play" type="button">Play</button>
+        <button id="sqep-reset" type="button">Reset</button>
+      </div>
+    </div>
+    <div class="sqep-stats">
+      <div><span>Round t</span><strong id="sqep-t">0</strong></div>
+      <div><span>&kappa;(S<sup>(t)</sup>)</span><strong id="sqep-kappa">0</strong></div>
+      <div><span>&Psi; so far</span><strong id="sqep-psi">0.00</strong></div>
+      <div><span>V*(s<sub>0</sub>)</span><strong id="sqep-vstar">0.00</strong></div>
+    </div>
+  </div>
+  <div class="sqep-chart-col">
+    <svg id="sqep-chart" viewBox="0 0 380 300" role="img" aria-label="Expected cumulative conflict cost versus kill probability p"></svg>
+    <p class="sqep-caption">
+      Mean &Psi; (600 Monte Carlo trials per policy per p) against the exact
+      backward-induction optimum V*(s<sub>0</sub>), on the same n=8 instance
+      as the figures above. The vertical marker tracks the p selected on the left.
+    </p>
+  </div>
+</div>
+<style>
+.sqep-widget {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+  align-items: flex-start;
+  margin: 2rem 0;
+  padding: 1.25rem;
+  background: var(--bg-elevated, #1d2229);
+  border: 1px solid var(--rule, #353d49);
+  border-radius: var(--radius-lg, 8px);
+  font-family: var(--font-body, sans-serif);
+}
+.sqep-board-col { flex: 0 0 300px; }
+.sqep-chart-col { flex: 1 1 320px; min-width: 300px; }
+#sqep-board { width: 100%; max-width: 300px; display: block; }
+#sqep-chart { width: 100%; display: block; }
+.sqep-controls { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.9rem; }
+.sqep-controls label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; color: var(--text-muted, #9ea8b7); gap: 0.75rem;
+}
+.sqep-controls select {
+  background: var(--bg-soft, #252b34); color: var(--text-primary, #f2f4f8);
+  border: 1px solid var(--rule, #353d49); border-radius: var(--radius, 4px);
+  padding: 0.3rem 0.5rem; font-family: var(--font-body, sans-serif); font-size: 0.85rem;
+}
+.sqep-buttons { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
+.sqep-buttons button {
+  flex: 1; background: var(--bg-soft, #252b34); color: var(--text-primary, #f2f4f8);
+  border: 1px solid var(--rule, #353d49); border-radius: var(--radius, 4px);
+  padding: 0.4rem 0.4rem; font-size: 0.8rem; cursor: pointer; font-family: var(--font-body, sans-serif);
+}
+.sqep-buttons button:hover { background: var(--bg-hover, #2c3340); border-color: var(--rule-strong, #444f5e); }
+.sqep-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 1rem;
+}
+.sqep-stats div {
+  background: var(--bg-soft, #252b34); border-radius: var(--radius, 4px);
+  padding: 0.55rem 0.7rem;
+}
+.sqep-stats span { display: block; font-size: 0.72rem; color: var(--text-muted, #9ea8b7); }
+.sqep-stats strong { display: block; font-size: 1.15rem; color: var(--text-primary, #f2f4f8); font-weight: 500; margin-top: 0.15rem; }
+.sqep-caption { font-size: 0.8rem; color: var(--text-muted, #9ea8b7); margin: 0.6rem 0 0; }
+</style>
+<script id="sqep-data" type="application/json">{"n": 8, "positions": [[1, 2], [2, 4], [1, 4], [3, 7], [6, 2], [6, 7], [2, 3], [7, 0]], "kappa0": 9, "p_grid": ["0.20", "0.35", "0.50", "0.70", "0.85", "1.00"], "vstar": {"0.20": 40.55555555555559, "0.35": 23.463203463203467, "0.50": 16.666666666666668, "0.70": 12.197802197802197, "0.85": 10.281329923273658, "1.00": 9.0}, "policy_labels": {"acg": "Adaptive coverage greedy", "greedy": "Greedy degree", "random": "Random admissible"}, "stats": {"acg": {"0.20": {"mean": 41.248333333333335, "stderr": 0.755520420955967}, "0.35": {"mean": 23.718333333333334, "stderr": 0.3951349921698115}, "0.50": {"mean": 16.618333333333332, "stderr": 0.2402059205333192}, "0.70": {"mean": 12.32, "stderr": 0.13679424939180254}, "0.85": {"mean": 10.36, "stderr": 0.07958643100428615}, "1.00": {"mean": 9.0, "stderr": 0.0}}, "greedy": {"0.20": {"mean": 43.85666666666667, "stderr": 0.7726212118736043}, "0.35": {"mean": 24.09, "stderr": 0.3896834185164499}, "0.50": {"mean": 17.52166666666667, "stderr": 0.2578636500886409}, "0.70": {"mean": 12.171666666666667, "stderr": 0.1384770170795835}, "0.85": {"mean": 10.246666666666666, "stderr": 0.07687459725880653}, "1.00": {"mean": 9.0, "stderr": 0.0}}, "random": {"0.20": {"mean": 54.653333333333336, "stderr": 1.025683909146225}, "0.35": {"mean": 31.925, "stderr": 0.5506199157918888}, "0.50": {"mean": 22.81833333333333, "stderr": 0.35078166022206486}, "0.70": {"mean": 16.515, "stderr": 0.21892328057513158}, "0.85": {"mean": 14.07, "stderr": 0.14415520185627095}, "1.00": {"mean": 11.918333333333333, "stderr": 0.08088054177017509}}}, "trajectories": {"acg": {"0.20": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 6, "killed": [5], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 15.0}, {"t": 3, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 21.0}, {"t": 4, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 27.0}, {"t": 5, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 33.0}, {"t": 6, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 39.0}, {"t": 7, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 45.0}, {"t": 8, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 51.0}, {"t": 9, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 57.0}, {"t": 10, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 2, "killed": [1], "cum_psi": 63.0}, {"t": 11, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 0, "killed": [], "cum_psi": 67.0}, {"t": 12, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 0, "killed": [], "cum_psi": 71.0}, {"t": 13, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 0, "killed": [], "cum_psi": 75.0}, {"t": 14, "alive": [0, 2, 3, 4, 7], "pairs": [[0, 2], [0, 4]], "kappa": 2, "activated": 0, "killed": [6], "cum_psi": 79.0}, {"t": 15, "alive": [0, 2, 3, 7], "pairs": [[0, 2]], "kappa": 1, "activated": 0, "killed": [4], "cum_psi": 81.0}, {"t": 16, "alive": [0, 3, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [2], "cum_psi": 82.0}], "0.35": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [1, 3, 4, 6, 7], "pairs": [[1, 6]], "kappa": 1, "activated": 6, "killed": [0, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [1, 3, 4, 7], "pairs": [], "kappa": 0, "activated": 1, "killed": [6], "cum_psi": 10.0}], "0.50": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [1, 3, 4, 6, 7], "pairs": [[1, 6]], "kappa": 1, "activated": 6, "killed": [0, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [1, 3, 4, 7], "pairs": [], "kappa": 0, "activated": 1, "killed": [6], "cum_psi": 10.0}], "0.70": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 3, 4, 6, 7], "pairs": [[0, 4], [0, 6]], "kappa": 2, "activated": 6, "killed": [1, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [0, 3, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [4, 6], "cum_psi": 11.0}], "0.85": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}], "1.00": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}]}, "greedy": {"0.20": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 6, "killed": [], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 6, "killed": [], "cum_psi": 18.0}, {"t": 3, "alive": [0, 1, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 6, "activated": 6, "killed": [2], "cum_psi": 27.0}, {"t": 4, "alive": [0, 1, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 6, "activated": 5, "killed": [], "cum_psi": 33.0}, {"t": 5, "alive": [0, 1, 3, 5, 7], "pairs": [[0, 5], [3, 5]], "kappa": 2, "activated": 5, "killed": [4, 6], "cum_psi": 39.0}, {"t": 6, "alive": [0, 1, 3, 5, 7], "pairs": [[0, 5], [3, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 41.0}, {"t": 7, "alive": [1, 3, 5, 7], "pairs": [[3, 5]], "kappa": 1, "activated": 5, "killed": [0], "cum_psi": 43.0}, {"t": 8, "alive": [1, 3, 5, 7], "pairs": [[3, 5]], "kappa": 1, "activated": 3, "killed": [], "cum_psi": 44.0}, {"t": 9, "alive": [1, 3, 7], "pairs": [], "kappa": 0, "activated": 3, "killed": [5], "cum_psi": 45.0}], "0.35": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [2, 3, 4, 5, 6, 7], "pairs": [[2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 6, "killed": [0, 1], "cum_psi": 9.0}, {"t": 2, "alive": [2, 3, 5, 6, 7], "pairs": [[2, 6], [3, 5], [5, 6]], "kappa": 3, "activated": 5, "killed": [4], "cum_psi": 13.0}, {"t": 3, "alive": [2, 3, 5, 7], "pairs": [[3, 5]], "kappa": 1, "activated": 5, "killed": [6], "cum_psi": 16.0}, {"t": 4, "alive": [2, 3, 7], "pairs": [], "kappa": 0, "activated": 3, "killed": [5], "cum_psi": 17.0}], "0.50": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [2, 3, 4, 5, 6, 7], "pairs": [[2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 6, "killed": [0, 1], "cum_psi": 9.0}, {"t": 2, "alive": [2, 5, 7], "pairs": [], "kappa": 0, "activated": 5, "killed": [3, 4, 6], "cum_psi": 13.0}], "0.70": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 3, 4, 6, 7], "pairs": [[0, 4], [0, 6]], "kappa": 2, "activated": 6, "killed": [1, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [0, 3, 4, 6, 7], "pairs": [[0, 4], [0, 6]], "kappa": 2, "activated": 0, "killed": [], "cum_psi": 11.0}, {"t": 3, "alive": [0, 3, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [4, 6], "cum_psi": 13.0}], "0.85": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}], "1.00": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}]}, "random": {"0.20": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 3, "killed": [], "cum_psi": 9.0}, {"t": 2, "alive": [0, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 7, "activated": 2, "killed": [1], "cum_psi": 18.0}, {"t": 3, "alive": [0, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 7, "activated": 2, "killed": [], "cum_psi": 25.0}, {"t": 4, "alive": [0, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [3, 5], [4, 5], [5, 6]], "kappa": 5, "activated": 0, "killed": [2], "cum_psi": 32.0}, {"t": 5, "alive": [0, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [3, 5], [4, 5], [5, 6]], "kappa": 5, "activated": 3, "killed": [], "cum_psi": 37.0}, {"t": 6, "alive": [0, 4, 5, 7], "pairs": [[0, 4], [0, 5], [4, 5]], "kappa": 3, "activated": 5, "killed": [3, 6], "cum_psi": 42.0}, {"t": 7, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [0], "cum_psi": 45.0}, {"t": 8, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 46.0}, {"t": 9, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 47.0}, {"t": 10, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 48.0}, {"t": 11, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 49.0}, {"t": 12, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 50.0}, {"t": 13, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 51.0}, {"t": 14, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 52.0}, {"t": 15, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 53.0}, {"t": 16, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 54.0}, {"t": 17, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 55.0}, {"t": 18, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 56.0}, {"t": 19, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 57.0}, {"t": 20, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 58.0}, {"t": 21, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 59.0}, {"t": 22, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 60.0}, {"t": 23, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 61.0}, {"t": 24, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 62.0}, {"t": 25, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 63.0}, {"t": 26, "alive": [4, 7], "pairs": [], "kappa": 0, "activated": 4, "killed": [5], "cum_psi": 64.0}], "0.35": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 2, "killed": [], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 1, "killed": [], "cum_psi": 18.0}, {"t": 3, "alive": [1, 3, 4, 5, 6, 7], "pairs": [[1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 6, "killed": [0, 2], "cum_psi": 27.0}, {"t": 4, "alive": [1, 3, 4, 5, 6, 7], "pairs": [[1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 3, "killed": [], "cum_psi": 31.0}, {"t": 5, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 1, "killed": [6], "cum_psi": 35.0}, {"t": 6, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 4, "killed": [], "cum_psi": 37.0}, {"t": 7, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 4, "killed": [], "cum_psi": 39.0}, {"t": 8, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 41.0}, {"t": 9, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 4, "killed": [], "cum_psi": 43.0}, {"t": 10, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 45.0}, {"t": 11, "alive": [1, 4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [3], "cum_psi": 47.0}, {"t": 12, "alive": [1, 4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 48.0}, {"t": 13, "alive": [1, 4, 7], "pairs": [], "kappa": 0, "activated": 4, "killed": [5], "cum_psi": 49.0}], "0.50": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 5, 6, 7], "pairs": [[0, 2], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [5, 6]], "kappa": 7, "activated": 5, "killed": [4], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 5, 7], "pairs": [[0, 2], [0, 5], [1, 2], [3, 5]], "kappa": 4, "activated": 0, "killed": [6], "cum_psi": 16.0}, {"t": 3, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 2, "killed": [0], "cum_psi": 20.0}, {"t": 4, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 3, "killed": [], "cum_psi": 22.0}, {"t": 5, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 3, "killed": [], "cum_psi": 24.0}, {"t": 6, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 2, "killed": [], "cum_psi": 26.0}, {"t": 7, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 1, "killed": [], "cum_psi": 28.0}, {"t": 8, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 30.0}, {"t": 9, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 3, "killed": [], "cum_psi": 32.0}, {"t": 10, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 1, "killed": [], "cum_psi": 34.0}, {"t": 11, "alive": [1, 2, 5, 7], "pairs": [[1, 2]], "kappa": 1, "activated": 5, "killed": [3], "cum_psi": 36.0}, {"t": 12, "alive": [1, 5, 7], "pairs": [], "kappa": 0, "activated": 1, "killed": [2], "cum_psi": 37.0}], "0.70": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 5, 6, 7], "pairs": [[0, 2], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [5, 6]], "kappa": 7, "activated": 0, "killed": [4], "cum_psi": 9.0}, {"t": 2, "alive": [1, 2, 3, 6, 7], "pairs": [[1, 2], [1, 6], [2, 6]], "kappa": 3, "activated": 6, "killed": [0, 5], "cum_psi": 16.0}, {"t": 3, "alive": [1, 3, 6, 7], "pairs": [[1, 6]], "kappa": 1, "activated": 6, "killed": [2], "cum_psi": 19.0}, {"t": 4, "alive": [3, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [1], "cum_psi": 20.0}], "0.85": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 3, "killed": [5], "cum_psi": 9.0}, {"t": 2, "alive": [2, 3, 4, 7], "pairs": [], "kappa": 0, "activated": 2, "killed": [0, 1, 6], "cum_psi": 15.0}], "1.00": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 5, 7], "pairs": [[0, 2], [0, 5], [1, 2]], "kappa": 3, "activated": 5, "killed": [3, 4, 6], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [2, 5], "cum_psi": 12.0}]}}}</script>
+<script>
+(function () {
+  const DATA = JSON.parse(document.getElementById('sqep-data').textContent);
+  const boardSvg = document.getElementById('sqep-board');
+  const chartSvg = document.getElementById('sqep-chart');
+  const cell = 336 / DATA.n;
+  const policySel = document.getElementById('sqep-policy');
+  const pSel = document.getElementById('sqep-p');
+  const stepBtn = document.getElementById('sqep-step');
+  const playBtn = document.getElementById('sqep-play');
+  const resetBtn = document.getElementById('sqep-reset');
+  const elT = document.getElementById('sqep-t');
+  const elKappa = document.getElementById('sqep-kappa');
+  const elPsi = document.getElementById('sqep-psi');
+  const elVstar = document.getElementById('sqep-vstar');
+
+  Object.keys(DATA.policy_labels).forEach(key => {
+    const opt = document.createElement('option');
+    opt.value = key; opt.textContent = DATA.policy_labels[key];
+    policySel.appendChild(opt);
+  });
+  policySel.value = 'acg';
+  DATA.p_grid.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = p; opt.textContent = 'p = ' + p;
+    pSel.appendChild(opt);
+  });
+  pSel.value = '0.50';
+
+  let frames = [];
+  let idx = 0;
+  let timer = null;
+
+  function currentFrames() {
+    return DATA.trajectories[policySel.value][pSel.value];
+  }
+
+  function drawBoard(frame) {
+    const aliveSet = new Set(frame.alive);
+    const pairSet = frame.pairs;
+    let sq = '';
+    for (let r = 0; r < DATA.n; r++) {
+      for (let c = 0; c < DATA.n; c++) {
+        const light = (r + c) % 2 === 0;
+        sq += '<rect x="' + (c * cell) + '" y="' + (r * cell) + '" width="' + cell + '" height="' + cell +
+          '" fill="' + (light ? 'var(--bg-soft, #252b34)' : 'var(--bg-base, #15181d)') + '"/>';
+      }
+    }
+    let edges = '';
+    pairSet.forEach(([i, j]) => {
+      const [r1, c1] = DATA.positions[i];
+      const [r2, c2] = DATA.positions[j];
+      edges += '<line x1="' + (c1 * cell + cell / 2) + '" y1="' + (r1 * cell + cell / 2) +
+        '" x2="' + (c2 * cell + cell / 2) + '" y2="' + (r2 * cell + cell / 2) +
+        '" stroke="var(--rule-strong, #444f5e)" stroke-width="1.5"/>';
+    });
+    let pieces = '';
+    for (let i = 0; i < DATA.n; i++) {
+      if (!aliveSet.has(i)) continue;
+      const [r, c] = DATA.positions[i];
+      const cx = c * cell + cell / 2, cy = r * cell + cell / 2;
+      const justKilled = frame.killed.includes(i);
+      const isActive = frame.activated === i;
+      let fill = 'var(--accent, #6ea8fe)';
+      if (isActive) fill = '#f2c94c';
+      const radius = cell * 0.32;
+      pieces += '<circle cx="' + cx + '" cy="' + cy + '" r="' + radius + '" fill="' + fill + '" ' +
+        'stroke="var(--bg-base,#15181d)" stroke-width="2"/>';
+      pieces += '<text x="' + cx + '" y="' + cy + '" text-anchor="middle" dominant-baseline="central" ' +
+        'font-size="' + (radius * 0.9) + '" font-weight="500" fill="#15181d">Q</text>';
+    }
+    boardSvg.innerHTML = sq + edges + pieces;
+  }
+
+  function drawChart() {
+    const pGrid = DATA.p_grid;
+    const x0 = 46, x1 = 360, y0 = 16, y1 = 240;
+    let maxY = 1;
+    Object.keys(DATA.stats).forEach(key => {
+      pGrid.forEach(p => { maxY = Math.max(maxY, DATA.stats[key][p].mean); });
+    });
+    pGrid.forEach(p => { maxY = Math.max(maxY, DATA.vstar[p]); });
+    maxY = Math.ceil(maxY * 1.1);
+    const xScale = i => x0 + (i / (pGrid.length - 1)) * (x1 - x0);
+    const yScale = v => y1 - (v / maxY) * (y1 - y0);
+
+    let axes = '<line x1="' + x0 + '" y1="' + y1 + '" x2="' + x1 + '" y2="' + y1 + '" stroke="var(--rule,#353d49)" stroke-width="1"/>';
+    axes += '<line x1="' + x0 + '" y1="' + y0 + '" x2="' + x0 + '" y2="' + y1 + '" stroke="var(--rule,#353d49)" stroke-width="1"/>';
+    pGrid.forEach((p, i) => {
+      axes += '<text x="' + xScale(i) + '" y="' + (y1 + 16) + '" font-size="10" text-anchor="middle" fill="var(--text-muted,#9ea8b7)">' + p + '</text>';
+    });
+    axes += '<text x="' + (x0 - 8) + '" y="' + (y0 + 4) + '" font-size="10" text-anchor="end" fill="var(--text-muted,#9ea8b7)">' + maxY + '</text>';
+    axes += '<text x="' + (x0 - 8) + '" y="' + y1 + '" font-size="10" text-anchor="end" fill="var(--text-muted,#9ea8b7)">0</text>';
+
+    const colors = { acg: '#6fcf97', greedy: '#f2994a', random: '#9ea8b7' };
+    let lines = '';
+    Object.keys(DATA.stats).forEach(key => {
+      const pts = pGrid.map((p, i) => xScale(i) + ',' + yScale(DATA.stats[key][p].mean));
+      lines += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + colors[key] + '" stroke-width="2"/>';
+      pGrid.forEach((p, i) => {
+        const m = DATA.stats[key][p].mean, se = DATA.stats[key][p].stderr;
+        const cx = xScale(i);
+        lines += '<line x1="' + cx + '" y1="' + yScale(m - 1.96 * se) + '" x2="' + cx + '" y2="' + yScale(m + 1.96 * se) + '" stroke="' + colors[key] + '" stroke-width="1"/>';
+        lines += '<circle cx="' + cx + '" cy="' + yScale(m) + '" r="3" fill="' + colors[key] + '"/>';
+      });
+    });
+    const vpts = pGrid.map((p, i) => xScale(i) + ',' + yScale(DATA.vstar[p]));
+    lines += '<polyline points="' + vpts.join(' ') + '" fill="none" stroke="var(--accent,#6ea8fe)" stroke-width="1.5" stroke-dasharray="4 3"/>';
+
+    const legendItems = [
+      ['ACG', colors.acg], ['Greedy-degree', colors.greedy],
+      ['Random admissible', colors.random], ['Exact V*', 'var(--accent,#6ea8fe)']
+    ];
+    let legend = '';
+    legendItems.forEach((item, i) => {
+      const ly = 8 + i * 14;
+      legend += '<circle cx="' + (x1 - 6) + '" cy="' + ly + '" r="3" fill="' + item[1] + '"/>';
+      legend += '<text x="' + (x1 - 14) + '" y="' + (ly + 3) + '" font-size="9" text-anchor="end" fill="var(--text-muted,#9ea8b7)">' + item[0] + '</text>';
+    });
+
+    const selIdx = pGrid.indexOf(pSel.value);
+    const marker = '<line x1="' + xScale(selIdx) + '" y1="' + y0 + '" x2="' + xScale(selIdx) + '" y2="' + y1 +
+      '" stroke="var(--text-primary,#f2f4f8)" stroke-width="1" stroke-dasharray="2 2" opacity="0.6"/>';
+
+    chartSvg.innerHTML = axes + lines + marker + legend;
+  }
+
+  function render() {
+    const frame = frames[idx];
+    drawBoard(frame);
+    elT.textContent = frame.t;
+    elKappa.textContent = frame.kappa;
+    elPsi.textContent = frame.cum_psi.toFixed(2);
+    elVstar.textContent = DATA.vstar[pSel.value].toFixed(2);
+    drawChart();
+  }
+
+  function loadFrames() {
+    frames = currentFrames();
+    idx = 0;
+    if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; }
+    render();
+  }
+
+  stepBtn.addEventListener('click', () => {
+    if (idx < frames.length - 1) idx += 1;
+    render();
+  });
+  resetBtn.addEventListener('click', loadFrames);
+  playBtn.addEventListener('click', () => {
+    if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; return; }
+    playBtn.textContent = 'Pause';
+    timer = setInterval(() => {
+      if (idx >= frames.length - 1) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; return; }
+      idx += 1; render();
+    }, 700);
+  });
+  policySel.addEventListener('change', loadFrames);
+  pSel.addEventListener('change', loadFrames);
+
+  loadFrames();
+})();
+</script>
+
+            <h2>What to look for</h2>
+            <ul>
+              <li>
+                Set \(p\) low (around 0.20) and compare ACG against Greedy-degree: the gap Table 2 reports
+                (ACG tracking \(V^{*}\) within roughly 2%, Greedy-degree noticeably further behind) is easier
+                to feel by stepping through a run than by reading a column of numbers.
+              </li>
+              <li>
+                Watch which queen gets activated first at each \(p\). ACG and Greedy-degree agree far more
+                often than you might expect on this board; the disagreement, when it happens, is usually a
+                queen with slightly lower degree but conflicts that overlap less with everyone else's.
+              </li>
+              <li>
+                As \(p \to 1\), all three curves in the right-hand chart converge toward \(\kappa(s_0) = 9\);
+                consistent with Remark 10, since a single sufficiently well-chosen activation can resolve every
+                conflict on this particular board when kills are deterministic.
+              </li>
+            </ul>
+
+          </div>
+
+        </article>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+
+</html>
