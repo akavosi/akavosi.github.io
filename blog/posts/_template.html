@@ -3,26 +3,35 @@
 
 <head>
   <meta charset="UTF-8">
-  <!-- TODO: set the page title -->
-  <title>Post Title — Blog — Artin Kavoosi</title>
+  <title>Post Title — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- TODO: one or two sentence summary -->
   <meta name="description" content="Post summary goes here.">
-  <meta name="theme-color" content="#15181d">
+  <meta name="theme-color" content="#fbfbf7">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
   <link rel="shortcut icon" type="image/png" href="../../favicon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <link rel="stylesheet" href="../../style.css">
   <link rel="stylesheet" href="../blog.css">
+
+  <!-- If this post needs math, uncomment MathJax:
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+  -->
 </head>
 
-<body>
+<body class="notes">
 
   <a href="#main" class="skip-link">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
@@ -31,60 +40,120 @@
     <div class="header-inner">
       <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
         <span class="monogram" aria-hidden="true">A·K</span>
-        <span class="branding-text">
-          <span class="brand-name">Artin Kavoosi</span>
-          <span class="brand-aff">University of Tehran</span>
-        </span>
+        <span class="brand-name">Artin Kavoosi</span>
       </a>
 
       <nav class="nav-links" aria-label="Primary">
         <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Blog</a>
+        <a href="../index.html" class="active">Notes</a>
         <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
       </nav>
     </div>
   </header>
 
   <main class="page" id="main">
-    <div class="page-inner" style="grid-template-columns: 1fr; max-width: 760px;">
-      <div class="content">
+    <div class="page-inner">
 
-        <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+      <a href="../index.html" class="post-back">&larr; Back to all posts</a>
 
-        <article class="post-article">
-          <header class="post-article-header">
-            <!-- TODO: set the date -->
-            <span class="post-meta">Month Year</span>
-            <!-- TODO: set the heading -->
-            <h1>Post Title</h1>
-          </header>
+      <!-- TODO: pick a kicker that describes the kind of note this is:
+           "Research Note" (original results) · "Technical Note" (write-up of a derivation/proof)
+           "Seminar Note" (recap of a talk) · "Companion · Interactive" (pairs with another post) -->
+      <span class="note-kicker">Research Note</span>
 
-          <div class="post-article-body">
-            <!-- TODO: write the post body. Plain HTML: <p>, <h2>, <h3>, <ul>, <blockquote>, <code>, <pre>, <img> all work. -->
-            <p>
-              Start writing here. Replace this paragraph with your content.
-            </p>
+      <article class="post-article">
+        <header class="post-article-header">
+          <!-- TODO: set the date -->
+          <span class="post-meta">Month Year</span>
+          <!-- TODO: set the heading -->
+          <h1>Post Title</h1>
+        </header>
 
-            <h2>A subheading</h2>
-            <p>
-              You can add as many paragraphs and subheadings as you like.
-            </p>
+        <!-- TODO: write a 1-2 sentence abstract — this also becomes the excerpt on the index page and in feed.xml -->
+        <div class="note-abstract">
+          <span class="note-abstract-label">Abstract</span>
+          <p>One or two sentences summarizing what this note actually does.</p>
+          <div class="note-abstract-tags">
+            <!-- TODO: 2-3 tags, reused from other posts where possible so they stay meaningful as filters -->
+            <span class="tag-pill">Tag One</span>
+            <span class="tag-pill">Tag Two</span>
+            <span class="tag-pill">~N min read</span>
           </div>
+        </div>
 
-          <!-- Optional: attach files (PDFs, datasets, slides, etc.)
-               Put the files in blog/files/ and list them here. Delete this
-               block entirely if a post has no attachments. -->
-          <div class="post-attachments">
-            <h3>Attachments</h3>
-            <a class="attachment-link" href="../files/example.pdf" target="_blank" rel="noopener">
-              <i class="fas fa-paperclip" aria-hidden="true"></i>
-              <span>example.pdf</span>
-            </a>
-          </div>
+        <!-- Table of contents fills in automatically from the h2/h3 below — no need to edit this block.
+             It hides itself automatically if the post has fewer than two headings. -->
+        <details class="note-toc" id="note-toc">
+          <summary>Contents</summary>
+          <ol class="note-toc-list" id="note-toc-list"></ol>
+        </details>
 
-        </article>
+        <div class="post-article-body">
+          <!-- TODO: write the post body. Plain HTML: <p>, <h2>, <h3>, <ul>, <blockquote>, <code>, <pre>, <img> all work. -->
+          <p>
+            Start writing here. Replace this paragraph with your content.
+          </p>
 
+          <h2>A subheading</h2>
+          <p>
+            You can add as many paragraphs and subheadings as you like. Each h2/h3 automatically
+            becomes an entry in the Contents box above.
+          </p>
+
+          <!-- Recommended for research/technical notes: a short numbered reference list, and an
+               "open questions" note at the end — both go a long way toward reading as scholarship
+               rather than a tutorial. Delete either if it doesn't fit the post.
+          <h2>References</h2>
+          <ol>
+            <li>Author, A. (Year). Title. Venue.</li>
+          </ol>
+
+          <h2>Open questions</h2>
+          <p>What you'd try next, or what you're still unsure about.</p>
+          -->
+        </div>
+
+        <!-- Optional: attach files (PDFs, datasets, slides, etc.)
+             Put the files in blog/files/ and list them here. Delete this
+             block entirely if a post has no attachments. -->
+        <div class="post-attachments">
+          <h3>Attachments</h3>
+          <a class="attachment-link" href="../files/example.pdf" target="_blank" rel="noopener">
+            <i class="fas fa-paperclip" aria-hidden="true"></i>
+            <span>example.pdf</span>
+          </a>
+        </div>
+
+      </article>
+
+      <!-- TODO: update the citation with the real title/year/slug -->
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (Year). &ldquo;Post Title.&rdquo; <em>Research notes</em>. https://akavosi.github.io/blog/posts/your-slug.html</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@misc{kavoosiYEARslug,
+  author = {Kavoosi, Artin},
+  title  = {Post Title},
+  year   = {Year},
+  note   = {Personal research notes, informal, not peer-reviewed},
+  url    = {https://akavosi.github.io/blog/posts/your-slug.html}
+}</pre>
+        </div>
+        <p class="note-cite-note">Informal research notes — not peer-reviewed.</p>
       </div>
+
+      <!-- TODO: link 1-2 related posts -->
+      <div class="note-related">
+        <h3>Continue reading</h3>
+        <div class="note-related-grid">
+          <a class="note-related-card" href="mdp.html">
+            <span class="note-related-kicker">Seminar Note</span>
+            <span class="note-related-title">An introduction to MDP</span>
+          </a>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -96,6 +165,7 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+  <script src="../notes.js" defer></script>
 </body>
 
 </html>
