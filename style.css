@@ -581,6 +581,7 @@ a:focus-visible {
 .status-badge.is-published { color: var(--status-published); }
 .status-badge.is-review    { color: var(--status-review); }
 .status-badge.is-submitted { color: var(--status-submitted); }
+.status-badge.is-preprint  { color: var(--accent); }
 
 
 .pub-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.35rem; }
