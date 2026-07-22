@@ -3,24 +3,25 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>An introduction to MDP</title>
+  <title>An introduction to MDP — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A February 2025 presentation at the University of Tehran on Markov Decision Processes: the MDP literature, the Bellman optimality equation, and classical examples.">
-  <meta name="theme-color" content="#15181d">
+  <meta name="theme-color" content="#fbfbf7">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
   <link rel="shortcut icon" type="image/png" href="../../favicon.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <link rel="stylesheet" href="../../style.css">
   <link rel="stylesheet" href="../blog.css">
 </head>
 
-<body>
+<body class="notes">
 
   <a href="#main" class="skip-link">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
@@ -29,27 +30,41 @@
     <div class="header-inner">
       <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
         <span class="monogram" aria-hidden="true">A·K</span>
-        <span class="branding-text">
-          <span class="brand-name">Artin Kavoosi</span>
-          <span class="brand-aff">University of Tehran</span>
-        </span>
+        <span class="brand-name">Artin Kavoosi</span>
       </a>
 
       <nav class="nav-links" aria-label="Primary">
         <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Blog</a>
+        <a href="../index.html" class="active">Notes</a>
         <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
       </nav>
     </div>
   </header>
 
   <main class="page" id="main">
-    <div class="page-inner" style="grid-template-columns: 1fr; max-width: 760px;">
-      <div class="content">
+    <div class="page-inner">
 
         <a href="../index.html" class="post-back">&larr; Back to all posts</a>
 
         <article class="post-article">
+      <span class="note-kicker">Seminar Note</span>
+
+      <div class="note-abstract">
+        <span class="note-abstract-label">Abstract</span>
+        <p>In February 2025, I presented at the University of Tehran about MDP, the literature on MDP (mostly before RL!), the Bellman optimality equation, and classical MDP examples.</p>
+        <div class="note-abstract-tags">
+            <span class="tag-pill">Markov Decision Processes</span>
+            <span class="tag-pill">Seminar</span>
+          <span class="tag-pill">~1 min read</span>
+        </div>
+      </div>
+
+      <details class="note-toc" id="note-toc">
+        <summary>Contents</summary>
+        <ol class="note-toc-list" id="note-toc-list"></ol>
+      </details>
+
+
           <header class="post-article-header">
             <span class="post-meta">February 2025<span class="series-badge">MDP series &middot; Part 1/2</span></span>
             <h1>An introduction to MDP</h1>
@@ -80,7 +95,36 @@
 
         </article>
 
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (2025). &ldquo;An introduction to MDP.&rdquo; <em>Research notes</em>. https://akavosi.github.io/blog/posts/mdp.html</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@misc{kavoosi2025mdp,
+  author = {Kavoosi, Artin},
+  title  = {An introduction to MDP},
+  year   = {2025},
+  note   = {Personal research notes, informal, not peer-reviewed},
+  url    = {https://akavosi.github.io/blog/posts/mdp.html}
+}</pre>
+        </div>
+        <p class="note-cite-note">Informal research notes — not peer-reviewed.</p>
       </div>
+
+      <div class="note-related">
+        <h3>Continue reading</h3>
+        <div class="note-related-grid">
+          <a class="note-related-card" href="acmdp.html">
+            <span class="note-related-kicker">Seminar Note · MDP series, Part 2/2</span>
+            <span class="note-related-title">On average reward criterion</span>
+          </a>
+          <a class="note-related-card" href="sqep.html">
+            <span class="note-related-kicker">Research Note</span>
+            <span class="note-related-title">Stochastic Queens Elimination</span>
+          </a>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -92,6 +136,7 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+  <script src="../notes.js" defer></script>
 </body>
 
 </html>
