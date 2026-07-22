@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Artin Kavoosi — Research Notes</title>
+    <link>https://akavosi.github.io/blog/</link>
+    <atom:link href="https://akavosi.github.io/blog/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Short notes on research, methods, and things I'm working through.</description>
+    <language>en</language>
+
+    <item>
+      <title>Stochastic Queens Elimination</title>
+      <link>https://akavosi.github.io/blog/posts/sqep.html</link>
+      <guid>https://akavosi.github.io/blog/posts/sqep.html</guid>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 GMT</pubDate>
+      <description>A stochastic, elimination-based variant of the n-queens problem: an MDP formulation, a provably suboptimal greedy baseline, a closed-form heuristic (ACG) with a worst-case approximation guarantee, and an exact MIP for the deterministic case.</description>
+    </item>
+
+    <item>
+      <title>An interactive S-SQEP policy simulator</title>
+      <link>https://akavosi.github.io/blog/posts/sqep-interactive.html</link>
+      <guid>https://akavosi.github.io/blog/posts/sqep-interactive.html</guid>
+      <pubDate>Wed, 01 Jul 2026 00:00:00 GMT</pubDate>
+      <description>Step through Random-admissible, Greedy-degree, and Adaptive Coverage Greedy yourself on the same n=8 board as the main post, and watch the cumulative conflict cost race against the exact optimal value.</description>
+    </item>
+
+    <item>
+      <title>On average reward criterion</title>
+      <link>https://akavosi.github.io/blog/posts/acmdp.html</link>
+      <guid>https://akavosi.github.io/blog/posts/acmdp.html</guid>
+      <pubDate>Mon, 01 Sep 2025 00:00:00 GMT</pubDate>
+      <description>At first view, the average-reward Markov Decision Process (MDP) feels like the natural choice, especially next to discounted formulations that often need extra real-world justification.</description>
+    </item>
+
+    <item>
+      <title>An introduction to MDP</title>
+      <link>https://akavosi.github.io/blog/posts/mdp.html</link>
+      <guid>https://akavosi.github.io/blog/posts/mdp.html</guid>
+      <pubDate>Sat, 01 Feb 2025 00:00:00 GMT</pubDate>
+      <description>In February 2025, I presented at the University of Tehran about MDP, the literature on MDP (mostly before RL!), the Bellman optimality equation, and classical MDP examples.</description>
+    </item>
+
+  </channel>
+</rss>
