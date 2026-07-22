@@ -1,7 +1,3 @@
-/* =========================================================
-  Notes (blog) style.css tokens are untouched elsewhere.
-  ========================================================= */
-
 body.notes {
  --bg-base:        #fbfbf7;
  --bg-elevated:    #ffffff;
@@ -111,10 +107,122 @@ body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max
 }
 
 /* =========================================================
-  Single note image + title/tagline, for posts that have
-  a hero image (currently just SQEP). A little bigger than
-  the original 140px art column, not dramatically so.
-  ========================================================= */
+   Single note — paper header, abstract, TOC
+   ========================================================= */
+
+.post-back {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);
+  margin: 2rem auto 1.8rem; max-width: 640px; padding-left: 0.5rem;
+}
+.post-back:hover { color: var(--accent); }
+.page-inner .post-back { display: flex; }
+
+.post-article { max-width: 640px; margin: 0 auto; }
+
+.note-kicker {
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 0.7rem; display: block;
+}
+
+.post-article-header { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.post-article-header h1 { font-size: 1.95rem; margin: 0 0 0.7rem; letter-spacing: -0.015em; line-height: 1.2; }
+
+.note-byline {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);
+  margin-bottom: 1.4rem;
+}
+.note-byline .sep { color: var(--rule-strong); }
+
+.series-badge {
+  display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: 0.7rem;
+  color: var(--accent); background: var(--accent-soft); border: 1px solid var(--accent-line);
+  border-radius: 99px; padding: 0.14rem 0.55rem;
+}
+
+.note-abstract {
+  background: var(--bg-elevated);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.35rem;
+  margin-bottom: 1.6rem;
+  box-shadow: var(--shadow-soft);
+}
+.note-abstract-label {
+  font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); display: block; margin-bottom: 0.55rem;
+}
+.note-abstract p { margin: 0; font-family: var(--font-display); font-size: 1rem; line-height: 1.65; color: var(--text-body); }
+.note-abstract-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.9rem; }
+
+.note-toc {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+.note-toc summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.75rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.note-toc summary::-webkit-details-marker { display: none; }
+.note-toc summary::after { content: "+"; font-family: var(--font-mono); color: var(--accent); font-size: 0.95rem; }
+.note-toc[open] summary::after { content: "\2212"; }
+.note-toc summary:hover { color: var(--text-primary); }
+.note-toc-list { list-style: none; margin: 0; padding: 0 1.1rem 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.note-toc-list a { font-size: 0.88rem; color: var(--text-body); background: none; }
+.note-toc-list a:hover { color: var(--accent); }
+.note-toc-list .toc-h3 { padding-left: 1.1rem; font-size: 0.84rem; color: var(--text-muted); }
+
+.post-article-body { font-family: var(--font-display); font-size: 1.03rem; line-height: 1.78; color: var(--text-body); }
+.post-article-body p { margin: 0 0 1.2rem; }
+.post-article-body h2 { font-size: 1.32rem; margin: 2.2rem 0 1rem; scroll-margin-top: 90px; }
+.post-article-body h3 { font-size: 1.1rem; margin: 1.8rem 0 0.8rem; scroll-margin-top: 90px; }
+.post-article-body ul, .post-article-body ol { margin: 0 0 1.2rem; padding-left: 1.4rem; color: var(--text-body); }
+.post-article-body li { margin-bottom: 0.4rem; }
+.post-article-body img { max-width: 100%; border-radius: var(--radius); border: 1px solid var(--rule); margin: 1.5rem 0; display: block; }
+.post-article-body figcaption { font-family: var(--font-body); font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: -1rem; margin-bottom: 1.5rem; }
+.post-article-body blockquote { margin: 1.5rem 0; padding: 0.2rem 1.2rem; border-left: 2px solid var(--accent); color: var(--text-muted); font-style: italic; }
+.post-article-body code { font-family: var(--font-mono); font-size: 0.87em; background: var(--bg-soft); border: 1px solid var(--rule); padding: 0.1em 0.4em; border-radius: 3px; color: var(--accent); }
+.post-article-body pre { background: var(--bg-elevated); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.2rem; overflow-x: auto; margin: 0 0 1.2rem; }
+.post-article-body pre code { background: none; border: none; padding: 0; color: var(--text-body); font-family: var(--font-mono); }
+
+.post-attachments { margin-top: 2.4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.post-attachments h3 { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.9rem; }
+.attachment-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.83rem; color: var(--text-primary);
+  background: var(--bg-elevated); border: 1px solid var(--rule-strong);
+  padding: 0.48rem 0.85rem; border-radius: var(--radius); margin: 0 0.5rem 0.5rem 0;
+  background-image: none;
+}
+.attachment-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Figures: narrower than the full text column so plots and diagrams
+   read as figures rather than full-bleed images, and stay centered. */
+.post-figure { margin: 1.8rem 0; }
+.post-article-body .post-figure img {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   Post heading — image + title/tagline, for posts that have
+   a hero image (currently just SQEP). A little bigger than
+   the original 140px art column, not dramatically so.
+   ========================================================= */
 
 .featured-badge {
  display: inline-flex;
