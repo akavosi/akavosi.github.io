@@ -58,16 +58,7 @@
 
       <div class="notes-index-rule"></div>
 
-      <!--
-        HOW TO ADD A NEW POST
-        ----------------------------------------------------------
-        1. Copy blog/posts/_template.html to blog/posts/your-slug.html
-        2. Edit the title, date, kicker, abstract, and body inside that file.
-        3. Add any files (PDFs, images, datasets) to blog/files/
-           and link them from the post using a relative path,
-           e.g. <a href="../files/your-file.pdf">.
-        4. Add one <li> entry below, newest post first, and update feed.xml.
-      -->
+      
       <ul class="post-list">
 
         <li class="post-list-item is-featured">
@@ -111,10 +102,10 @@
             <span class="post-date">Jul 2026 &middot; OR Visualizations series · Part 1/3</span>
             <div class="post-title">Genetic Algorithm Evolution</div>
             <p class="post-excerpt">
-              At first view, the average-reward Markov Decision Process (MDP) feels like the natural choice, 
-            especially next to discounted formulations that often need extra real-world justification. In practice, though, 
-            the average-criterion approach hasn’t become as popular: subtle technical assumptions, multichain behavior, and 
-            delicate limit arguments make it less straightforward than it appears.
+              A from-scratch, real-valued genetic algorithm searches the Rastrigin function — a
+            standard benchmark riddled with about a hundred local optima — and every part of the
+            accompanying visualization is designed to make the exploration/exploitation tradeoff
+            something you watch happen, rather than something you're told about.
             </p>
             <div class="post-list-tags">
               <span class="tag-pill">Genetic Algorithms</span>
@@ -125,6 +116,25 @@
 
         <li class="post-list-item">
           <span class="post-list-index">04</span>
+          <a class="post-list-link" href="posts/ant-colony-optimization.html">
+            <span class="post-date">Jul 2026 &middot; OR Visualizations series · Part 2/3</span>
+            <div class="post-title">Ant Colony Optimization</div>
+            <p class="post-excerpt">
+              A from-scratch Elitist Ant System searches a 17-city Traveling Salesman instance small
+            enough to solve exactly, so every claim about convergence in this post is checked
+            against a provable answer rather than "whatever the colony settled on." Every part of
+            the accompanying visualization is designed to make one thing visible: 272 candidate
+            edges quietly evaporating while the 17 that matter get louder.
+            </p>
+            <div class="post-list-tags">
+              <span class="tag-pill">Ant Colony Optimization</span>
+              <span class="tag-pill">Metaheuristics</span>
+            </div>
+          </a>
+        </li>
+
+        <li class="post-list-item">
+          <span class="post-list-index">05</span>
           <a class="post-list-link" href="posts/acmdp.html">
             <span class="post-date">Sep 2025 &middot; MDP series, Part 2/2</span>
             <div class="post-title">On average reward criterion</div>
@@ -142,7 +152,7 @@
         </li>
 
         <li class="post-list-item">
-          <span class="post-list-index">05</span>
+          <span class="post-list-index">06</span>
           <a class="post-list-link" href="posts/mdp.html">
             <span class="post-date">Feb 2025 &middot; MDP series, Part 1/2</span>
             <div class="post-title">An introduction to MDP</div>
