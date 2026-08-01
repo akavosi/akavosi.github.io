@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Ant Colony Optimization — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A from-scratch Elitist Ant System searching a 17-city instance with a provable answer, engineered and visualized so watching pheromone concentrate into the optimal tour is the whole point.">
+  <meta name="theme-color" content="#fbfbf7">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body class="notes">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="brand-name">Artin Kavoosi</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../../index.html#about">About</a>
+        <a href="../index.html" class="active">Notes</a>
+        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner">
+
+      <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+      <article class="post-article">
+
+        <div class="post-hero">
+          <div class="post-hero-art">
+            <img src="../assets/ant-colony-optimization/aco_pheromone_3d_hero.png" alt="A 3D bar chart of a 17x17 pheromone matrix: a nearly-flat field of low bars with seventeen tall gold spikes standing out, corresponding to the edges of the optimal tour.">
+          </div>
+          <div class="post-hero-text">
+            <span class="post-meta">Technical Note &middot; Operations Research / Visualization<span class="series-badge">OR Visualizations series &middot; Part 2 of 3</span></span>
+            <h1>Ant Colony Optimization</h1>
+            <p class="post-tagline">No map. No memory but the trail itself.</p>
+          </div>
+        </div>
+
+        <div class="note-abstract">
+          <span class="note-abstract-label">Abstract</span>
+          <p>A from-scratch Elitist Ant System searches a 17-city Traveling Salesman instance small
+            enough to solve exactly, so every claim about convergence in this post is checked
+            against a provable answer rather than "whatever the colony settled on." Every part of
+            the accompanying visualization is designed to make one thing visible: 272 candidate
+            edges quietly evaporating while the 17 that matter get louder.</p>
+          <div class="note-abstract-tags">
+            <span class="tag-pill">Ant Colony Optimization</span>
+            <span class="tag-pill">Metaheuristics</span>
+            <span class="tag-pill">~10 min read</span>
+          </div>
+        </div>
+
+        <details class="note-toc" id="note-toc">
+          <summary>Contents</summary>
+          <ol class="note-toc-list" id="note-toc-list"></ol>
+        </details>
+
+        <div class="post-article-body">
+
+          <p>
+            An ant laying pheromone has no plan. It isn't comparing routes, weighing tradeoffs, or
+            remembering yesterday's trip — it's walking, semi-randomly, and leaving a chemical trail
+            as it goes. A colony solving the Traveling Salesman Problem is thousands of these
+            memory-less walks, repeated, with slightly-shorter walks leaving slightly-stronger
+            trails. That a good tour emerges from this — with no individual ant ever "finding" it —
+            is the entire premise of Ant Colony Optimization, and the second entry in this
+            <a href="genetic-algorithm-evolution.html">visualization series</a> after last time's
+            genetic algorithm.
+          </p>
+
+          <p>
+            This post walks through a from-scratch implementation of Elitist Ant System solving a
+            17-city instance, sized deliberately so an exact
+            <a href="https://en.wikipedia.org/wiki/Held%E2%80%93Karp_algorithm">Held-Karp</a>
+            solver can compute the true optimal tour — every convergence claim in this post is
+            checked against that provable answer, not against whatever the colony happened to
+            settle on.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/ant-colony-optimization/aco_evolution_blog.gif" alt="Animated graph of 17 cities. Ants walk along glowing pheromone edges as a gold polyline, the best-known tour, gradually shortens and simplifies into a clean loop.">
+            <figcaption>
+              17 cities, 24 ants, seeded run. Gold is the best tour found so far; edge brightness is
+              pheromone, drawn only where it's actually risen above the starting baseline. Full
+              resolution and an MP4 version are in the <a href="#code-and-reproducibility">code
+              repository</a>.
+            </figcaption>
+          </figure>
+
+          <p>
+            The rest of this post explains how a colony with no global view ends up converging on a
+            single, provably-optimal answer — and why, just like last time, the honest hyperparameters
+            made that happen almost immediately, which turned out to be a worse story than a slower,
+            more deliberately-tuned one.
+          </p>
+
+          <h2>The idea, before the machinery</h2>
+          <p>
+            The Traveling Salesman Problem asks for the shortest closed route visiting every city
+            exactly once. It's short to state and expensive to solve exactly — the number of
+            distinct tours grows factorially, and no known algorithm solves every instance quickly.
+            Ant Colony Optimization doesn't try to solve it exactly. It treats "build a plausible
+            tour" as something many cheap, independent, slightly-random agents can do in parallel,
+            and lets a shared, slowly-updated signal — pheromone — accumulate wherever those
+            cheap attempts tend to agree.
+          </p>
+          <p>
+            The biological mechanism this borrows from is called <strong>stigmergy</strong>:
+            coordination through the environment rather than through direct communication. No ant
+            tells another ant anything. Each one only ever reacts to pheromone it finds already on
+            the ground, left by ants it will never interact with directly. It's a strange amount of
+            structure to get from agents that, individually, are doing something close to a random
+            walk.
+          </p>
+
+          <h2>From ants to pheromone</h2>
+          <p>
+            Each iteration, every ant in the colony builds a complete tour, city by city, choosing
+            its next stop probabilistically: stronger pheromone on an edge makes it more likely to
+            be chosen, and a built-in <strong>nearness heuristic</strong> — closer cities are
+            inherently more attractive, independent of pheromone — helps even a totally
+            inexperienced colony build reasonable-looking tours from the very first iteration. Once
+            every ant has finished, pheromone <strong>evaporates</strong> everywhere (a fixed
+            fraction is simply removed), and then every ant <strong>deposits</strong> fresh
+            pheromone along its own tour, in inverse proportion to that tour's length. Shorter tours
+            deposit more. That's the entire learning signal.
+          </p>
+          <p>
+            Left alone, this is called <em>Ant System</em>. The <strong>Elitist</strong> variant
+            used here adds one more step: the single best tour found so far gets an
+            <em>extra</em> deposit, every iteration, regardless of whether that iteration's ants
+            happened to rediscover it. It's the direct analogue of elitism in the genetic algorithm
+            post — not just "protect the best answer from being lost," but actively keep
+            reinforcing the specific choices that produced it.
+          </p>
+          <p>
+            Evaporation is doing more work here than it might look like. Without it, pheromone can
+            only ever accumulate, and whichever tour an early, lucky ant stumbles onto gets
+            reinforced forever regardless of whether a shorter one exists nearby. Evaporation is
+            what lets the colony change its mind — it's the mechanism behind the same
+            exploration/exploitation tension the genetic algorithm post spent a lot of time on, just
+            implemented as forgetting instead of mutation.
+          </p>
+
+          <h2>The loop, formally</h2>
+          <ol>
+            <li>Every ant constructs a complete tour via the random-proportional rule (below).</li>
+            <li>Evaporate pheromone on every edge: \(\tau \leftarrow (1-\rho)\,\tau\).</li>
+            <li>Every ant deposits pheromone along its own tour, proportional to \(1/\text{length}\).</li>
+            <li>The best-known tour receives an extra "elitist" deposit.</li>
+            <li>Track the best tour found so far.</li>
+            <li>Repeat until an iteration budget is exhausted.</li>
+          </ol>
+
+          <div class="thm-box">
+            <span class="thm-label">The random-proportional rule</span>
+            <p>
+              From city \(i\), the probability of moving to unvisited city \(j\) is proportional to
+              \(\tau_{ij}^{\alpha} \cdot \eta_{ij}^{\beta}\), where \(\tau_{ij}\) is pheromone and
+              \(\eta_{ij} = 1/d_{ij}\) is the nearness heuristic. \(\alpha\) and \(\beta\) control how
+              strongly each signal matters; \(\beta = 0\) makes the colony ignore distance entirely
+              and rely on pheromone alone, which — on this project's instance, within a generous
+              iteration budget — never finds the optimum at all. The nearness heuristic isn't a
+              minor convenience here; it's load-bearing.
+            </p>
+          </div>
+
+          <h2>A city layout with a provable answer</h2>
+          <p>
+            Seventeen cities is a deliberately small instance. Held-Karp dynamic programming solves
+            it exactly in about two seconds — trivial as a one-time cost, even though its
+            \(O(2^n n^2)\) complexity makes it impractical well before \(n=25\). That exactness is
+            what lets every chart in this post plot a genuine <em>gap to the true optimum</em>
+            rather than a gap to "the best this particular run happened to find," which is the same
+            device the genetic algorithm post used with Rastrigin's known analytic minimum.
+          </p>
+          <p>
+            The first working version of this project solved the instance in 2 to 13 iterations,
+            on every one of ten seeds tried. That's an excellent result and a bad animation, for the
+            same reason as last time: a long, visually static tail once nothing is left to discover.
+            A parameter sweep isolated the cause quickly — <code>beta</code> was doing almost all of
+            the work. At <code>beta=3</code>, the nearness heuristic alone builds near-optimal tours
+            before pheromone has contributed anything, so there's barely any learning left to watch
+            happen. Lowering it to <code>0.7</code> (forcing more genuine reliance on accumulated
+            pheromone) and lowering the elitist bonus from 4 to 1 (a gentler reinforcement) pushed
+            convergence into a 16-to-121-iteration range, reliably, across 20 seeds swept.
+          </p>
+          <p>
+            The seed used throughout this post converges at iteration 54, and its middle section is
+            the most useful part of the story: after rapid early progress — from more than double
+            the optimal length down to within 10% by iteration 18 — it spends the next
+            <strong>25 iterations</strong> essentially motionless, stuck within about 3% of optimal,
+            before finally closing the gap. The colony had, in a real sense, already found the right
+            <em>shape</em> of tour well before iteration 27. What took another 27 iterations was
+            pheromone accumulating enough on the last one or two edges that separated "very good"
+            from "exactly optimal."
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/ant-colony-optimization/aco_filmstrip.png" alt="Six-panel grid of the pheromone map and best tour at iterations 0, 3, 9, 18, 27, and 54, showing the tour rapidly simplifying early and then holding a nearly-identical shape from iteration 18 through 54 while background edges keep fading.">
+            <figcaption>
+              The same run at six moments. Compare iteration 18 to iteration 27 to 54 — the gold
+              tour barely changes shape after iteration 18; what changes is how much everything
+              else fades.
+            </figcaption>
+          </figure>
+
+          <h2>Reading the animation</h2>
+          <p>
+            The color legend carries over unchanged from the genetic algorithm post: gold is the
+            current best answer, muted ink/gray is background, and a navy accent marks active
+            signal — cities here, ants walking their tours. Edge width and opacity encode pheromone,
+            but only above a threshold: at most 45 of the 136 possible edges are ever drawn, and
+            typically far fewer once the colony commits, so the canvas never shows more candidate
+            connections than are actually informative.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/ant-colony-optimization/aco_convergence_chart.png" alt="Two-panel chart. Top panel: log-scale gap to the proven optimum, dropping in two large steps around iteration 1 then holding flat from roughly iteration 6 to 53 before a final sharp drop to zero at iteration 54. Bottom panel: pheromone diversity declining steadily across the same range.">
+            <figcaption>
+              Gap to the proven optimum, log-scaled for the same reason as the genetic algorithm
+              post's chart: a linear plot goes flat once the gap is small, hiding exactly the
+              25-iteration plateau that's the most interesting part of this run.
+            </figcaption>
+          </figure>
+
+          <h2>In three dimensions</h2>
+          <p>
+            TSP has no continuous landscape the way a fitness function does, so a rotating terrain
+            shot wouldn't mean anything here. What <em>is</em> a genuinely three-dimensional object
+            is the pheromone matrix itself: a value for every pair of cities, which a 3D bar chart
+            renders directly — two city indices as the base plane, pheromone level as height.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/ant-colony-optimization/aco_pheromone_3d_blog.gif" alt="Animated 3D bar chart of the pheromone matrix. Bars for most city pairs stay low and shrink toward zero, while seventeen bars corresponding to the optimal tour's edges grow tall and turn gold, with a slow camera rotation throughout.">
+            <figcaption>
+              289 possible (ordered) city pairs, rendered as bars. Watching most of them shrink
+              toward nothing while a specific 34 (17 edges, both directions) grow and turn gold is a
+              more literal picture of "the colony's memory becomes the answer" than the 2D map alone
+              implies.
+            </figcaption>
+          </figure>
+
+          <p>
+            Building this surfaced a genuine, if narrower, version of a problem the genetic algorithm
+            project also ran into with 3D rendering: getting the "important" bars to actually render
+            in front of the background ones required an explicit draw order (background first, gold
+            last) rather than trusting matplotlib to sort a mix of ~270 bars by depth correctly on
+            its own. The fix followed directly from the lesson learned last time —
+            <code>ax.computed_zorder = False</code> plus deliberate draw order — which is exactly
+            why that fix was pulled into this series' shared <code>theme.py</code> instead of being
+            solved twice.
+          </p>
+
+          <h2>Implementation notes</h2>
+          <p>
+            Three files are byte-for-byte identical to the genetic algorithm project:
+            <code>viz/theme.py</code>, <code>utils/seeding.py</code>, and
+            <code>export/render.py</code>. That's not an aspiration, it's a fact you can check with
+            <code>diff</code> — the reusable framework the first project in this series was
+            designed to leave behind actually got reused, unmodified, the first time it had the
+            chance to be. The single exception is <code>setup_3d_axes</code>, which lived inside a
+            landscape-specific module in the first project (despite being fully generic) until this
+            project needed it too; it now lives in the shared <code>theme.py</code>, and that fix
+            was carried backward into the genetic algorithm project as well, so both copies stay
+            identical.
+          </p>
+          <p>
+            One bug is worth describing rather than just fixing quietly: edge prominence was
+            originally normalized against the min/max pheromone of just the <em>drawn</em> edges.
+            At iteration 0, before any ant has walked, pheromone is perfectly uniform — zero spread —
+            which degenerated into "every candidate edge gets maximum brightness," the opposite of
+            the calm, nothing-differentiated-yet look the design was supposed to produce. It was
+            caught by checking pixel-level edge density across frames before ever presenting a
+            render, not after noticing the video looked busy. The fix measures prominence against
+            the fixed initial pheromone level instead of the current frame's own spread, so an
+            undifferentiated state correctly draws nothing.
+          </p>
+
+          <h2>Computational complexity</h2>
+          <p>
+            Per iteration, the dominant cost is tour construction: \(m\) ants, each making \(n\)
+            sequential choices, each choice an \(O(n)\) weighted sample over remaining cities —
+            \(O(m n^2)\) per iteration. Pheromone evaporation and deposit are \(O(n^2)\) and
+            \(O(m n)\) respectively, dominated by construction for any reasonable ant count. Over
+            \(g\) iterations, total work is \(O(g \, m \, n^2)\). The one-time Held-Karp solve is a
+            separate \(O(2^n n^2)\) cost, paid once per problem instance regardless of how many
+            times ACO itself is run against it — at \(n=17\) that's roughly two seconds, dwarfing
+            the search itself, which completes in under a second.
+          </p>
+
+          <h2>Strengths and weaknesses</h2>
+          <p>
+            The strengths: no derivative or convexity assumption needed (same as the genetic
+            algorithm), naturally suited to graph and routing problems where the search space is
+            inherently combinatorial rather than continuous, trivially parallelizable across ants
+            within an iteration, and the elitist mechanism gives the same monotonic best-ever
+            guarantee as elitism did last time, despite the underlying search remaining stochastic.
+          </p>
+          <p>
+            The weaknesses, again demonstrated rather than just asserted: convergence speed is
+            wildly hyperparameter-sensitive — 2 iterations or 121, same algorithm, same instance,
+            differing only in <code>beta</code> and the elitist weight — and the nearness heuristic
+            that makes this instance tractable is itself a form of problem-specific engineering that
+            won't exist for every combinatorial problem ACO gets applied to. Removing it
+            (<code>beta=0</code>) meant the colony never found the true optimum within a generous
+            budget on this exact instance. ACO also inherits the general metaheuristic weakness of
+            no convergence guarantee in bounded time, though the Elitist variant's monotonic
+            best-ever tracking means it degrades gracefully rather than catastrophically — you
+            always keep the best answer found, even if you can't guarantee how good that answer is.
+          </p>
+
+          <h2>Extensions</h2>
+          <p>
+            A few natural next steps: Ant Colony System's pseudo-random-proportional rule and local
+            pheromone updates (a stronger, more exploitation-heavy variant worth animating side by
+            side with this post's Elitist Ant System); MAX-MIN Ant System, which clamps pheromone to
+            a fixed range specifically to prevent the kind of premature, permanent commitment this
+            post's sweep occasionally produced; a larger instance paired with a heuristic lower
+            bound (a minimum spanning tree, say) once exact solving via Held-Karp stops being
+            practical; and a multi-colony variant with occasional pheromone exchange between
+            otherwise-independent colonies, which would visualize nicely as several pheromone maps
+            evolving mostly separately.
+          </p>
+
+          <h2 id="code-and-reproducibility">Code and reproducibility</h2>
+          <p>
+            A full reference implementation — the algorithm, the exact solver, every visualization
+            module, the render scripts used to produce every figure and animation in this post, and
+            a 37-test pytest suite (including the Held-Karp solver checked against independent
+            brute-force enumeration) — is available at
+            <a href="https://github.com/akavosi/ant-colony-optimization" target="_blank" rel="noopener">github.com/akavosi/ant-colony-optimization</a>.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li>Dorigo, M., Maniezzo, V., &amp; Colorni, A. (1996). <em>Ant System: Optimization by a Colony of Cooperating Agents</em>. IEEE Transactions on Systems, Man, and Cybernetics, Part B, 26(1), 29-41.</li>
+            <li>Dorigo, M., &amp; Gambardella, L. M. (1997). <em>Ant Colony System: A Cooperative Learning Approach to the Traveling Salesman Problem</em>. IEEE Transactions on Evolutionary Computation, 1(1), 53-66.</li>
+            <li>Held, M., &amp; Karp, R. M. (1962). <em>A Dynamic Programming Approach to Sequencing Problems</em>. Journal of the Society for Industrial and Applied Mathematics, 10(1), 196-210.</li>
+          </ol>
+
+        </div>
+
+        <div class="note-related">
+          <span class="note-related-kicker">Continue reading</span>
+          <a class="note-related-card" href="genetic-algorithm-evolution.html">
+            <span class="note-related-title">Genetic Algorithm Evolution</span>
+            <span class="note-related-desc">Part 1 of this series — the same visual language, applied to a continuous landscape riddled with local optima.</span>
+          </a>
+        </div>
+        <!-- Part 3, Simulated Annealing, not yet published — add a second
+             note-related card here once that post exists. -->
+
+      </article>
+
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (2026). &ldquo;Ant Colony Optimization.&rdquo; <em>Research notes</em>. https://akavosi.github.io/blog/posts/ant-colony-optimization.html</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@misc{kavoosi2026acoevolution,
+  author = {Kavoosi, Artin},
+  title  = {Ant Colony Optimization},
+  year   = {2026},
+  note   = {Personal research notes, informal, not peer-reviewed},
+  url    = {https://akavosi.github.io/blog/posts/ant-colony-optimization.html}
+}</pre>
+        </div>
+        <p class="note-cite-note">Informal research notes — not peer-reviewed.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="../notes.js" defer></script>
+</body>
+
+</html>
