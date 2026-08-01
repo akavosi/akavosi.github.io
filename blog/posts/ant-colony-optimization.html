@@ -297,17 +297,6 @@
             was carried backward into the genetic algorithm project as well, so both copies stay
             identical.
           </p>
-          <p>
-            One bug is worth describing rather than just fixing quietly: edge prominence was
-            originally normalized against the min/max pheromone of just the <em>drawn</em> edges.
-            At iteration 0, before any ant has walked, pheromone is perfectly uniform — zero spread —
-            which degenerated into "every candidate edge gets maximum brightness," the opposite of
-            the calm, nothing-differentiated-yet look the design was supposed to produce. It was
-            caught by checking pixel-level edge density across frames before ever presenting a
-            render, not after noticing the video looked busy. The fix measures prominence against
-            the fixed initial pheromone level instead of the current frame's own spread, so an
-            undifferentiated state correctly draws nothing.
-          </p>
 
           <h2>Computational complexity</h2>
           <p>
