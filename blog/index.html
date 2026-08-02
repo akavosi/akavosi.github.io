@@ -8,7 +8,6 @@
   <meta name="description" content="Notes and posts by Artin Kavoosi on research, operations research, and machine learning.">
   <meta name="theme-color" content="#fbfbf7">
   <link rel="canonical" href="https://akavosi.github.io/blog/">
-  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
   <link rel="shortcut icon" type="image/png" href="../favicon.png">
@@ -50,19 +49,38 @@
           <h1>Research Notes</h1>
           <p>Short notes on research, methods, and things I'm working through.</p>
         </div>
-        <a class="blog-feed-link" href="feed.xml" title="RSS feed">
-          <i class="fas fa-rss" aria-hidden="true"></i>
-          <span>RSS</span>
-        </a>
+        <button class="surprise-btn" id="surprise-btn" type="button">
+          <i class="fas fa-shuffle" aria-hidden="true"></i>
+          <span>Serendipitous Discovery!</span>
+        </button>
+      </div>
+
+      <div class="blog-stats" id="blog-stats">
+        <span><strong id="stat-notes">10</strong> notes</span>
+        <span class="blog-stats-sep">&middot;</span>
+        <span><strong>5</strong> interactive companions</span>
+        <span class="blog-stats-sep">&middot;</span>
+        <span><strong>3</strong> series</span>
       </div>
 
       <div class="notes-index-rule"></div>
 
-      
-      <ul class="post-list">
+      <div class="notes-filter" role="search">
+        <div class="notes-search">
+          <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+          <input type="text" id="notes-search-input" placeholder="Search notes by title or topic&hellip;" aria-label="Search notes">
+        </div>
+        <div class="notes-tag-filter" id="notes-tag-filter" aria-label="Filter by topic">
+          <!-- populated by script below from each card's data-tags, plus a leading "All" pill -->
+        </div>
+      </div>
 
-        <li class="post-list-item is-featured">
-          <span class="post-list-index">01</span>
+      <p class="notes-empty" id="notes-empty" hidden>No notes match that search — try a different term or <button type="button" id="notes-empty-reset">clear the filters</button>.</p>
+
+      
+      <ul class="post-list" id="post-list">
+
+        <li class="post-list-item is-featured" data-tags="markov-decision-processes,combinatorial-optimization,approximation-guarantees">
           <a class="post-list-link" href="posts/sqep.html">
             <span class="start-here-badge">Start here</span>
             <span class="post-date">Jul 2026 &middot; Featured</span>
@@ -75,14 +93,17 @@
             <div class="post-list-tags">
               <span class="tag-pill">Markov Decision Processes</span>
               <span class="tag-pill">Combinatorial Optimization</span>
+              <span class="tag-pill">Approximation Guarantees</span>
             </div>
+          </a>
+          <a class="post-companion-link" href="posts/sqep-interactive.html">
+            <i class="fas fa-arrow-right-long" aria-hidden="true"></i> Interactive companion: policy simulator
           </a>
         </li>
 
-        <li class="post-list-item">
-          <span class="post-list-index">02</span>
+        <li class="post-list-item" data-tags="integer-programming,markov-decision-processes,Companion,Interactive">
           <a class="post-list-link" href="posts/sqep-interactive.html">
-            <span class="post-date">Jul 2026 &middot; SQEP series &middot; Interactive</span>
+            <span class="post-date">Jul 2026</span>
             <div class="post-title">An interactive S-SQEP policy simulator</div>
             <p class="post-excerpt">
               Step through Random-admissible, Greedy-degree, and Adaptive Coverage Greedy yourself on the
@@ -90,22 +111,23 @@
               optimal value.
             </p>
             <div class="post-list-tags">
+              <span class="tag-pill">Integer Programming</span>
               <span class="tag-pill">Companion</span>
               <span class="tag-pill">Interactive</span>
             </div>
           </a>
         </li>
 
-        <li class="post-list-item">
-          <span class="post-list-index">03</span>
+
+        <li class="post-list-item" data-tags="genetic-algorithms,metaheuristics">
           <a class="post-list-link" href="posts/genetic-algorithm-evolution.html">
-            <span class="post-date">Jul 2026 &middot; OR Visualizations series · Part 1/3</span>
+            <span class="post-date">Jul 2026 &middot; OR Visualizations series &middot; Part 1 of 3</span>
             <div class="post-title">Genetic Algorithm Evolution</div>
             <p class="post-excerpt">
-              A from-scratch, real-valued genetic algorithm searches the Rastrigin function — a
-            standard benchmark riddled with about a hundred local optima — and every part of the
-            accompanying visualization is designed to make the exploration/exploitation tradeoff
-            something you watch happen, rather than something you're told about.
+              A from-scratch, real-valued genetic algorithm searches the Rastrigin function — a standard
+              benchmark riddled with about a hundred local optima — and every part of the accompanying
+              visualization is designed to make the exploration/exploitation tradeoff something you watch
+              happen, rather than something you're told about.
             </p>
             <div class="post-list-tags">
               <span class="tag-pill">Genetic Algorithms</span>
@@ -114,17 +136,16 @@
           </a>
         </li>
 
-        <li class="post-list-item">
-          <span class="post-list-index">04</span>
+        <li class="post-list-item" data-tags="ant-colony-optimization,metaheuristics">
           <a class="post-list-link" href="posts/ant-colony-optimization.html">
-            <span class="post-date">Jul 2026 &middot; OR Visualizations series · Part 2/3</span>
+            <span class="post-date">Jul 2026 &middot; OR Visualizations series &middot; Part 2 of 3</span>
             <div class="post-title">Ant Colony Optimization</div>
             <p class="post-excerpt">
-              A from-scratch Elitist Ant System searches a 17-city Traveling Salesman instance small
-            enough to solve exactly, so every claim about convergence in this post is checked
-            against a provable answer rather than "whatever the colony settled on." Every part of
-            the accompanying visualization is designed to make one thing visible: 272 candidate
-            edges quietly evaporating while the 17 that matter get louder.
+              A from-scratch Elitist Ant System searches a 17-city Traveling Salesman instance small enough to
+              solve exactly, so every claim about convergence in this post is checked against a provable
+              answer rather than "whatever the colony settled on." Every part of the accompanying
+              visualization is designed to make one thing visible: 272 candidate edges quietly evaporating
+              while the 17 that matter get louder.
             </p>
             <div class="post-list-tags">
               <span class="tag-pill">Ant Colony Optimization</span>
@@ -133,16 +154,16 @@
           </a>
         </li>
 
-        <li class="post-list-item">
-          <span class="post-list-index">05</span>
+        <li class="post-list-item" data-tags="markov-decision-processes,average-reward">
           <a class="post-list-link" href="posts/acmdp.html">
             <span class="post-date">Sep 2025 &middot; MDP series, Part 2/2</span>
             <div class="post-title">On average reward criterion</div>
             <p class="post-excerpt">
-              At first view, the average-reward Markov Decision Process (MDP) feels like the natural choice, 
-            especially next to discounted formulations that often need extra real-world justification. In practice, though, 
-            the average-criterion approach hasn’t become as popular: subtle technical assumptions, multichain behavior, and 
-            delicate limit arguments make it less straightforward than it appears.
+              At first view, the average-reward Markov Decision Process (MDP) feels like the natural choice,
+              especially next to discounted formulations that often need extra real-world justification. In
+              practice, though, the average-criterion approach hasn't become as popular: subtle technical
+              assumptions, multichain behavior, and delicate limit arguments make it less straightforward than
+              it appears.
             </p>
             <div class="post-list-tags">
               <span class="tag-pill">Markov Decision Processes</span>
@@ -151,14 +172,13 @@
           </a>
         </li>
 
-        <li class="post-list-item">
-          <span class="post-list-index">06</span>
+        <li class="post-list-item" data-tags="markov-decision-processes,seminar">
           <a class="post-list-link" href="posts/mdp.html">
             <span class="post-date">Feb 2025 &middot; MDP series, Part 1/2</span>
             <div class="post-title">An introduction to MDP</div>
             <p class="post-excerpt">
-              In February 2025, I presented at the University of Tehran about MDP, the literature on MDP (mostly before RL!), 
-              the Bellman optimality equation, and classical MDP examples.
+              In February 2025, I presented at the University of Tehran about MDP, the literature on MDP
+              (mostly before RL!), the Bellman optimality equation, and classical MDP examples.
             </p>
             <div class="post-list-tags">
               <span class="tag-pill">Markov Decision Processes</span>
@@ -182,6 +202,121 @@
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
+
+  <script>
+    // Notes index: tag filter + search + surprise-me. Reads only what's
+    // already in the DOM (data-tags, post text, and each card's own
+    // tag-pills) so the filter bar can't drift out of sync with the list.
+    (function () {
+      var list = document.getElementById("post-list");
+      var items = Array.prototype.slice.call(list.querySelectorAll(".post-list-item"));
+      var tagFilterEl = document.getElementById("notes-tag-filter");
+      var searchInput = document.getElementById("notes-search-input");
+      var emptyState = document.getElementById("notes-empty");
+      var activeTags = {};
+      var searchQuery = "";
+
+      var tagLabels = {};
+      items.forEach(function (li) {
+        var slugs = (li.getAttribute("data-tags") || "").split(",").filter(Boolean);
+        var pills = li.querySelectorAll(".tag-pill");
+        slugs.forEach(function (slug, i) {
+          if (pills[i]) tagLabels[slug] = pills[i].textContent.trim();
+        });
+      });
+
+      var allPill = document.createElement("button");
+      allPill.type = "button";
+      allPill.className = "filter-pill is-active";
+      allPill.textContent = "All";
+      allPill.addEventListener("click", function () {
+        activeTags = {};
+        searchInput.value = "";
+        searchQuery = "";
+        render();
+      });
+      tagFilterEl.appendChild(allPill);
+
+      Object.keys(tagLabels).sort(function (a, b) {
+        return tagLabels[a].localeCompare(tagLabels[b]);
+      }).forEach(function (slug) {
+        var btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "filter-pill";
+        btn.textContent = tagLabels[slug];
+        btn.dataset.tag = slug;
+        btn.addEventListener("click", function () { toggleTag(slug); });
+        tagFilterEl.appendChild(btn);
+      });
+
+      function toggleTag(slug) {
+        if (activeTags[slug]) delete activeTags[slug];
+        else activeTags[slug] = true;
+        render();
+      }
+
+      // Tag-pills printed on each card are also clickable shortcuts into
+      // the same filter -- seeing a topic while reading and wanting more
+      // of it is the whole point of tagging.
+      items.forEach(function (li) {
+        var slugs = (li.getAttribute("data-tags") || "").split(",").filter(Boolean);
+        var pills = li.querySelectorAll(".tag-pill");
+        slugs.forEach(function (slug, i) {
+          if (!pills[i]) return;
+          pills[i].classList.add("tag-pill-clickable");
+          pills[i].addEventListener("click", function (e) {
+            e.preventDefault();
+            toggleTag(slug);
+          });
+        });
+      });
+
+      searchInput.addEventListener("input", function () {
+        searchQuery = searchInput.value.trim().toLowerCase();
+        render();
+      });
+
+      document.getElementById("notes-empty-reset").addEventListener("click", function () {
+        activeTags = {}; searchQuery = ""; searchInput.value = "";
+        render();
+      });
+
+      function render() {
+        var activeList = Object.keys(activeTags);
+        var visibleCount = 0;
+
+        items.forEach(function (li) {
+          var slugs = (li.getAttribute("data-tags") || "").split(",");
+          var tagMatch = activeList.length === 0 || activeList.some(function (t) { return slugs.indexOf(t) !== -1; });
+          var text = li.textContent.toLowerCase();
+          var searchMatch = !searchQuery || text.indexOf(searchQuery) !== -1;
+          var visible = tagMatch && searchMatch;
+          li.hidden = !visible;
+          if (visible) visibleCount += 1;
+        });
+
+        allPill.classList.toggle("is-active", activeList.length === 0);
+        Array.prototype.forEach.call(tagFilterEl.querySelectorAll(".filter-pill[data-tag]"), function (btn) {
+          btn.classList.toggle("is-active", !!activeTags[btn.dataset.tag]);
+        });
+
+        emptyState.hidden = visibleCount !== 0;
+        list.hidden = visibleCount === 0;
+      }
+
+      // Surprise me: jump to a random primary post (not a companion --
+      // those are meant to be read after their main note, not cold).
+      var primaryUrls = items.map(function (li) {
+        return li.querySelector(".post-list-link").getAttribute("href");
+      });
+      document.getElementById("surprise-btn").addEventListener("click", function () {
+        var pick = primaryUrls[Math.floor(Math.random() * primaryUrls.length)];
+        window.location.href = pick;
+      });
+    })();
+  </script>
+
+  <script src="notes.js" defer></script>
 </body>
 
 </html>
