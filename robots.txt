@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://akavosi.github.io/sitemap.xml
