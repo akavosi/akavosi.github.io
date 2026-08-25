@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Simulated Annealing — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A from-scratch simulated annealing search on a hand-designed, deliberately deceptive energy landscape, engineered and visualized so watching a cooling search escape a plausible trap is the whole point.">
+  <meta name="theme-color" content="#fbfbf7">
+  <link rel="canonical" href="https://akavosi.github.io/blog/posts/simulated-annealing.html">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Simulated Annealing — Artin Kavoosi">
+  <meta property="og:description" content="A from-scratch simulated annealing search on a hand-designed, deliberately deceptive energy landscape, engineered and visualized so watching a cooling search escape a plausible trap is the whole point.">
+  <meta property="og:url" content="https://akavosi.github.io/blog/posts/simulated-annealing.html">
+  <meta property="og:image" content="https://akavosi.github.io/blog/assets/simulated-annealing/sa_landscape_3d_hero.png">
+  <meta property="og:site_name" content="Artin Kavoosi — Research Notes">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simulated Annealing — Artin Kavoosi">
+  <meta name="twitter:description" content="A from-scratch simulated annealing search on a hand-designed, deliberately deceptive energy landscape, engineered and visualized so watching a cooling search escape a plausible trap is the whole point.">
+  <meta name="twitter:image" content="https://akavosi.github.io/blog/assets/simulated-annealing/sa_landscape_3d_hero.png">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Simulated Annealing \u2014 Artin Kavoosi",
+  "description": "A from-scratch simulated annealing search on a hand-designed, deliberately deceptive energy landscape, engineered and visualized so watching a cooling search escape a plausible trap is the whole point.",
+  "url": "https://akavosi.github.io/blog/posts/simulated-annealing.html",
+  "datePublished": "2026-07-01",
+  "image": "https://akavosi.github.io/blog/assets/simulated-annealing/sa_landscape_3d_hero.png",
+  "inLanguage": "en",
+  "author": {
+    "@type": "Person",
+    "name": "Artin Kavoosi",
+    "alternateName": "Alireza Kavoosi",
+    "url": "https://akavosi.github.io/"
+  }
+}
+  </script>
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body class="notes">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="brand-name">Artin Kavoosi</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../../index.html#about">About</a>
+        <a href="../index.html" class="active">Notes</a>
+        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner">
+
+      <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+      <article class="post-article">
+
+        <div class="post-hero">
+          <div class="post-hero-art">
+            <img src="../assets/simulated-annealing/sa_landscape_3d_hero.png" alt="A 3D energy surface with six wells of different depths, with the search's full trajectory traced across it from a far corner down into the deepest well.">
+          </div>
+          <div class="post-hero-text">
+            <span class="post-meta">Technical Note &middot; Operations Research / Visualization<span class="series-badge">OR Visualizations series &middot; Part 3 of 3</span></span>
+            <h1>Simulated Annealing</h1>
+            <p class="post-tagline">No population. No colony. Just one search, cooling.</p>
+          </div>
+        </div>
+
+        <div class="note-abstract">
+          <span class="note-abstract-label">Abstract</span>
+          <p>A from-scratch simulated annealing search explores a hand-designed energy surface with six
+            wells of deliberately different depths — one true global minimum and several plausible
+            decoys — and every part of the accompanying visualization is built around one moment: a
+            search accepting a worse outcome on purpose, because it's still hot enough to afford to.</p>
+          <div class="note-abstract-tags">
+            <span class="tag-pill">Simulated Annealing</span>
+            <span class="tag-pill">Metaheuristics</span>
+            <span class="tag-pill">~10 min read</span>
+          </div>
+        </div>
+
+        <details class="note-toc" id="note-toc">
+          <summary>Contents</summary>
+          <ol class="note-toc-list" id="note-toc-list"></ol>
+        </details>
+
+        <div class="post-article-body">
+
+          <p>
+            Heat a piece of metal and quench it — cool it fast — and its atoms freeze wherever they
+            happened to be, locked into a disordered, defect-ridden structure. Cool it slowly instead
+            and the atoms keep finding better arrangements for as long as they're still mobile enough
+            to move, settling toward something closer to a clean crystal. Simulated annealing takes
+            that physical process and turns it into a search algorithm, and it's the simplest
+            mechanism in this three-part series by a wide margin: no population, no colony, just one
+            point wandering and a single number — temperature — controlling how willing it currently
+            is to make things worse on the way to making them better.
+          </p>
+
+          <p>
+            This is the third and final post in a series that has, each time, ended up telling a
+            version of the same story: <a href="genetic-algorithm-evolution.html">a genetic
+            algorithm</a> and <a href="ant-colony-optimization.html">an ant colony</a> both needed
+            deliberately weakened hyperparameters to keep from solving their problems suspiciously
+            fast. This project needed the opposite. Simulated annealing, on a landscape built to be
+            genuinely deceptive, turned out to be the one that needed help succeeding at all.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/simulated-annealing/sa_evolution_blog.gif" alt="Animated scatter plot of a single point wandering across a landscape with six glowing wells, with a temperature gauge draining in the top-left corner as the point eventually settles into the brightest well.">
+            <figcaption>
+              A single search, seeded run, cooling from left to right (watch the temperature gauge,
+              top left). The point visits four wells before committing to the true global minimum.
+              Full resolution and an MP4 version are in the <a href="#code-and-reproducibility">code
+              repository</a>.
+            </figcaption>
+          </figure>
+
+          <p>
+            The rest of this post explains the mechanism, the landscape built specifically to test
+            it, and why this project — alone among the three — needed thousands of steps rather than
+            dozens of generations or iterations to tell an honest story.
+          </p>
+
+          <h2>The idea, before the machinery</h2>
+          <p>
+            Simple local search — always move to a better neighbor, stop when nothing nearby is
+            better — is cheap and often good, but it has an obvious failure mode: it stops at the
+            first local minimum it finds, with no way to tell whether a much better one is sitting
+            just past a ridge it would never voluntarily cross. Simulated annealing's answer is to
+            allow uphill moves, but only sometimes, and less and less often as the search runs. Early
+            on, with temperature high, the search behaves almost randomly — happy to cross ridges,
+            indifferent to short-term setbacks. As temperature falls, it behaves more and more like
+            plain local search, until eventually it accepts nothing but improvements at all. The hope,
+            and for well-behaved problems the mathematical guarantee under a sufficiently slow
+            schedule, is that the search spends its early, undiscriminating phase finding the right
+            neighborhood, and its late, disciplined phase refining within it.
+          </p>
+
+          <h2>The mechanism, formally</h2>
+          <p>
+            Each step proposes a small random move from the current point. If it improves the
+            objective, it's always accepted. If it doesn't, it's accepted anyway with probability
+            given by the Metropolis criterion:
+          </p>
+          <div class="thm-box">
+            <span class="thm-label">The Metropolis criterion</span>
+            <p>
+              For a proposed move with energy change \(\Delta E = E(\text{proposed}) -
+              E(\text{current})\), the acceptance probability is
+            </p>
+            <p>\[
+              P(\text{accept}) = \begin{cases} 1 & \Delta E \le 0 \\ \exp(-\Delta E / T) & \Delta E > 0 \end{cases}
+            \]</p>
+            <p>
+              where \(T\) is the current temperature. Large \(\Delta E\) or small \(T\) both push
+              acceptance toward zero; small \(\Delta E\) or large \(T\) both push it toward one. This
+              single formula is the entire mechanism — everything else in the algorithm is
+              bookkeeping around it.
+            </p>
+          </div>
+          <p>
+            Temperature itself follows a <strong>cooling schedule</strong>. This project uses
+            geometric cooling, \(T \leftarrow \alpha T\) for a fixed \(\alpha\) just under 1, the
+            standard practical choice. Two others are implemented for comparison rather than use:
+            linear cooling, and logarithmic cooling — the latter has a real theoretical guarantee
+            (Hajek, 1988) of converging to the global optimum almost surely, but only if temperature
+            falls proportional to \(1/\log(k)\), which is so slow it's a proof of concept rather than
+            a usable schedule. One more detail worth naming: this implementation also shrinks the
+            proposal's <em>step width</em> alongside temperature, so a cooling search's jumps
+            visibly get shorter and not just less willing to go uphill — both signals of "settling
+            in," reinforcing each other rather than only one being visible.
+          </p>
+
+          <h2>A landscape built to be deceptive</h2>
+          <p>
+            The genetic algorithm post used Rastrigin, a standard benchmark with roughly a hundred
+            similarly-shallow local optima. That shape is wrong for this post's purpose. What
+            annealing needs to demonstrate isn't "many similar traps" — it's one specific,
+            <em>plausible</em> trap: a well deep enough that a search which stops exploring too early
+            has every reason to believe it found the answer. That calls for something with direct
+            control over depth and placement, so this project uses a hand-built landscape instead: a
+            mild bowl (keeping the search roughly centered) minus six Gaussian wells of deliberately
+            different depths. The true global minimum is only about 7% deeper than its nearest
+            decoy — verified numerically, not just asserted, since the landscape's mild bowl term
+            shifts the true minimum slightly off each well's raw center.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/simulated-annealing/sa_filmstrip.png" alt="Six-panel grid of the search at steps 0, 22, 74, 177, 300, and 1000, showing the point visiting four different wells before settling into the deepest one by step 177 and remaining there.">
+            <figcaption>
+              The same run at six moments. At step 22 the search briefly reaches the true global
+              minimum's neighborhood — and leaves again, because at that temperature a nearby decoy
+              still looked worth checking.
+            </figcaption>
+          </figure>
+
+          <p>
+            The first version of this project's hyperparameters found the true global minimum on
+            only 9 of 20 seeds tried, usually settling into one of the five decoys instead — a
+            genuinely different problem than either earlier project in this series faced, where the
+            naive settings solved things <em>too</em> easily. The fix here wasn't to weaken anything;
+            it was to give the search enough time at high temperature to actually distinguish "very
+            good" from "best" before cooling took that option away. Raising the starting temperature,
+            widening the initial proposal step, and — the change that mattered most — extending the
+            run from 600 steps to 6,000, pushed reliability to 28 of 30 seeds (93.3%), a number that,
+            unprompted, landed almost exactly where the genetic algorithm project's corrected
+            defaults did. Cutting the budget back down even with proportionally faster cooling
+            measurably hurt reliability, which was itself informative: what matters is the absolute
+            time spent exploring, not just the total amount of cooling applied by the time the run
+            ends.
+          </p>
+          <p>
+            That budget is also why this project's "step" count runs into the thousands where the
+            other two projects' generation and iteration counts stayed in the dozens: a single SA
+            step is one point either moving or not, a far lower-information unit than one GA
+            generation (dozens of individuals) or one ACO iteration (dozens of full ant tours). More
+            steps were never a sign the algorithm was struggling — they're the natural unit size for
+            what a single step actually contains.
+          </p>
+
+          <h2>Reading the animation</h2>
+          <p>
+            The series' color legend gains one new, specific meaning here: amber marks the current
+            point whenever the step that produced it was accepted <em>despite being worse</em> — the
+            exact instant the Metropolis criterion does the one thing it exists to do. Gold is the
+            best point found so far, exactly as gold has meant "current best" throughout this series.
+            A temperature gauge, new to this project, drains left to right and shifts from amber to
+            navy as the run cools — the same warm-to-cool metaphor as the metallurgical process the
+            algorithm is named after.
+          </p>
+          <p>
+            One structural difference from the GA and ACO animations is worth calling out rather than
+            glossing over: those two smoothly interpolate between two meaningful states — a parent
+            and child, or the start and end of an ant's tour walk. Simulated annealing has no
+            equivalent; a proposal is just a Gaussian jump, not a blend of anything. So instead of
+            interpolation, this animation groups raw steps into batches that grow in size as the run
+            progresses (small early, where the actual story happens; large late, once the search has
+            settled and nothing changes for thousands of steps) and shows a short fading trail of the
+            point's genuinely recent positions — jitter, honestly rendered, rather than a fabricated
+            smooth glide.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/simulated-annealing/sa_convergence_chart.png" alt="Two-panel chart. Top panel: log-scale distance to the true global minimum, dropping in steps around step 11 and holding flat with a final sharp drop around step 850. Bottom panel: acceptance rate declining unevenly, with visible noise, across the same range.">
+            <figcaption>
+              Distance to the true optimum, log-scaled for the same reason as the earlier two
+              projects' charts. Acceptance rate (bottom) is visibly noisier than the genetic
+              algorithm's diversity or the ant colony's pheromone entropy — a single random walk has
+              no averaging-across-a-population to smooth it out.
+            </figcaption>
+          </figure>
+
+          <h2>In three dimensions</h2>
+          <p>
+            This is the one project in the series where a 3D landscape needed no justification or
+            substitute object — an energy surface is natively three-dimensional the same way
+            Rastrigin was, and this project reuses that earlier project's shaded-relief rendering
+            code directly, unmodified, right down to the specific <code>computed_zorder</code> fix
+            that made markers render correctly above a surface in the first place.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/simulated-annealing/sa_landscape_3d_descent_blog.gif" alt="Animated 3D shaded-relief energy surface with two markers, one tracking the current wandering point and one tracking the best point found so far, with a slow camera rotation as the search settles into the deepest well.">
+            <figcaption>
+              The wandering current point (navy) and the best-ever point (gold) shown together across
+              the same surface used for the 2D animation — reused rendering code, a new camera angle,
+              no new bugs to find this time.
+            </figcaption>
+          </figure>
+
+          <h2>Implementation notes</h2>
+          <p>
+            Six files carry over from earlier projects in this series completely unmodified:
+            <code>viz/theme.py</code>, <code>viz/fonts.py</code>, <code>viz/landscape_renderer.py</code>,
+            <code>viz/landscape_3d.py</code>, <code>utils/seeding.py</code>, and
+            <code>export/render.py</code>. That list is longer than either earlier project's, which is
+            roughly what "a reusable framework" should look like by its third use rather than its
+            first: by now, most of what a new project in this series needs is already sitting in
+            <code>src/viz/</code>, waiting to be imported rather than rebuilt. The one function that
+            needed a real fix along the way — <code>draw_trajectory_path</code>, inherited from the
+            genetic algorithm project — turned out to be hard-coded against that project's specific
+            history schema despite looking generic. It was rewritten to take plain waypoint
+            coordinates instead of a whole history object, and that fix was carried backward into the
+            genetic algorithm project too, the same pattern as the ant colony project's
+            <code>setup_3d_axes</code> fix before it.
+          </p>
+          <p>
+            Every stochastic step draws from a single seeded <code>numpy.random.Generator</code>, so
+            the same seed reproduces an identical run bit-for-bit; every figure and animation in this
+            post was generated directly by the scripts in the repository.
+          </p>
+
+          <h2>Computational complexity</h2>
+          <p>
+            Each step is \(O(1)\): one proposal, one objective evaluation, one accept/reject decision
+            — no population to evaluate, no colony to construct tours for. Over \(k\) steps, total
+            work is \(O(k)\), the cheapest per-step cost of any algorithm in this series by a wide
+            margin. That's also exactly why this project could afford 6,000 steps where the others
+            used dozens: the entire tuned run completes in well under a second, and essentially all
+            of this project's wall-clock time went into rendering rather than searching, the same as
+            both earlier projects.
+          </p>
+
+          <h2>Strengths and weaknesses</h2>
+          <p>
+            The strengths: astonishingly simple to implement and reason about (the entire algorithm
+            fits in the Metropolis criterion plus a cooling schedule), minimal memory footprint (one
+            point, one temperature — no population or shared pheromone structure to maintain), and a
+            real theoretical convergence guarantee under logarithmic cooling, even if that schedule
+            is impractically slow.
+          </p>
+          <p>
+            The weaknesses, again demonstrated rather than just listed: with no population and no
+            shared memory, a single run has nothing to fall back on if its one search commits to the
+            wrong basin — this project's 93.3% reliability rate is a property of the <em>schedule</em>
+            averaged over many independent runs, not a guarantee any single run carries. Performance
+            is highly sensitive to the cooling schedule specifically, more so than either earlier
+            project was to its own hyperparameters: this post's landscape went from a 45%
+            success rate to 93.3% purely by giving the same search more time, with no other change to
+            the algorithm's logic. And single-point search is inherently less parallelizable than a
+            GA's independent fitness evaluations or an ACO colony's independent ant constructions —
+            multiple annealing runs can go in parallel, but one run's steps are fundamentally
+            sequential, each depending on where the last one landed.
+          </p>
+
+          <h2>Extensions</h2>
+          <p>
+            A few natural next steps: adaptive or reheating schedules that raise temperature again if
+            the search appears stuck, rather than committing to one monotonic curve chosen in
+            advance; parallel tempering, which runs several chains at different fixed temperatures
+            and occasionally swaps their states, giving a single search some of the population-level
+            robustness this post's single-chain version lacks; and a combinatorial variant applied to
+            the same 17-city instance as the ant colony project, which would make a direct,
+            apples-to-apples comparison between two metaheuristics on identical problems — something
+            this series gestures at throughout but never quite does directly.
+          </p>
+
+          <h2 id="code-and-reproducibility">Code and reproducibility</h2>
+          <p>
+            A full reference implementation — the algorithm, three cooling schedules, every
+            visualization module, the render scripts used to produce every figure and animation in
+            this post, and a 22-test pytest suite (including a numerical check that the claimed
+            global minimum is genuinely a local minimum and genuinely the deepest of the six basins,
+            not just an assertion) — is available at
+            <a href="https://github.com/akavosi/simulated-annealing" target="_blank" rel="noopener">github.com/akavosi/simulated-annealing</a>.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li>Kirkpatrick, S., Gelatt, C. D., &amp; Vecchi, M. P. (1983). <em>Optimization by Simulated Annealing</em>. Science, 220(4598), 671-680.</li>
+            <li>Metropolis, N., Rosenbluth, A. W., Rosenbluth, M. N., Teller, A. H., &amp; Teller, E. (1953). <em>Equation of State Calculations by Fast Computing Machines</em>. The Journal of Chemical Physics, 21(6), 1087-1092.</li>
+            <li>Hajek, B. (1988). <em>Cooling Schedules for Optimal Annealing</em>. Mathematics of Operations Research, 13(2), 311-329.</li>
+          </ol>
+
+        </div>
+
+        <div class="note-related">
+          <span class="note-related-kicker">Continue reading</span>
+          <a class="note-related-card" href="ant-colony-optimization.html">
+            <span class="note-related-title">Ant Colony Optimization</span>
+            <span class="note-related-desc">Part 2 of this series — the same visual language, applied to a discrete routing problem with a provable optimum.</span>
+          </a>
+          <a class="note-related-card" href="genetic-algorithm-evolution.html">
+            <span class="note-related-title">Genetic Algorithm Evolution</span>
+            <span class="note-related-desc">Part 1 of this series — where this series' shared visual language started, on a continuous landscape riddled with local optima.</span>
+          </a>
+        </div>
+
+      </article>
+
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (2026). &ldquo;Simulated Annealing.&rdquo; <em>Research notes</em>. https://akavosi.github.io/blog/posts/simulated-annealing.html</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@misc{kavoosi2026saevolution,
+  author = {Kavoosi, Artin},
+  title  = {Simulated Annealing},
+  year   = {2026},
+  note   = {Personal research notes, informal, not peer-reviewed},
+  url    = {https://akavosi.github.io/blog/posts/simulated-annealing.html}
+}</pre>
+        </div>
+        <p class="note-cite-note">Informal research notes — not peer-reviewed.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="../notes.js" defer></script>
+</body>
+
+</html>
