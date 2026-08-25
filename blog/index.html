@@ -56,7 +56,7 @@
       </div>
 
       <div class="blog-stats" id="blog-stats">
-        <span><strong id="stat-notes">6</strong> notes</span>
+        <span><strong id="stat-notes">7</strong> notes</span>
         <span class="blog-stats-sep">&middot;</span>
         <span><strong>1</strong> interactive companions</span>
         <span class="blog-stats-sep">&middot;</span>
@@ -119,22 +119,24 @@
         </li>
 
 
-        <li class="post-list-item" data-tags="genetic-algorithms,metaheuristics">
-          <a class="post-list-link" href="posts/genetic-algorithm-evolution.html">
-            <span class="post-date">Jul 2026 &middot; OR Visualizations series &middot; Part 1 of 3</span>
-            <div class="post-title">Genetic Algorithm Evolution</div>
+        <li class="post-list-item" data-tags="simulated-annealing,metaheuristics">
+          <a class="post-list-link" href="posts/simulated-annealing.html">
+            <span class="post-date">Aug 2026 &middot; OR Visualizations series &middot; Part 3 of 3</span>
+            <div class="post-title">Simulated Annealing</div>
             <p class="post-excerpt">
-              A from-scratch, real-valued genetic algorithm searches the Rastrigin function — a standard
-              benchmark riddled with about a hundred local optima — and every part of the accompanying
-              visualization is designed to make the exploration/exploitation tradeoff something you watch
-              happen, rather than something you're told about.
+              A from-scratch simulated annealing search explores a hand-designed energy surface with six
+            wells of deliberately different depths — one true global minimum and several plausible
+            decoys — and every part of the accompanying visualization is built around one moment: a
+            search accepting a worse outcome on purpose, because it's still hot enough to afford to.272 candidate edges quietly evaporating
+              while the 17 that matter get louder.
             </p>
             <div class="post-list-tags">
-              <span class="tag-pill">Genetic Algorithms</span>
+              <span class="tag-pill">Simulated Annealing</span>
               <span class="tag-pill">Metaheuristics</span>
             </div>
           </a>
         </li>
+
 
         <li class="post-list-item" data-tags="ant-colony-optimization,metaheuristics">
           <a class="post-list-link" href="posts/ant-colony-optimization.html">
@@ -154,6 +156,24 @@
           </a>
         </li>
 
+        <li class="post-list-item" data-tags="genetic-algorithms,metaheuristics">
+          <a class="post-list-link" href="posts/genetic-algorithm-evolution.html">
+            <span class="post-date">Jul 2026 &middot; OR Visualizations series &middot; Part 1 of 3</span>
+            <div class="post-title">Genetic Algorithm Evolution</div>
+            <p class="post-excerpt">
+              A from-scratch, real-valued genetic algorithm searches the Rastrigin function — a standard
+              benchmark riddled with about a hundred local optima — and every part of the accompanying
+              visualization is designed to make the exploration/exploitation tradeoff something you watch
+              happen, rather than something you're told about.
+            </p>
+            <div class="post-list-tags">
+              <span class="tag-pill">Genetic Algorithms</span>
+              <span class="tag-pill">Metaheuristics</span>
+            </div>
+          </a>
+        </li>
+
+
         <li class="post-list-item" data-tags="markov-decision-processes,average-reward">
           <a class="post-list-link" href="posts/acmdp.html">
             <span class="post-date">Sep 2025 &middot; MDP series, Part 2/2</span>
@@ -172,7 +192,8 @@
           </a>
         </li>
 
-        <li class="post-list-item" data-tags="markov-decision-processes,seminar">
+
+          <li class="post-list-item" data-tags="markov-decision-processes,seminar">
           <a class="post-list-link" href="posts/mdp.html">
             <span class="post-date">Feb 2025 &middot; MDP series, Part 1/2</span>
             <div class="post-title">An introduction to MDP</div>
@@ -186,6 +207,7 @@
             </div>
           </a>
         </li>
+
 
         <!-- New <li class="post-list-item"> entries go above this line -->
 
@@ -204,9 +226,8 @@
   </script>
 
   <script>
-    // Notes index: tag filter + search + surprise-me. Reads only what's
-    // already in the DOM (data-tags, post text, and each card's own
-    // tag-pills) so the filter bar can't drift out of sync with the list.
+
+
     (function () {
       var list = document.getElementById("post-list");
       var items = Array.prototype.slice.call(list.querySelectorAll(".post-list-item"));
