@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+
+
   <title>An interactive S-SQEP policy simulator — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A live, in-browser replay of the Stochastic Queens Elimination Problem: step through Random-admissible, Greedy-degree, and Adaptive Coverage Greedy on the same n=8 instance used in the main post, and compare each against the exact optimal value V*(s0).">
-  <meta name="theme-color" content="#fbfbf7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
@@ -19,6 +21,51 @@
 
   <link rel="stylesheet" href="../../style.css">
   <link rel="stylesheet" href="../blog.css">
+  <style>
+.sqep-widget {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+  align-items: flex-start;
+  margin: 2rem 0;
+  padding: 1.25rem;
+  background: var(--bg-elevated, #1d2229);
+  border: 1px solid var(--rule, #353d49);
+  border-radius: var(--radius-lg, 8px);
+  font-family: var(--font-body, sans-serif);
+}
+.sqep-board-col { flex: 0 0 300px; }
+.sqep-chart-col { flex: 1 1 320px; min-width: 300px; }
+#sqep-board { width: 100%; max-width: 300px; display: block; }
+#sqep-chart { width: 100%; display: block; }
+.sqep-controls { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.9rem; }
+.sqep-controls label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.8rem; color: var(--text-muted, #9ea8b7); gap: 0.75rem;
+}
+.sqep-controls select {
+  background: var(--bg-soft, #252b34); color: var(--text-primary, #f2f4f8);
+  border: 1px solid var(--rule, #353d49); border-radius: var(--radius, 4px);
+  padding: 0.3rem 0.5rem; font-family: var(--font-body, sans-serif); font-size: 0.85rem;
+}
+.sqep-buttons { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
+.sqep-buttons button {
+  flex: 1; background: var(--bg-soft, #252b34); color: var(--text-primary, #f2f4f8);
+  border: 1px solid var(--rule, #353d49); border-radius: var(--radius, 4px);
+  padding: 0.4rem 0.4rem; font-size: 0.8rem; cursor: pointer; font-family: var(--font-body, sans-serif);
+}
+.sqep-buttons button:hover { background: var(--bg-hover, #2c3340); border-color: var(--rule-strong, #444f5e); }
+.sqep-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 1rem;
+}
+.sqep-stats div {
+  background: var(--bg-soft, #252b34); border-radius: var(--radius, 4px);
+  padding: 0.55rem 0.7rem;
+}
+.sqep-stats span { display: block; font-size: 0.72rem; color: var(--text-muted, #9ea8b7); }
+.sqep-stats strong { display: block; font-size: 1.15rem; color: var(--text-primary, #f2f4f8); font-weight: 500; margin-top: 0.15rem; }
+.sqep-caption { font-size: 0.8rem; color: var(--text-muted, #9ea8b7); margin: 0.6rem 0 0; }
+</style>
   <!-- MathJax, for the formulas in this post only -->
   <script>
     window.MathJax = {
@@ -41,11 +88,11 @@
         <span class="brand-name">Artin Kavoosi</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Notes</a>
-        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
-      </nav>
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
     </div>
   </header>
 
@@ -56,6 +103,11 @@
 
         <article class="post-article">
       <span class="note-kicker">Companion · Interactive</span>
+
+      <header class="post-article-header">
+        <span class="post-meta">July 2026<span class="series-badge">SQEP series &middot; Interactive companion</span></span>
+        <h1>An interactive S-SQEP policy simulator</h1>
+      </header>
 
       <div class="note-abstract">
         <span class="note-abstract-label">Abstract</span>
@@ -72,12 +124,6 @@
         <summary>Contents</summary>
         <ol class="note-toc-list" id="note-toc-list"></ol>
       </details>
-
-
-          <header class="post-article-header">
-            <span class="post-meta">July 2026<span class="series-badge">SQEP series &middot; Interactive companion</span></span>
-            <h1>An interactive S-SQEP policy simulator</h1>
-          </header>
 
           <div class="post-article-body">
 
@@ -154,51 +200,6 @@
     </p>
   </div>
 </div>
-<style>
-.sqep-widget {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.75rem;
-  align-items: flex-start;
-  margin: 2rem 0;
-  padding: 1.25rem;
-  background: var(--bg-elevated, #1d2229);
-  border: 1px solid var(--rule, #353d49);
-  border-radius: var(--radius-lg, 8px);
-  font-family: var(--font-body, sans-serif);
-}
-.sqep-board-col { flex: 0 0 300px; }
-.sqep-chart-col { flex: 1 1 320px; min-width: 300px; }
-#sqep-board { width: 100%; max-width: 300px; display: block; }
-#sqep-chart { width: 100%; display: block; }
-.sqep-controls { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.9rem; }
-.sqep-controls label {
-  display: flex; justify-content: space-between; align-items: center;
-  font-size: 0.8rem; color: var(--text-muted, #9ea8b7); gap: 0.75rem;
-}
-.sqep-controls select {
-  background: var(--bg-soft, #252b34); color: var(--text-primary, #f2f4f8);
-  border: 1px solid var(--rule, #353d49); border-radius: var(--radius, 4px);
-  padding: 0.3rem 0.5rem; font-family: var(--font-body, sans-serif); font-size: 0.85rem;
-}
-.sqep-buttons { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
-.sqep-buttons button {
-  flex: 1; background: var(--bg-soft, #252b34); color: var(--text-primary, #f2f4f8);
-  border: 1px solid var(--rule, #353d49); border-radius: var(--radius, 4px);
-  padding: 0.4rem 0.4rem; font-size: 0.8rem; cursor: pointer; font-family: var(--font-body, sans-serif);
-}
-.sqep-buttons button:hover { background: var(--bg-hover, #2c3340); border-color: var(--rule-strong, #444f5e); }
-.sqep-stats {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-top: 1rem;
-}
-.sqep-stats div {
-  background: var(--bg-soft, #252b34); border-radius: var(--radius, 4px);
-  padding: 0.55rem 0.7rem;
-}
-.sqep-stats span { display: block; font-size: 0.72rem; color: var(--text-muted, #9ea8b7); }
-.sqep-stats strong { display: block; font-size: 1.15rem; color: var(--text-primary, #f2f4f8); font-weight: 500; margin-top: 0.15rem; }
-.sqep-caption { font-size: 0.8rem; color: var(--text-muted, #9ea8b7); margin: 0.6rem 0 0; }
-</style>
 <script id="sqep-data" type="application/json">{"n": 8, "positions": [[1, 2], [2, 4], [1, 4], [3, 7], [6, 2], [6, 7], [2, 3], [7, 0]], "kappa0": 9, "p_grid": ["0.20", "0.35", "0.50", "0.70", "0.85", "1.00"], "vstar": {"0.20": 40.55555555555559, "0.35": 23.463203463203467, "0.50": 16.666666666666668, "0.70": 12.197802197802197, "0.85": 10.281329923273658, "1.00": 9.0}, "policy_labels": {"acg": "Adaptive coverage greedy", "greedy": "Greedy degree", "random": "Random admissible"}, "stats": {"acg": {"0.20": {"mean": 41.248333333333335, "stderr": 0.755520420955967}, "0.35": {"mean": 23.718333333333334, "stderr": 0.3951349921698115}, "0.50": {"mean": 16.618333333333332, "stderr": 0.2402059205333192}, "0.70": {"mean": 12.32, "stderr": 0.13679424939180254}, "0.85": {"mean": 10.36, "stderr": 0.07958643100428615}, "1.00": {"mean": 9.0, "stderr": 0.0}}, "greedy": {"0.20": {"mean": 43.85666666666667, "stderr": 0.7726212118736043}, "0.35": {"mean": 24.09, "stderr": 0.3896834185164499}, "0.50": {"mean": 17.52166666666667, "stderr": 0.2578636500886409}, "0.70": {"mean": 12.171666666666667, "stderr": 0.1384770170795835}, "0.85": {"mean": 10.246666666666666, "stderr": 0.07687459725880653}, "1.00": {"mean": 9.0, "stderr": 0.0}}, "random": {"0.20": {"mean": 54.653333333333336, "stderr": 1.025683909146225}, "0.35": {"mean": 31.925, "stderr": 0.5506199157918888}, "0.50": {"mean": 22.81833333333333, "stderr": 0.35078166022206486}, "0.70": {"mean": 16.515, "stderr": 0.21892328057513158}, "0.85": {"mean": 14.07, "stderr": 0.14415520185627095}, "1.00": {"mean": 11.918333333333333, "stderr": 0.08088054177017509}}}, "trajectories": {"acg": {"0.20": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 6, "killed": [5], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 15.0}, {"t": 3, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 21.0}, {"t": 4, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 27.0}, {"t": 5, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 33.0}, {"t": 6, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 39.0}, {"t": 7, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 45.0}, {"t": 8, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 51.0}, {"t": 9, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 2, "killed": [], "cum_psi": 57.0}, {"t": 10, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 2, "killed": [1], "cum_psi": 63.0}, {"t": 11, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 0, "killed": [], "cum_psi": 67.0}, {"t": 12, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 0, "killed": [], "cum_psi": 71.0}, {"t": 13, "alive": [0, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6]], "kappa": 4, "activated": 0, "killed": [], "cum_psi": 75.0}, {"t": 14, "alive": [0, 2, 3, 4, 7], "pairs": [[0, 2], [0, 4]], "kappa": 2, "activated": 0, "killed": [6], "cum_psi": 79.0}, {"t": 15, "alive": [0, 2, 3, 7], "pairs": [[0, 2]], "kappa": 1, "activated": 0, "killed": [4], "cum_psi": 81.0}, {"t": 16, "alive": [0, 3, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [2], "cum_psi": 82.0}], "0.35": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [1, 3, 4, 6, 7], "pairs": [[1, 6]], "kappa": 1, "activated": 6, "killed": [0, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [1, 3, 4, 7], "pairs": [], "kappa": 0, "activated": 1, "killed": [6], "cum_psi": 10.0}], "0.50": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [1, 3, 4, 6, 7], "pairs": [[1, 6]], "kappa": 1, "activated": 6, "killed": [0, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [1, 3, 4, 7], "pairs": [], "kappa": 0, "activated": 1, "killed": [6], "cum_psi": 10.0}], "0.70": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 3, 4, 6, 7], "pairs": [[0, 4], [0, 6]], "kappa": 2, "activated": 6, "killed": [1, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [0, 3, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [4, 6], "cum_psi": 11.0}], "0.85": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}], "1.00": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}]}, "greedy": {"0.20": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 6, "killed": [], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 6, "killed": [], "cum_psi": 18.0}, {"t": 3, "alive": [0, 1, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 6, "activated": 6, "killed": [2], "cum_psi": 27.0}, {"t": 4, "alive": [0, 1, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 6, "activated": 5, "killed": [], "cum_psi": 33.0}, {"t": 5, "alive": [0, 1, 3, 5, 7], "pairs": [[0, 5], [3, 5]], "kappa": 2, "activated": 5, "killed": [4, 6], "cum_psi": 39.0}, {"t": 6, "alive": [0, 1, 3, 5, 7], "pairs": [[0, 5], [3, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 41.0}, {"t": 7, "alive": [1, 3, 5, 7], "pairs": [[3, 5]], "kappa": 1, "activated": 5, "killed": [0], "cum_psi": 43.0}, {"t": 8, "alive": [1, 3, 5, 7], "pairs": [[3, 5]], "kappa": 1, "activated": 3, "killed": [], "cum_psi": 44.0}, {"t": 9, "alive": [1, 3, 7], "pairs": [], "kappa": 0, "activated": 3, "killed": [5], "cum_psi": 45.0}], "0.35": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [2, 3, 4, 5, 6, 7], "pairs": [[2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 6, "killed": [0, 1], "cum_psi": 9.0}, {"t": 2, "alive": [2, 3, 5, 6, 7], "pairs": [[2, 6], [3, 5], [5, 6]], "kappa": 3, "activated": 5, "killed": [4], "cum_psi": 13.0}, {"t": 3, "alive": [2, 3, 5, 7], "pairs": [[3, 5]], "kappa": 1, "activated": 5, "killed": [6], "cum_psi": 16.0}, {"t": 4, "alive": [2, 3, 7], "pairs": [], "kappa": 0, "activated": 3, "killed": [5], "cum_psi": 17.0}], "0.50": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [2, 3, 4, 5, 6, 7], "pairs": [[2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 6, "killed": [0, 1], "cum_psi": 9.0}, {"t": 2, "alive": [2, 5, 7], "pairs": [], "kappa": 0, "activated": 5, "killed": [3, 4, 6], "cum_psi": 13.0}], "0.70": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 3, 4, 6, 7], "pairs": [[0, 4], [0, 6]], "kappa": 2, "activated": 6, "killed": [1, 2, 5], "cum_psi": 9.0}, {"t": 2, "alive": [0, 3, 4, 6, 7], "pairs": [[0, 4], [0, 6]], "kappa": 2, "activated": 0, "killed": [], "cum_psi": 11.0}, {"t": 3, "alive": [0, 3, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [4, 6], "cum_psi": 13.0}], "0.85": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}], "1.00": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [3, 4, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [0, 1, 2, 5], "cum_psi": 9.0}]}, "random": {"0.20": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 3, "killed": [], "cum_psi": 9.0}, {"t": 2, "alive": [0, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 7, "activated": 2, "killed": [1], "cum_psi": 18.0}, {"t": 3, "alive": [0, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 7, "activated": 2, "killed": [], "cum_psi": 25.0}, {"t": 4, "alive": [0, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [3, 5], [4, 5], [5, 6]], "kappa": 5, "activated": 0, "killed": [2], "cum_psi": 32.0}, {"t": 5, "alive": [0, 3, 4, 5, 6, 7], "pairs": [[0, 4], [0, 6], [3, 5], [4, 5], [5, 6]], "kappa": 5, "activated": 3, "killed": [], "cum_psi": 37.0}, {"t": 6, "alive": [0, 4, 5, 7], "pairs": [[0, 4], [0, 5], [4, 5]], "kappa": 3, "activated": 5, "killed": [3, 6], "cum_psi": 42.0}, {"t": 7, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [0], "cum_psi": 45.0}, {"t": 8, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 46.0}, {"t": 9, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 47.0}, {"t": 10, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 48.0}, {"t": 11, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 49.0}, {"t": 12, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 50.0}, {"t": 13, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 51.0}, {"t": 14, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 52.0}, {"t": 15, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 53.0}, {"t": 16, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 54.0}, {"t": 17, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 55.0}, {"t": 18, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 56.0}, {"t": 19, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 57.0}, {"t": 20, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 58.0}, {"t": 21, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 59.0}, {"t": 22, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 60.0}, {"t": 23, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 61.0}, {"t": 24, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 62.0}, {"t": 25, "alive": [4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 4, "killed": [], "cum_psi": 63.0}, {"t": 26, "alive": [4, 7], "pairs": [], "kappa": 0, "activated": 4, "killed": [5], "cum_psi": 64.0}], "0.35": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 2, "killed": [], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": 1, "killed": [], "cum_psi": 18.0}, {"t": 3, "alive": [1, 3, 4, 5, 6, 7], "pairs": [[1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 6, "killed": [0, 2], "cum_psi": 27.0}, {"t": 4, "alive": [1, 3, 4, 5, 6, 7], "pairs": [[1, 6], [3, 5], [4, 5], [5, 6]], "kappa": 4, "activated": 3, "killed": [], "cum_psi": 31.0}, {"t": 5, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 1, "killed": [6], "cum_psi": 35.0}, {"t": 6, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 4, "killed": [], "cum_psi": 37.0}, {"t": 7, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 4, "killed": [], "cum_psi": 39.0}, {"t": 8, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 41.0}, {"t": 9, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 4, "killed": [], "cum_psi": 43.0}, {"t": 10, "alive": [1, 3, 4, 5, 7], "pairs": [[3, 5], [4, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 45.0}, {"t": 11, "alive": [1, 4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [3], "cum_psi": 47.0}, {"t": 12, "alive": [1, 4, 5, 7], "pairs": [[4, 5]], "kappa": 1, "activated": 5, "killed": [], "cum_psi": 48.0}, {"t": 13, "alive": [1, 4, 7], "pairs": [], "kappa": 0, "activated": 4, "killed": [5], "cum_psi": 49.0}], "0.50": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 5, 6, 7], "pairs": [[0, 2], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [5, 6]], "kappa": 7, "activated": 5, "killed": [4], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 2, 3, 5, 7], "pairs": [[0, 2], [0, 5], [1, 2], [3, 5]], "kappa": 4, "activated": 0, "killed": [6], "cum_psi": 16.0}, {"t": 3, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 2, "killed": [0], "cum_psi": 20.0}, {"t": 4, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 3, "killed": [], "cum_psi": 22.0}, {"t": 5, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 3, "killed": [], "cum_psi": 24.0}, {"t": 6, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 2, "killed": [], "cum_psi": 26.0}, {"t": 7, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 1, "killed": [], "cum_psi": 28.0}, {"t": 8, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 5, "killed": [], "cum_psi": 30.0}, {"t": 9, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 3, "killed": [], "cum_psi": 32.0}, {"t": 10, "alive": [1, 2, 3, 5, 7], "pairs": [[1, 2], [3, 5]], "kappa": 2, "activated": 1, "killed": [], "cum_psi": 34.0}, {"t": 11, "alive": [1, 2, 5, 7], "pairs": [[1, 2]], "kappa": 1, "activated": 5, "killed": [3], "cum_psi": 36.0}, {"t": 12, "alive": [1, 5, 7], "pairs": [], "kappa": 0, "activated": 1, "killed": [2], "cum_psi": 37.0}], "0.70": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 5, 6, 7], "pairs": [[0, 2], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [5, 6]], "kappa": 7, "activated": 0, "killed": [4], "cum_psi": 9.0}, {"t": 2, "alive": [1, 2, 3, 6, 7], "pairs": [[1, 2], [1, 6], [2, 6]], "kappa": 3, "activated": 6, "killed": [0, 5], "cum_psi": 16.0}, {"t": 3, "alive": [1, 3, 6, 7], "pairs": [[1, 6]], "kappa": 1, "activated": 6, "killed": [2], "cum_psi": 19.0}, {"t": 4, "alive": [3, 6, 7], "pairs": [], "kappa": 0, "activated": 6, "killed": [1], "cum_psi": 20.0}], "0.85": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 3, 4, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6]], "kappa": 6, "activated": 3, "killed": [5], "cum_psi": 9.0}, {"t": 2, "alive": [2, 3, 4, 7], "pairs": [], "kappa": 0, "activated": 2, "killed": [0, 1, 6], "cum_psi": 15.0}], "1.00": [{"t": 0, "alive": [0, 1, 2, 3, 4, 5, 6, 7], "pairs": [[0, 2], [0, 4], [0, 6], [1, 2], [1, 6], [2, 6], [3, 5], [4, 5], [5, 6]], "kappa": 9, "activated": null, "killed": [], "cum_psi": 0.0}, {"t": 1, "alive": [0, 1, 2, 5, 7], "pairs": [[0, 2], [0, 5], [1, 2]], "kappa": 3, "activated": 5, "killed": [3, 4, 6], "cum_psi": 9.0}, {"t": 2, "alive": [0, 1, 7], "pairs": [], "kappa": 0, "activated": 0, "killed": [2, 5], "cum_psi": 12.0}]}}}</script>
 <script>
 (function () {
@@ -386,6 +387,18 @@
           </div>
 
         </article>
+
+      <nav class="series-nav" aria-label="SQEP series navigation">
+        <span class="series-nav-label">SQEP Series</span>
+        <ol class="series-nav-parts">
+          <li><span class="series-part-num">01</span><a href="sqep.html">Overview</a></li>
+          <li class="is-current"><span class="series-part-num">02</span><span>Interactive companion</span></li>
+        </ol>
+        <div class="series-nav-pager">
+          <a href="sqep.html">&larr; Previous: Overview</a>
+          <span class="series-nav-none">Next &rarr;</span>
+        </div>
+      </nav>
 
       <div class="note-cite">
         <h3>Cite this note</h3>
