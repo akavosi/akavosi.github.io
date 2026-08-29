@@ -3,11 +3,14 @@
 
 <head>
   <meta charset="UTF-8">
+
+
   <title>Research Notes — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Notes and posts by Artin Kavoosi on research, operations research, and machine learning.">
-  <meta name="theme-color" content="#fbfbf7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="canonical" href="https://akavosi.github.io/blog/">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
   <link rel="shortcut icon" type="image/png" href="../favicon.png">
@@ -23,6 +26,12 @@
 
 <body class="notes">
 
+  <script>
+    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-ready');
+    }
+  </script>
+
   <a href="#main" class="skip-link">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
 
@@ -33,11 +42,11 @@
         <span class="brand-name">Artin Kavoosi</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="../index.html#about">About</a>
-        <a href="index.html" class="active">Notes</a>
-        <a href="../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
-      </nav>
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../index.html#about">About</a>
+          <a href="index.html" class="active">Notes</a>
+          <a href="../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
     </div>
   </header>
 
@@ -45,173 +54,202 @@
     <div class="page-inner">
 
       <div class="blog-hero">
-        <div class="blog-hero-text">
-          <h1>Research Notes</h1>
-          <p>Short notes on research, methods, and things I'm working through.</p>
+        <span class="blog-hero-eyebrow">Research blog</span>
+        <h1>Research Notes</h1>
+        <p>Ideas, methods, algorithms, and things I'm working through.</p>
+      </div>
+
+      <div class="blog-hero-bar">
+        <div class="blog-stats" id="blog-stats">
+          <span><strong id="stat-notes">7</strong> notes</span>
+          <span class="blog-stats-sep">&middot;</span>
+          <span><strong id="stat-series">3</strong> series</span>
+          <span class="blog-stats-sep">&middot;</span>
+          <span><strong id="stat-interactive">1</strong> interactive</span>
         </div>
-        <button class="surprise-btn" id="surprise-btn" type="button">
+        <button class="surprise-btn" id="surprise-btn" type="button" title="Jump to a random note">
           <i class="fas fa-shuffle" aria-hidden="true"></i>
-          <span>Serendipitous Discovery!</span>
+          <span>Random note</span>
         </button>
       </div>
 
-      <div class="blog-stats" id="blog-stats">
-        <span><strong id="stat-notes">7</strong> notes</span>
-        <span class="blog-stats-sep">&middot;</span>
-        <span><strong>1</strong> interactive companions</span>
-        <span class="blog-stats-sep">&middot;</span>
-        <span><strong>3</strong> series</span>
-      </div>
-
-      <div class="notes-index-rule"></div>
-
-      <div class="notes-filter" role="search">
-        <div class="notes-search">
-          <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
-          <input type="text" id="notes-search-input" placeholder="Search notes by title or topic&hellip;" aria-label="Search notes">
+      <!-- =========================================================
+           Featured — visual centerpiece, pulled out of any list.
+           ========================================================= -->
+      <section class="featured-note" aria-labelledby="featured-note-title">
+        <a class="featured-note-media" href="posts/sqep.html" tabindex="-1" aria-hidden="true">
+          <img src="assets/sqep/queen-hero.png" alt="" loading="eager">
+        </a>
+        <div class="featured-note-text">
+          <span class="featured-note-kicker">Start here</span>
+          <h2 id="featured-note-title" class="featured-note-title"><a href="posts/sqep.html">Stochastic Queens Elimination</a></h2>
+          <p class="featured-note-desc">
+            A stochastic, elimination-based variant of the <em>n</em>-queens problem: an MDP formulation,
+            a provably suboptimal greedy baseline, a closed-form heuristic (ACG) with a worst-case
+            approximation guarantee, and an exact MIP for the deterministic case.
+          </p>
+          <div class="meta-line"><span>Research Note</span><span>Jul 2026</span><span>Markov Decision Processes</span><span>Combinatorial Optimization</span></div>
+          <div class="featured-note-actions">
+            <a class="featured-note-cta" href="posts/sqep.html">Read the note <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            <a class="featured-note-companion" href="posts/sqep-interactive.html"><i class="fas fa-shuffle" aria-hidden="true"></i> Interactive companion: policy simulator</a>
+          </div>
         </div>
-        <div class="notes-tag-filter" id="notes-tag-filter" aria-label="Filter by topic">
-          <!-- populated by script below from each card's data-tags, plus a leading "All" pill -->
+      </section>
+
+      <!-- =========================================================
+           Recent Notes — 2-column editorial grid.
+           ========================================================= -->
+      <section class="notes-section" aria-labelledby="recent-heading">
+        <div class="notes-section-head"><h2 id="recent-heading">Recent Notes</h2></div>
+        <div class="notes-grid">
+
+          <a class="note-card" href="posts/simulated-annealing.html">
+            <span class="card-thumb"><img src="assets/simulated-annealing/sa_landscape_3d_hero.png" alt="" loading="lazy"></span>
+            <span class="note-card-title">Simulated Annealing</span>
+            <div class="meta-line"><span>Aug 2026</span><span>OR Visualizations, Part 3/3</span></div>
+            <p class="note-card-desc">A hand-designed energy surface with six wells, and a search that accepts a worse outcome on purpose because it's still hot enough to afford to.</p>
+            <span class="note-card-read">Read <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+
+          <a class="note-card" href="posts/ant-colony-optimization.html">
+            <span class="card-thumb"><img src="assets/ant-colony-optimization/aco_pheromone_3d_hero.png" alt="" loading="lazy"></span>
+            <span class="note-card-title">Ant Colony Optimization</span>
+            <div class="meta-line"><span>Jul 2026</span><span>OR Visualizations, Part 2/3</span></div>
+            <p class="note-card-desc">A from-scratch Elitist Ant System on a 17-city TSP instance small enough to solve exactly, so every convergence claim is checked against a provable answer.</p>
+            <span class="note-card-read">Read <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+
+          <a class="note-card" href="posts/genetic-algorithm-evolution.html">
+            <span class="card-thumb"><img src="assets/genetic-algorithm-evolution/ga_landscape_3d_hero.png" alt="" loading="lazy"></span>
+            <span class="note-card-title">Genetic Algorithm Evolution</span>
+            <div class="meta-line"><span>Jul 2026</span><span>OR Visualizations, Part 1/3</span></div>
+            <p class="note-card-desc">A real-valued genetic algorithm searches the Rastrigin function, making the exploration/exploitation tradeoff something you watch happen.</p>
+            <span class="note-card-read">Read <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+
+          <a class="note-card is-textual" href="posts/acmdp.html">
+            <span class="note-card-title">On average reward criterion</span>
+            <div class="meta-line"><span>Sep 2025</span><span>MDP series, Part 2/2</span></div>
+            <p class="note-card-desc">Why the average-reward MDP criterion, despite feeling like the natural choice next to discounted formulations, hasn't become as popular.</p>
+            <span class="note-card-read">Read <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </a>
+
         </div>
-      </div>
+      </section>
 
-      <p class="notes-empty" id="notes-empty" hidden>No notes match that search — try a different term or <button type="button" id="notes-empty-reset">clear the filters</button>.</p>
+      <!-- =========================================================
+           Series — curated collections.
+           ========================================================= -->
+      <section class="series-section" id="series" aria-labelledby="series-heading">
+        <div class="notes-section-head"><h2 id="series-heading">Series</h2></div>
 
-      
-      <ul class="post-list" id="post-list">
+        <article class="series-block">
+          <div class="series-block-head">
+            <h3><a href="posts/genetic-algorithm-evolution.html">OR Visualizations</a></h3>
+            <p>Algorithms you can see.</p>
+          </div>
+          <ol class="series-parts">
+            <li><span class="series-part-num">01</span><a href="posts/genetic-algorithm-evolution.html">Genetic Algorithm Evolution</a></li>
+            <li><span class="series-part-num">02</span><a href="posts/ant-colony-optimization.html">Ant Colony Optimization</a></li>
+            <li><span class="series-part-num">03</span><a href="posts/simulated-annealing.html">Simulated Annealing</a></li>
+          </ol>
+          <a class="series-explore" href="posts/genetic-algorithm-evolution.html">Explore series →</a>
+        </article>
 
-        <li class="post-list-item is-featured" data-tags="markov-decision-processes,combinatorial-optimization,approximation-guarantees">
-          <a class="post-list-link" href="posts/sqep.html">
-            <span class="start-here-badge">Start here</span>
-            <span class="post-date">Jul 2026 &middot; Featured</span>
-            <div class="post-title">Stochastic Queens Elimination</div>
-            <p class="post-excerpt">
-              A stochastic, elimination-based variant of the n-queens problem: an MDP formulation, a provably
-              suboptimal greedy baseline, a closed-form heuristic (ACG) with a worst-case approximation
-              guarantee, and an exact MIP for the deterministic case.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Markov Decision Processes</span>
-              <span class="tag-pill">Combinatorial Optimization</span>
-              <span class="tag-pill">Approximation Guarantees</span>
-            </div>
-          </a>
-          <a class="post-companion-link" href="posts/sqep-interactive.html">
-            <i class="fas fa-arrow-right-long" aria-hidden="true"></i> Interactive companion: policy simulator
-          </a>
-        </li>
+        <article class="series-block">
+          <div class="series-block-head">
+            <h3><a href="posts/mdp.html">MDP Series</a></h3>
+            <p>Markov Decision Processes, from seminar to subtlety.</p>
+          </div>
+          <ol class="series-parts">
+            <li><span class="series-part-num">01</span><a href="posts/mdp.html">An introduction to MDP</a></li>
+            <li><span class="series-part-num">02</span><a href="posts/acmdp.html">On average reward criterion</a></li>
+          </ol>
+          <a class="series-explore" href="posts/mdp.html">Explore series →</a>
+        </article>
 
-        <li class="post-list-item" data-tags="integer-programming,markov-decision-processes,Companion,Interactive">
-          <a class="post-list-link" href="posts/sqep-interactive.html">
-            <span class="post-date">Jul 2026</span>
-            <div class="post-title">An interactive S-SQEP policy simulator</div>
-            <p class="post-excerpt">
-              Step through Random-admissible, Greedy-degree, and Adaptive Coverage Greedy yourself on the
-              same n=8 board as the main post, and watch the cumulative conflict cost race against the exact
-              optimal value.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Integer Programming</span>
-              <span class="tag-pill">Companion</span>
-              <span class="tag-pill">Interactive</span>
-            </div>
-          </a>
-        </li>
+        <article class="series-block">
+          <div class="series-block-head">
+            <h3><a href="posts/sqep.html">SQEP</a></h3>
+            <p>Stochastic Queens Elimination, from the paper to the policy simulator.</p>
+          </div>
+          <ol class="series-parts">
+            <li><span class="series-part-num">01</span><a href="posts/sqep.html">Overview</a></li>
+            <li><span class="series-part-num">02</span><a href="posts/sqep-interactive.html">Interactive companion</a></li>
+          </ol>
+          <a class="series-explore" href="posts/sqep.html">Explore series →</a>
+        </article>
+      </section>
 
+      <!-- =========================================================
+           Interactive companions.
+           ========================================================= -->
+      <section class="interactive-section" aria-labelledby="interactive-heading">
+        <div class="notes-section-head"><h2 id="interactive-heading">Interactive</h2></div>
+        <a class="interactive-card" href="posts/sqep-interactive.html">
+          <div class="interactive-card-text">
+            <span class="interactive-card-kicker"><i class="fas fa-shuffle" aria-hidden="true"></i> Interactive companion</span>
+            <h3>An interactive S-SQEP policy simulator</h3>
+            <p>Don't just read about Random-admissible, Greedy-degree, and Adaptive Coverage Greedy — step
+              through them yourself on the same n=8 board as the main post, and watch the cumulative
+              conflict cost race against the exact optimal value.</p>
+            <span class="interactive-card-cta">Launch companion <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </div>
+        </a>
+      </section>
 
-        <li class="post-list-item" data-tags="simulated-annealing,metaheuristics">
-          <a class="post-list-link" href="posts/simulated-annealing.html">
-            <span class="post-date">Aug 2026 &middot; OR Visualizations series &middot; Part 3 of 3</span>
-            <div class="post-title">Simulated Annealing</div>
-            <p class="post-excerpt">
-              A from-scratch simulated annealing search explores a hand-designed energy surface with six
-            wells of deliberately different depths — one true global minimum and several plausible
-            decoys — and every part of the accompanying visualization is built around one moment: a
-            search accepting a worse outcome on purpose, because it's still hot enough to afford to.272 candidate edges quietly evaporating
-              while the 17 that matter get louder.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Simulated Annealing</span>
-              <span class="tag-pill">Metaheuristics</span>
-            </div>
-          </a>
-        </li>
+      <!-- =========================================================
+           Archive — the complete, searchable, filterable record.
+           ========================================================= -->
+      <section class="archive-section" aria-labelledby="archive-heading">
+        <div class="notes-section-head"><h2 id="archive-heading">Archive</h2></div>
 
+        <div class="notes-filter" role="search">
+          <div class="notes-search">
+            <i class="fas fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" id="notes-search-input" placeholder="Search notes&hellip;" aria-label="Search notes">
+            <kbd class="notes-search-kbd">&#8984;K</kbd>
+          </div>
+          <div class="notes-tag-filter" id="notes-tag-filter" role="group" aria-label="Filter by topic">
+            <!-- populated by notes.js -->
+          </div>
+        </div>
 
-        <li class="post-list-item" data-tags="ant-colony-optimization,metaheuristics">
-          <a class="post-list-link" href="posts/ant-colony-optimization.html">
-            <span class="post-date">Jul 2026 &middot; OR Visualizations series &middot; Part 2 of 3</span>
-            <div class="post-title">Ant Colony Optimization</div>
-            <p class="post-excerpt">
-              A from-scratch Elitist Ant System searches a 17-city Traveling Salesman instance small enough to
-              solve exactly, so every claim about convergence in this post is checked against a provable
-              answer rather than "whatever the colony settled on." Every part of the accompanying
-              visualization is designed to make one thing visible: 272 candidate edges quietly evaporating
-              while the 17 that matter get louder.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Ant Colony Optimization</span>
-              <span class="tag-pill">Metaheuristics</span>
-            </div>
-          </a>
-        </li>
+        <p class="notes-empty" id="notes-empty" hidden>No notes match that search — try a different term or <button type="button" id="notes-empty-reset">clear the filters</button>.</p>
 
-        <li class="post-list-item" data-tags="genetic-algorithms,metaheuristics">
-          <a class="post-list-link" href="posts/genetic-algorithm-evolution.html">
-            <span class="post-date">Jul 2026 &middot; OR Visualizations series &middot; Part 1 of 3</span>
-            <div class="post-title">Genetic Algorithm Evolution</div>
-            <p class="post-excerpt">
-              A from-scratch, real-valued genetic algorithm searches the Rastrigin function — a standard
-              benchmark riddled with about a hundred local optima — and every part of the accompanying
-              visualization is designed to make the exploration/exploitation tradeoff something you watch
-              happen, rather than something you're told about.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Genetic Algorithms</span>
-              <span class="tag-pill">Metaheuristics</span>
-            </div>
-          </a>
-        </li>
+        <div class="archive-year-group" data-year="2026">
+          <div class="archive-year">2026</div>
+          <ul class="archive-list">
+            <li class="archive-row" data-tags="simulated-annealing,metaheuristics">
+              <a href="posts/simulated-annealing.html"><span class="archive-month">Aug</span><span class="archive-title">Simulated Annealing</span><span class="archive-type">OR Visualizations · 3/3</span></a>
+            </li>
+            <li class="archive-row" data-tags="markov-decision-processes,combinatorial-optimization,approximation-guarantees">
+              <a href="posts/sqep.html"><span class="archive-month">Jul</span><span class="archive-title">Stochastic Queens Elimination</span><span class="archive-type">SQEP · 1/2</span></a>
+            </li>
+            <li class="archive-row" data-tags="integer-programming,markov-decision-processes,companion,interactive">
+              <a href="posts/sqep-interactive.html"><span class="archive-month">Jul</span><span class="archive-title">An interactive S-SQEP policy simulator</span><span class="archive-type">SQEP · 2/2</span></a>
+            </li>
+            <li class="archive-row" data-tags="ant-colony-optimization,metaheuristics">
+              <a href="posts/ant-colony-optimization.html"><span class="archive-month">Jul</span><span class="archive-title">Ant Colony Optimization</span><span class="archive-type">OR Visualizations · 2/3</span></a>
+            </li>
+            <li class="archive-row" data-tags="genetic-algorithms,metaheuristics">
+              <a href="posts/genetic-algorithm-evolution.html"><span class="archive-month">Jul</span><span class="archive-title">Genetic Algorithm Evolution</span><span class="archive-type">OR Visualizations · 1/3</span></a>
+            </li>
+          </ul>
+        </div>
 
-
-        <li class="post-list-item" data-tags="markov-decision-processes,average-reward">
-          <a class="post-list-link" href="posts/acmdp.html">
-            <span class="post-date">Sep 2025 &middot; MDP series, Part 2/2</span>
-            <div class="post-title">On average reward criterion</div>
-            <p class="post-excerpt">
-              At first view, the average-reward Markov Decision Process (MDP) feels like the natural choice,
-              especially next to discounted formulations that often need extra real-world justification. In
-              practice, though, the average-criterion approach hasn't become as popular: subtle technical
-              assumptions, multichain behavior, and delicate limit arguments make it less straightforward than
-              it appears.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Markov Decision Processes</span>
-              <span class="tag-pill">Average Reward</span>
-            </div>
-          </a>
-        </li>
-
-
-          <li class="post-list-item" data-tags="markov-decision-processes,seminar">
-          <a class="post-list-link" href="posts/mdp.html">
-            <span class="post-date">Feb 2025 &middot; MDP series, Part 1/2</span>
-            <div class="post-title">An introduction to MDP</div>
-            <p class="post-excerpt">
-              In February 2025, I presented at the University of Tehran about MDP, the literature on MDP
-              (mostly before RL!), the Bellman optimality equation, and classical MDP examples.
-            </p>
-            <div class="post-list-tags">
-              <span class="tag-pill">Markov Decision Processes</span>
-              <span class="tag-pill">Seminar</span>
-            </div>
-          </a>
-        </li>
-
-
-        <!-- New <li class="post-list-item"> entries go above this line -->
-
-      </ul>
+        <div class="archive-year-group" data-year="2025">
+          <div class="archive-year">2025</div>
+          <ul class="archive-list">
+            <li class="archive-row" data-tags="markov-decision-processes,average-reward">
+              <a href="posts/acmdp.html"><span class="archive-month">Sep</span><span class="archive-title">On average reward criterion</span><span class="archive-type">MDP series · 2/2</span></a>
+            </li>
+            <li class="archive-row" data-tags="markov-decision-processes,seminar">
+              <a href="posts/mdp.html"><span class="archive-month">Feb</span><span class="archive-title">An introduction to MDP</span><span class="archive-type">MDP series · 1/2</span></a>
+            </li>
+          </ul>
+        </div>
+      </section>
 
       <footer class="site-footer">
         <span>© <span id="year"></span> Artin Kavoosi</span>
@@ -223,118 +261,6 @@
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
-
-  <script>
-
-
-    (function () {
-      var list = document.getElementById("post-list");
-      var items = Array.prototype.slice.call(list.querySelectorAll(".post-list-item"));
-      var tagFilterEl = document.getElementById("notes-tag-filter");
-      var searchInput = document.getElementById("notes-search-input");
-      var emptyState = document.getElementById("notes-empty");
-      var activeTags = {};
-      var searchQuery = "";
-
-      var tagLabels = {};
-      items.forEach(function (li) {
-        var slugs = (li.getAttribute("data-tags") || "").split(",").filter(Boolean);
-        var pills = li.querySelectorAll(".tag-pill");
-        slugs.forEach(function (slug, i) {
-          if (pills[i]) tagLabels[slug] = pills[i].textContent.trim();
-        });
-      });
-
-      var allPill = document.createElement("button");
-      allPill.type = "button";
-      allPill.className = "filter-pill is-active";
-      allPill.textContent = "All";
-      allPill.addEventListener("click", function () {
-        activeTags = {};
-        searchInput.value = "";
-        searchQuery = "";
-        render();
-      });
-      tagFilterEl.appendChild(allPill);
-
-      Object.keys(tagLabels).sort(function (a, b) {
-        return tagLabels[a].localeCompare(tagLabels[b]);
-      }).forEach(function (slug) {
-        var btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "filter-pill";
-        btn.textContent = tagLabels[slug];
-        btn.dataset.tag = slug;
-        btn.addEventListener("click", function () { toggleTag(slug); });
-        tagFilterEl.appendChild(btn);
-      });
-
-      function toggleTag(slug) {
-        if (activeTags[slug]) delete activeTags[slug];
-        else activeTags[slug] = true;
-        render();
-      }
-
-      // Tag-pills printed on each card are also clickable shortcuts into
-      // the same filter -- seeing a topic while reading and wanting more
-      // of it is the whole point of tagging.
-      items.forEach(function (li) {
-        var slugs = (li.getAttribute("data-tags") || "").split(",").filter(Boolean);
-        var pills = li.querySelectorAll(".tag-pill");
-        slugs.forEach(function (slug, i) {
-          if (!pills[i]) return;
-          pills[i].classList.add("tag-pill-clickable");
-          pills[i].addEventListener("click", function (e) {
-            e.preventDefault();
-            toggleTag(slug);
-          });
-        });
-      });
-
-      searchInput.addEventListener("input", function () {
-        searchQuery = searchInput.value.trim().toLowerCase();
-        render();
-      });
-
-      document.getElementById("notes-empty-reset").addEventListener("click", function () {
-        activeTags = {}; searchQuery = ""; searchInput.value = "";
-        render();
-      });
-
-      function render() {
-        var activeList = Object.keys(activeTags);
-        var visibleCount = 0;
-
-        items.forEach(function (li) {
-          var slugs = (li.getAttribute("data-tags") || "").split(",");
-          var tagMatch = activeList.length === 0 || activeList.some(function (t) { return slugs.indexOf(t) !== -1; });
-          var text = li.textContent.toLowerCase();
-          var searchMatch = !searchQuery || text.indexOf(searchQuery) !== -1;
-          var visible = tagMatch && searchMatch;
-          li.hidden = !visible;
-          if (visible) visibleCount += 1;
-        });
-
-        allPill.classList.toggle("is-active", activeList.length === 0);
-        Array.prototype.forEach.call(tagFilterEl.querySelectorAll(".filter-pill[data-tag]"), function (btn) {
-          btn.classList.toggle("is-active", !!activeTags[btn.dataset.tag]);
-        });
-
-        emptyState.hidden = visibleCount !== 0;
-        list.hidden = visibleCount === 0;
-      }
-
-      // Surprise me: jump to a random primary post (not a companion --
-      // those are meant to be read after their main note, not cold).
-      var primaryUrls = items.map(function (li) {
-        return li.querySelector(".post-list-link").getAttribute("href");
-      });
-      document.getElementById("surprise-btn").addEventListener("click", function () {
-        var pick = primaryUrls[Math.floor(Math.random() * primaryUrls.length)];
-        window.location.href = pick;
-      });
-    })();
   </script>
 
   <script src="notes.js" defer></script>
