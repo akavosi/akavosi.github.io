@@ -62,3 +62,22 @@
     sections.forEach(function (s) { spy.observe(s); });
   }
 })();
+
+// Broken images (e.g. a figure asset that didn't make it into the repo)
+// degrade to a quiet on-brand placeholder instead of a raw broken-image
+// icon. See .img-fallback in style.css.
+(function () {
+  var imgs = document.querySelectorAll("img");
+  for (var i = 0; i < imgs.length; i++) {
+    imgs[i].addEventListener("error", (function (img) {
+      return function () {
+        var container = img.closest(".post-figure, .post-hero-art, .card-thumb, .notebook-card-thumb, .series-thumb");
+        if (container) {
+          container.classList.add("img-fallback");
+        } else {
+          img.classList.add("img-fallback-inline");
+        }
+      };
+    })(imgs[i]));
+  }
+})();
