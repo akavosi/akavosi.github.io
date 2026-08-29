@@ -1,8 +1,8 @@
 body.notes {
- --bg-base:        #fbfbf7;
+ --bg-base:        #ffffff;
  --bg-elevated:    #ffffff;
- --bg-soft:        #f1efe6;
- --bg-hover:       #e9e6d8;
+ --bg-soft:        #f6f6f4;
+ --bg-hover:       #ececea;
 
  --text-primary:   #18181a;
  --text-body:      #2b2b29;
@@ -14,8 +14,8 @@ body.notes {
  --accent-soft:    rgba(156, 43, 43, 0.07);
  --accent-line:    rgba(156, 43, 43, 0.28);
 
- --rule:           #e5e1d3;
- --rule-strong:    #d2ccb6;
+ --rule:           #e3e2dd;
+ --rule-strong:    #cac9c1;
 
  --status-published: #3f7d4f;
  --status-review:    #b5792a;
@@ -33,41 +33,47 @@ body.notes {
 body.notes .grain { opacity: 0.025; }
 
 body.notes .site-header { border-bottom-color: var(--rule); }
-body.notes .hero-links a i,
 body.notes .nav-links a.active { color: var(--accent); }
 
 /* =========================================================
   Notes index
   ========================================================= */
 
-body.notes .blog-hero { text-align: left; margin: 3rem auto 0.5rem; display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
-body.notes .blog-hero-text h1 { font-size: 2rem; margin-bottom: 0.4rem; }
-body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max-width: 52ch; }
-
-.surprise-btn {
- display: inline-flex; align-items: center; gap: 0.5rem; white-space: nowrap;
- font-family: var(--font-body); font-size: 0.86rem; font-weight: 500; color: var(--bg-elevated);
- background: var(--accent); border: 1px solid var(--accent); border-radius: 99px;
- padding: 0.55rem 1.05rem; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
+body.notes .blog-hero { text-align: left; margin: 3rem auto 0; max-width: 780px; }
+.blog-hero-eyebrow {
+ display: block; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.12em;
+ text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem;
 }
-.surprise-btn:hover { background: var(--accent-bright); border-color: var(--accent-bright); box-shadow: var(--shadow-soft); }
-.surprise-btn:active { transform: translateY(1px); }
-.surprise-btn i { font-size: 0.82rem; }
+body.notes .blog-hero h1 { font-size: 2.3rem; margin-bottom: 0.55rem; letter-spacing: -0.015em; }
+body.notes .blog-hero p { color: var(--text-muted); font-size: 1.02rem; max-width: 54ch; font-family: var(--font-display); }
 
+/* "Serendipitous discovery" — a quiet text control, not a game-show
+   button. It should read as a feature of the archive, not a CTA
+   competing with Read/Explore actions elsewhere on the page. */
+.surprise-btn {
+ display: inline-flex; align-items: center; gap: 0.45rem; white-space: nowrap;
+ font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);
+ background: none; border: none; padding: 0.3rem 0; cursor: pointer;
+}
+.surprise-btn:hover, .surprise-btn:focus-visible { color: var(--accent); }
+.surprise-btn i { font-size: 0.78rem; }
+
+.blog-hero-bar {
+ max-width: 780px; margin: 0 auto 2.3rem; padding-bottom: 1.3rem; border-bottom: 1px solid var(--rule);
+ display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+}
 .blog-stats {
- max-width: 640px; margin: 0 auto; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);
+ font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);
 }
 .blog-stats strong { color: var(--text-primary); font-weight: 600; }
 .blog-stats-sep { margin: 0 0.5rem; color: var(--text-faint); }
 
-.notes-index-rule { max-width: 640px; margin: 1.6rem auto 1.4rem; height: 1px; background: var(--rule); }
-
-.notes-filter { max-width: 640px; margin: 0 auto 1.6rem; display: flex; flex-direction: column; gap: 0.85rem; }
+.notes-filter { max-width: 780px; margin: 0 auto 1.6rem; display: flex; flex-direction: column; gap: 0.85rem; }
 
 .notes-search {
  display: flex; align-items: center; gap: 0.55rem;
  border: 1px solid var(--rule-strong); border-radius: 99px;
- padding: 0.5rem 0.9rem; background: var(--bg-elevated);
+ padding: 0.5rem 0.6rem 0.5rem 0.9rem; background: var(--bg-elevated);
  transition: border-color 0.15s ease;
 }
 .notes-search:focus-within { border-color: var(--accent-line); }
@@ -77,6 +83,11 @@ body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max
  font-family: var(--font-body); font-size: 0.88rem; color: var(--text-primary);
 }
 .notes-search input::placeholder { color: var(--text-faint); }
+.notes-search-kbd {
+ font-family: var(--font-mono); font-size: 0.68rem; color: var(--text-faint);
+ border: 1px solid var(--rule-strong); border-radius: 4px; padding: 0.1rem 0.4rem;
+ background: var(--bg-soft);
+}
 
 .notes-tag-filter { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .filter-pill {
@@ -88,7 +99,7 @@ body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max
 .filter-pill.is-active { background: var(--accent); border-color: var(--accent); color: var(--bg-elevated); }
 
 .notes-empty {
- max-width: 640px; margin: 0 auto 1.6rem; font-size: 0.92rem; color: var(--text-muted);
+ max-width: 780px; margin: 0 auto 1.6rem; font-size: 0.92rem; color: var(--text-muted);
  text-align: center; padding: 1.4rem 1rem;
 }
 .notes-empty button {
@@ -96,24 +107,11 @@ body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max
  text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
 }
 
-.post-list { list-style: none; margin: 0 auto; padding: 0; max-width: 640px; display: flex; flex-direction: column; }
-
-.post-list-item {
- border-top: 1px solid var(--rule);
- padding: 1.3rem 0.4rem;
- transition: background-color 0.2s ease;
- border-radius: var(--radius);
-}
-.post-list-item:first-child { border-top: 0; padding-top: 0.3rem; }
-.post-list-item:hover { background-color: var(--accent-soft); }
-
-.post-list-link { display: block; background: none; }
-
-.post-date { font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.03em; color: var(--text-muted); margin-bottom: 0.35rem; display: block; }
-.post-title { font-family: var(--font-display); font-size: 1.18rem; font-weight: 600; color: var(--text-primary); margin-bottom: 0.4rem; line-height: 1.35; }
-.post-excerpt { font-size: 0.92rem; color: var(--text-body); line-height: 1.6; }
-
-.post-list-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.65rem; }
+/* Topic-tag pills — used inside each individual post's abstract box
+   (.note-abstract-tags) and, with the -clickable modifier, as the
+   clickable shortcuts into the Archive's tag filter from post-list-tag
+   pills on the index (see notes.js). Kept as pills deliberately: these
+   are genuinely interactive controls, not just labels. */
 .tag-pill {
  font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.03em;
  color: var(--text-muted); border: 1px solid var(--rule-strong);
@@ -121,30 +119,6 @@ body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max
 }
 .tag-pill-clickable { cursor: pointer; transition: all 0.15s ease; }
 .tag-pill-clickable:hover { border-color: var(--accent-line); color: var(--accent); }
-
-.post-companion-link {
- display: flex; align-items: center; gap: 0.4rem;
- font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-muted);
- margin: 0.7rem 0.2rem 0; padding-top: 0.7rem; border-top: 1px dashed var(--rule);
-}
-.post-companion-link:hover { color: var(--accent); }
-.post-companion-link i { font-size: 0.68rem; }
-
-.post-list-item.is-featured {
- border: 1px solid var(--accent-line);
- border-top: 1px solid var(--accent-line);
- background: linear-gradient(135deg, var(--accent-soft), transparent 70%);
- padding: 1.2rem 1.1rem 1.2rem 0.7rem;
- margin-bottom: 0.4rem;
-}
-.post-list-item.is-featured:first-child { padding-top: 1.2rem; }
-
-.start-here-badge {
- display: inline-flex; align-items: center; gap: 0.3rem;
- font-family: var(--font-mono); font-size: 0.64rem; letter-spacing: 0.08em; text-transform: uppercase;
- color: var(--bg-elevated); background: var(--accent);
- padding: 0.18rem 0.55rem; border-radius: 99px; margin-bottom: 0.55rem;
-}
 
 /* =========================================================
    Single note — paper header, abstract, TOC
@@ -390,13 +364,208 @@ body.notes .blog-hero-text p { color: var(--text-muted); font-size: 0.98rem; max
  display: block; background: var(--bg-elevated); border: 1px solid var(--rule); border-radius: var(--radius);
  padding: 1rem 1.1rem; background-image: none; transition: border-color 0.2s ease, transform 0.2s ease;
 }
-.note-related-card:hover { border-color: var(--accent-line); transform: translateY(-2px); }
+.note-related-card:hover { border-color: var(--accent-line); }
 .note-related-kicker { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; display: block; }
 .note-related-title { font-family: var(--font-display); font-weight: 600; font-size: 0.98rem; color: var(--text-primary); line-height: 1.4; }
 
 @media (max-width: 600px) {
  .post-article-header h1 { font-size: 1.55rem; }
- body.notes .blog-hero-text h1 { font-size: 1.6rem; }
- body.notes .blog-hero { flex-direction: column; align-items: stretch; gap: 0.9rem; }
- .surprise-btn { justify-content: center; }
+ body.notes .blog-hero h1 { font-size: 1.7rem; }
+ .blog-hero-bar { flex-direction: column; align-items: flex-start; gap: 0.7rem; }
+}
+
+/* Shared "compact metadata line" — mono, dot-separated plain text.
+   Used wherever a card/row needs date · type · series info without
+   the visual weight of pills (pills stay reserved for the genuinely
+   interactive tag/filter controls above). */
+.meta-line {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0;
+  font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+.meta-line span:not(:last-child)::after { content: " \00b7 "; color: var(--rule-strong); }
+
+.notes-section-head, .archive-section > .notes-section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: 0 auto 1.2rem; max-width: 780px; padding-bottom: 0.5rem; border-bottom: 1px solid var(--rule);
+}
+.notes-section-head h2 { font-size: 1.4rem; letter-spacing: -0.01em; }
+
+/* =========================================================
+   Featured note — full-width visual centerpiece.
+   ========================================================= */
+.featured-note {
+  max-width: 780px; margin: 0 auto 2.8rem;
+  display: grid; grid-template-columns: 260px 1fr; gap: 2.1rem; align-items: center;
+  background: var(--bg-elevated); border: 1px solid var(--rule); border-radius: var(--radius-lg);
+  padding: 1.8rem; box-shadow: var(--shadow-soft);
+}
+.featured-note-media {
+  display: block; aspect-ratio: 1 / 1; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--rule-strong); background: var(--bg-soft);
+}
+.featured-note-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.featured-note-kicker {
+  display: inline-flex; align-items: center; font-family: var(--font-mono); font-size: 0.68rem;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--bg-elevated);
+  background: linear-gradient(135deg, var(--accent-bright), var(--accent));
+  padding: 0.32rem 0.75rem; border-radius: 999px; margin-bottom: 1.1rem;
+}
+.featured-note-title { font-size: 2rem; line-height: 1.12; letter-spacing: -0.02em; margin: 0 0 0.9rem; }
+.featured-note-title a { color: var(--text-primary); background: none; }
+.featured-note-title a:hover { color: var(--accent); }
+.featured-note-desc { font-size: 1rem; color: var(--text-body); line-height: 1.65; margin: 0 0 0; max-width: 58ch; }
+.featured-note .meta-line { margin: 0.9rem 0 1.2rem; }
+.featured-note-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+.featured-note-cta {
+  display: inline-flex; align-items: center; gap: 0.55rem; font-family: var(--font-mono);
+  font-size: 0.88rem; font-weight: 500; color: var(--bg-elevated); background: var(--accent);
+  padding: 0.62rem 1.15rem; border-radius: var(--radius); background-image: none;
+  transition: background-color 0.18s ease;
+}
+.featured-note-cta:hover { background: var(--accent-bright); }
+.featured-note-cta i { font-size: 0.82em; }
+.featured-note-companion {
+  display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono);
+  font-size: 0.78rem; color: var(--text-muted); background: none;
+}
+.featured-note-companion:hover { color: var(--accent); }
+
+/* =========================================================
+   Recent Notes — responsive 2-column editorial grid.
+   ========================================================= */
+.notes-section { max-width: 780px; margin: 0 auto 2.8rem; }
+.notes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.3rem; }
+.note-card {
+  display: flex; flex-direction: column; background: var(--bg-elevated); border: 1px solid var(--rule);
+  border-radius: var(--radius-lg); overflow: hidden; background-image: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.note-card:hover { border-color: var(--accent-line); box-shadow: var(--shadow-soft); }
+.card-thumb { display: block; aspect-ratio: 16 / 10; background: var(--bg-soft); overflow: hidden; }
+.card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+.note-card-title { display: block; font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; color: var(--text-primary); line-height: 1.35; margin: 1.05rem 1.15rem 0; }
+.note-card.is-textual .note-card-title { margin-top: 1.2rem; }
+.note-card .meta-line { margin: 0.45rem 1.15rem 0; }
+.note-card-desc { font-size: 0.87rem; color: var(--text-body); line-height: 1.55; margin: 0.6rem 1.15rem 0.9rem; flex: 1; }
+.note-card-read { display: inline-flex; align-items: center; gap: 0.35rem; font-family: var(--font-mono); font-size: 0.76rem; color: var(--accent); background: none; margin: 0 1.15rem 1.1rem; }
+.note-card-read i { font-size: 0.7em; }
+
+/* =========================================================
+   Series — curated collections, rule-separated rather than
+   cards, so three items of very different length sit
+   comfortably without forcing equal card heights.
+   ========================================================= */
+.series-section { max-width: 780px; margin: 0 auto 2.8rem; }
+.series-block { border-top: 1px solid var(--rule); padding: 1.6rem 0.2rem; }
+.series-block:first-of-type { border-top: 0; padding-top: 0.5rem; }
+.series-block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.series-block-head h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; }
+.series-block-head h3 a { color: var(--text-primary); background: none; }
+.series-block-head h3 a:hover { color: var(--accent); }
+.series-block-head p { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); }
+.series-parts { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+.series-parts li { display: flex; align-items: baseline; gap: 0.8rem; }
+.series-part-num { font-family: var(--font-mono); font-size: 0.76rem; color: var(--text-faint); width: 1.4rem; flex: none; }
+.series-parts a { font-size: 0.96rem; color: var(--text-body); background: none; }
+.series-parts a:hover { color: var(--accent); }
+.series-explore { display: inline-block; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+.series-explore:hover { color: var(--accent-bright); }
+
+/* =========================================================
+   Interactive companions — a distinct, dashed-border callout
+   so interactivity reads as a different kind of content, not
+   just another card in the grid.
+   ========================================================= */
+.interactive-section { max-width: 780px; margin: 0 auto 2.8rem; }
+.interactive-card {
+  display: block; background: var(--bg-soft); border: 1px dashed var(--accent-line);
+  border-radius: var(--radius-lg); padding: 1.8rem 1.9rem; background-image: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.interactive-card:hover { border-style: solid; background-color: var(--accent-soft); }
+.interactive-card-kicker {
+  display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.7rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem;
+}
+.interactive-card-text h3 { font-family: var(--font-display); font-size: 1.32rem; margin-bottom: 0.65rem; color: var(--text-primary); }
+.interactive-card-text p { font-size: 0.94rem; color: var(--text-body); line-height: 1.6; max-width: 62ch; margin: 0 0 1.1rem; }
+.interactive-card-cta { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.84rem; color: var(--accent); font-weight: 500; }
+.interactive-card-cta i { font-size: 0.8em; }
+
+/* =========================================================
+   Archive — compact, scannable, and the one place search and
+   tag filtering actually act. Grows gracefully to hundreds of
+   rows since each row is a single flex line.
+   ========================================================= */
+.archive-section { max-width: 780px; margin: 0 auto 3rem; }
+.archive-year { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.1em; color: var(--text-faint); margin: 1.5rem 0 0.3rem; }
+.archive-year-group:first-of-type .archive-year { margin-top: 0.3rem; }
+.archive-list { list-style: none; margin: 0; padding: 0; }
+.archive-row { border-top: 1px solid var(--rule); }
+.archive-row:first-child { border-top: 0; }
+.archive-row a { display: flex; align-items: baseline; gap: 1.1rem; padding: 0.7rem 0.4rem; background: none; border-radius: var(--radius); }
+.archive-row a:hover { background: var(--accent-soft); }
+.archive-month { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-faint); width: 2.4rem; flex: none; text-transform: uppercase; }
+.archive-title { flex: 1; font-size: 0.96rem; color: var(--text-primary); min-width: 0; }
+.archive-row a:hover .archive-title { color: var(--accent); }
+.archive-type { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-faint); white-space: nowrap; }
+
+/* =========================================================
+   Figure moments — an optional wider treatment for the one
+   figure per visualization-heavy post (the 3D landscape) that
+   earns more room than the standard 480px figure column.
+   ========================================================= */
+.post-article-body .post-figure.figure-wide img { max-width: 100%; }
+.post-figure.figure-wide { max-width: 720px; margin-left: 50%; transform: translateX(-50%); }
+
+/* =========================================================
+   Series navigation — on individual article pages, for posts
+   that belong to a numbered series (GA/ACO/SA, MDP, SQEP).
+   ========================================================= */
+.series-nav {
+  max-width: 640px; margin: 2.6rem auto; background: var(--bg-elevated); border: 1px solid var(--rule);
+  border-radius: var(--radius-lg); padding: 1.3rem 1.4rem;
+}
+.series-nav-label { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.9rem; display: block; }
+.series-nav-parts { list-style: none; margin: 0 0 1rem; padding: 0; display: flex; flex-direction: column; gap: 0.45rem; }
+.series-nav-parts li { display: flex; align-items: baseline; gap: 0.7rem; }
+.series-nav-parts .series-part-num { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-faint); width: 1.3rem; flex: none; }
+.series-nav-parts a { font-size: 0.92rem; color: var(--text-body); background: none; }
+.series-nav-parts a:hover { color: var(--accent); }
+.series-nav-parts .is-current { font-weight: 600; color: var(--text-primary); }
+.series-nav-parts .is-current .series-part-num { color: var(--accent); }
+.series-nav-pager {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding-top: 1rem; border-top: 1px dashed var(--rule);
+  font-family: var(--font-mono); font-size: 0.82rem;
+}
+.series-nav-pager a { color: var(--accent); background: none; }
+.series-nav-pager a:hover { color: var(--accent-bright); }
+.series-nav-pager .series-nav-none { color: var(--text-faint); }
+
+@media (max-width: 720px) {
+  .featured-note { grid-template-columns: 1fr; padding: 1.4rem; gap: 1.3rem; }
+  .featured-note-media { max-width: 220px; margin: 0 auto; }
+  .featured-note-title { font-size: 1.5rem; }
+  .notes-grid { grid-template-columns: 1fr; }
+  .notes-section-head, .archive-section > .notes-section-head { max-width: none; }
+}
+@media (max-width: 600px) {
+  .series-block-head { flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+  .archive-type { display: none; }
+  .series-nav-pager { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+}
+
+/* Motion micro-interactions (small lift/slide/zoom on hover) only run
+   when the visitor hasn't asked for reduced motion; the color/border/
+   shadow feedback above still applies either way. */
+@media (prefers-reduced-motion: no-preference) {
+  .note-related-card:hover { transform: translateY(-2px); }
+  .featured-note-cta:hover i { transform: translateX(3px); }
+  .note-card:hover { transform: translateY(-2px); }
+  .note-card:hover .card-thumb img { transform: scale(1.035); }
+  .note-card:hover .note-card-read i { transform: translateX(3px); }
+  .interactive-card:hover .interactive-card-cta i { transform: translateX(3px); }
+  .surprise-btn:hover i { transform: rotate(50deg); }
 }
