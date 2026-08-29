@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+
+
   <title>Post Title — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Post summary goes here.">
-  <meta name="theme-color" content="#fbfbf7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
@@ -33,6 +35,12 @@
 
 <body class="notes">
 
+  <script>
+    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-ready');
+    }
+  </script>
+
   <a href="#main" class="skip-link">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
 
@@ -43,11 +51,11 @@
         <span class="brand-name">Artin Kavoosi</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Notes</a>
-        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
-      </nav>
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
     </div>
   </header>
 
@@ -125,6 +133,22 @@
         </div>
 
       </article>
+
+      <!-- Optional: if this post is part of a numbered series, add a series-nav block here.
+           See any of the OR Visualizations posts, the MDP series posts, or the SQEP posts
+           for a working example — copy one and update the labels/hrefs/is-current.
+      <nav class="series-nav" aria-label="[Series name] series navigation">
+        <span class="series-nav-label">[Series Name]</span>
+        <ol class="series-nav-parts">
+          <li><span class="series-part-num">01</span><a href="other-post.html">Other Post Title</a></li>
+          <li class="is-current"><span class="series-part-num">02</span><span>Post Title</span></li>
+        </ol>
+        <div class="series-nav-pager">
+          <a href="other-post.html">&larr; Previous: Other Post Title</a>
+          <span class="series-nav-none">Next &rarr;</span>
+        </div>
+      </nav>
+      -->
 
       <!-- TODO: update the citation with the real title/year/slug -->
       <div class="note-cite">
