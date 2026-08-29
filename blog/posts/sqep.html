@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+
+
   <title>Stochastic Queens Elimination — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A stochastic, elimination-based variant of the n-queens problem: an MDP formulation, a provable approximation guarantee for a greedy heuristic, and a MIP for the deterministic case.">
-  <meta name="theme-color" content="#fbfbf7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
@@ -41,11 +43,11 @@
         <span class="brand-name">Artin Kavoosi</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Notes</a>
-        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
-      </nav>
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
     </div>
   </header>
 
@@ -173,7 +175,7 @@
             <h2>The obvious heuristic isn't optimal</h2>
             <p>
               A natural first guess is to always activate whichever queen currently threatens the most
-              rivals; a greedy-by-degree policy. It turns out this is provably suboptimal for \(p < 1\):
+              rivals; a greedy-by-degree policy. It turns out this is provably suboptimal for \(p \lt 1\):
               the paper gives an explicit four-queen configuration where activating the highest-degree queen
               leaves a strictly larger expected cost than activating a lower-degree one, because degree alone
               ignores how much overlap there is between a queen's targets and the rest of the conflict graph.
@@ -260,7 +262,7 @@
               queen is activated at each step, and which attacking pairs are currently unblocked, with a set of
               linear constraints proven to encode the blocking logic exactly. Solving this MIP gives an exact
               optimal elimination order for \(p=1\) and, since \(\Psi^{\star}(1) \le \Psi^{\star}(p)\) for all
-              \(p<1\), also supplies a valid lower bound usable for pruning in stochastic instances.
+              \(p \lt 1\), also supplies a valid lower bound usable for pruning in stochastic instances.
             </p>
 
             <h2>Takeaways</h2>
@@ -298,6 +300,18 @@
           <!-- Full manuscript PDF to be added when available -->
 
         </article>
+
+      <nav class="series-nav" aria-label="SQEP series navigation">
+        <span class="series-nav-label">SQEP Series</span>
+        <ol class="series-nav-parts">
+          <li class="is-current"><span class="series-part-num">01</span><span>Overview</span></li>
+          <li><span class="series-part-num">02</span><a href="sqep-interactive.html">Interactive companion</a></li>
+        </ol>
+        <div class="series-nav-pager">
+          <span class="series-nav-none">&larr; Previous</span>
+          <a href="sqep-interactive.html">Next: Interactive companion &rarr;</a>
+        </div>
+      </nav>
 
       <div class="note-cite">
         <h3>Cite this note</h3>
