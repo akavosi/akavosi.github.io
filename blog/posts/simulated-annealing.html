@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+
+
   <title>Simulated Annealing — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A from-scratch simulated annealing search on a hand-designed, deliberately deceptive energy landscape, engineered and visualized so watching a cooling search escape a plausible trap is the whole point.">
-  <meta name="theme-color" content="#fbfbf7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="canonical" href="https://akavosi.github.io/blog/posts/simulated-annealing.html">
 
   <meta property="og:type" content="article">
@@ -73,11 +75,11 @@
         <span class="brand-name">Artin Kavoosi</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Notes</a>
-        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
-      </nav>
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
     </div>
   </header>
 
@@ -183,7 +185,7 @@
               E(\text{current})\), the acceptance probability is
             </p>
             <p>\[
-              P(\text{accept}) = \begin{cases} 1 & \Delta E \le 0 \\ \exp(-\Delta E / T) & \Delta E > 0 \end{cases}
+              P(\text{accept}) = \begin{cases} 1 &amp; \Delta E \le 0 \\ \exp(-\Delta E / T) &amp; \Delta E > 0 \end{cases}
             \]</p>
             <p>
               where \(T\) is the current temperature. Large \(\Delta E\) or small \(T\) both push
@@ -293,7 +295,7 @@
             that made markers render correctly above a surface in the first place.
           </p>
 
-          <figure class="post-figure">
+          <figure class="post-figure figure-wide">
             <img src="../assets/simulated-annealing/sa_landscape_3d_descent_blog.gif" alt="Animated 3D shaded-relief energy surface with two markers, one tracking the current wandering point and one tracking the best point found so far, with a slow camera rotation as the search settles into the deepest well.">
             <figcaption>
               The wandering current point (navy) and the best-ever point (gold) shown together across
@@ -401,6 +403,19 @@
         </div>
 
       </article>
+
+      <nav class="series-nav" aria-label="OR Visualizations series navigation">
+        <span class="series-nav-label">OR Visualizations</span>
+        <ol class="series-nav-parts">
+          <li><span class="series-part-num">01</span><a href="genetic-algorithm-evolution.html">Genetic Algorithm Evolution</a></li>
+          <li><span class="series-part-num">02</span><a href="ant-colony-optimization.html">Ant Colony Optimization</a></li>
+          <li class="is-current"><span class="series-part-num">03</span><span>Simulated Annealing</span></li>
+        </ol>
+        <div class="series-nav-pager">
+          <a href="ant-colony-optimization.html">&larr; Previous: Ant Colony Optimization</a>
+          <span class="series-nav-none">Next &rarr;</span>
+        </div>
+      </nav>
 
       <div class="note-cite">
         <h3>Cite this note</h3>
