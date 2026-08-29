@@ -3,10 +3,12 @@
 
 <head>
   <meta charset="UTF-8">
+
+
   <title>Ant Colony Optimization — Artin Kavoosi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A from-scratch Elitist Ant System searching a 17-city instance with a provable answer, engineered and visualized so watching pheromone concentrate into the optimal tour is the whole point.">
-  <meta name="theme-color" content="#fbfbf7">
+  <meta name="theme-color" content="#ffffff">
   <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
 
   <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
@@ -41,11 +43,11 @@
         <span class="brand-name">Artin Kavoosi</span>
       </a>
 
-      <nav class="nav-links" aria-label="Primary">
-        <a href="../../index.html#about">About</a>
-        <a href="../index.html" class="active">Notes</a>
-        <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
-      </nav>
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
     </div>
   </header>
 
@@ -263,7 +265,7 @@
             renders directly — two city indices as the base plane, pheromone level as height.
           </p>
 
-          <figure class="post-figure">
+          <figure class="post-figure figure-wide">
             <img src="../assets/ant-colony-optimization/aco_pheromone_3d_blog.gif" alt="Animated 3D bar chart of the pheromone matrix. Bars for most city pairs stay low and shrink toward zero, while seventeen bars corresponding to the optimal tour's edges grow tall and turn gold, with a slow camera rotation throughout.">
             <figcaption>
               289 possible (ordered) city pairs, rendered as bars. Watching most of them shrink
@@ -368,11 +370,26 @@
             <span class="note-related-title">Genetic Algorithm Evolution</span>
             <span class="note-related-desc">Part 1 of this series — the same visual language, applied to a continuous landscape riddled with local optima.</span>
           </a>
+          <a class="note-related-card" href="simulated-annealing.html">
+            <span class="note-related-title">Simulated Annealing</span>
+            <span class="note-related-desc">Part 3 of this series — the same visual language, applied to a hand-designed energy surface with six wells of different depths.</span>
+          </a>
         </div>
-        <!-- Part 3, Simulated Annealing, not yet published — add a second
-             note-related card here once that post exists. -->
 
       </article>
+
+      <nav class="series-nav" aria-label="OR Visualizations series navigation">
+        <span class="series-nav-label">OR Visualizations</span>
+        <ol class="series-nav-parts">
+          <li><span class="series-part-num">01</span><a href="genetic-algorithm-evolution.html">Genetic Algorithm Evolution</a></li>
+          <li class="is-current"><span class="series-part-num">02</span><span>Ant Colony Optimization</span></li>
+          <li><span class="series-part-num">03</span><a href="simulated-annealing.html">Simulated Annealing</a></li>
+        </ol>
+        <div class="series-nav-pager">
+          <a href="genetic-algorithm-evolution.html">&larr; Previous: Genetic Algorithm Evolution</a>
+          <a href="simulated-annealing.html">Next: Simulated Annealing &rarr;</a>
+        </div>
+      </nav>
 
       <div class="note-cite">
         <h3>Cite this note</h3>
