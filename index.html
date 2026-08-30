@@ -69,7 +69,7 @@
   </script>
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
-  <a href="#about" class="skip-link">Skip to content</a>
+  <a href="#notebook" class="skip-link">Skip to content</a>
   <div class="grain" aria-hidden="true"></div>
 
   <header class="site-header">
@@ -89,12 +89,10 @@
   </header>
 
   <nav class="section-rail" aria-label="Section navigation">
-    <a href="#about"><span class="rail-num">01</span><span class="rail-label">About</span></a>
-    <a href="#research"><span class="rail-num">02</span><span class="rail-label">Research</span></a>
-    <a href="#projects"><span class="rail-num">03</span><span class="rail-label">Projects</span></a>
-    <a href="#publications"><span class="rail-num">04</span><span class="rail-label">Publications</span></a>
-    <a href="#background"><span class="rail-num">05</span><span class="rail-label">Background</span></a>
-    <a href="#contact"><span class="rail-num">06</span><span class="rail-label">Contact</span></a>
+    <a href="#projects"><span class="rail-num">01</span><span class="rail-label">Projects</span></a>
+    <a href="#publications"><span class="rail-num">02</span><span class="rail-label">Publications</span></a>
+    <a href="#background"><span class="rail-num">03</span><span class="rail-label">Background</span></a>
+    <a href="#contact"><span class="rail-num">04</span><span class="rail-label">Contact</span></a>
   </nav>
 
   <main class="page" id="top">
@@ -110,15 +108,31 @@
               <a href="https://scholar.google.com/citations?hl=en&amp;user=gIBr2zQAAAAJ" target="_blank" rel="noopener" title="Google Scholar" aria-label="Google Scholar"><i class="fas fa-graduation-cap" aria-hidden="true"></i></a>
               <a href="https://orcid.org/0009-0002-1033-5480" target="_blank" rel="noopener" title="ORCID" aria-label="ORCID"><i class="fa-brands fa-orcid" aria-hidden="true"></i></a>
             </div>
+
+            <div class="hero-links-list">
+              <nav class="hero-jump" aria-label="Quick links">
+                <a href="blog/index.html">Notes</a>
+                <a href="#projects">Projects</a>
+                <a href="#publications">Publications</a>
+                <a href="cv.pdf" target="_blank" rel="noopener">CV</a>
+              </nav>
+
+            </div>
+
           </div>
+
+
 
           <div class="hero-intro">
             <h1>Artin Kavoosi</h1>
 
             <p class="hero-bio">
               I am an M.Sc. candidate in System Modeling and Data Analytics at the University of
-              Tehran, working at the intersection of operations research and machine learning. My
-              research interests are in decision-making under uncertainty for perishable and
+              Tehran, working at the intersection of operations research and machine learning. 
+
+            </p>
+            <p class="hero-bio">
+              My interests are in decision-making under uncertainty for perishable and
               safety-critical supply chains &mdash; inventory control, dynamic pricing, and
               coordination for blood banks, fresh produce, and retail &mdash; using reinforcement
               learning and Markov decision processes to build methods that are theoretically
@@ -128,21 +142,10 @@
               I am advised by Prof. Reza Tavakkoli-Moghaddam, and my thesis,
               <em>&ldquo;Towards autonomous supply chains for perishable products: Learning based
               decision making for coordination, competition, and resilience,&rdquo;</em> is expected
-              to be completed in December 2026. Before my M.Sc., I completed my B.S. in Industrial
-              Engineering at Kharazmi University.
+              to be completed in December 2026.
             </p>
 
-            <nav class="hero-jump" aria-label="Quick links">
-              <a href="#research">Research</a>
-              <a href="blog/index.html">Notes</a>
-              <a href="#projects">Projects</a>
-              <a href="#publications">Publications</a>
-              <a href="cv.pdf" target="_blank" rel="noopener">CV</a>
-            </nav>
 
-            <p class="hero-contact-line">
-              Email: <a href="mailto:alireza.kavoosi@ut.ac.ir">alireza.kavoosi@ut.ac.ir</a>
-            </p>
           </div>
         </div>
 
@@ -167,62 +170,6 @@
       </section>
 
       <div class="section-thread">
-      <section id="about" class="section">
-        <div class="section-head">
-          <span class="section-num">01</span>
-          <h2>About</h2>
-        </div>
-        <p class="lede drop-cap">
-          I am an M.Sc. candidate in System Modeling and Data Analytics at the
-          <a href="https://ut.ac.ir" target="_blank" rel="noopener">University of Tehran</a>,
-          where I am advised by Prof. Reza Tavakkoli-Moghaddam.
-        </p>
-        <p>
-          My thesis, <em>“Towards autonomous supply chains for perishable products: Learning based
-          decision making for coordination, competition, and resilience,”</em> is expected to be completed
-          in December 2026.
-        </p>
-      </section>
-
-      <section id="research" class="section">
-        <div class="section-head">
-          <span class="section-num">02</span>
-          <h2>Research Statement</h2>
-        </div>
-        <p>
-          Perishable goods, blood units, fresh produce, short shelf life inventory, are managed under
-          uncertainty that classical optimization struggles to capture. Demand is noisy, supply is
-          disrupted, and decisions made today constrain what is possible tomorrow. My research asks how
-          autonomous agents can make good pricing, replenishment, and coordination decisions in these
-          settings, without relying on the simplifying assumptions that make problems tractable but
-          unrealistic.
-        </p>
-        <p>
-          I work at the intersection of operations research and machine learning, to design decision making systems
-          for inventory control, dynamic pricing, and supply chain coordination. This matters because
-          perishable and life critical supply chains, blood banks, food distribution, retail, absorb real
-          costs from waste, shortage, and slow adaptation to disruption. My goal is to build methods that
-          are both theoretically grounded and usable in practice, so that the systems making these
-          decisions can learn, adapt, and remain resilient as conditions change.
-        </p>
-        <p class="pull-quote">“My research asks how autonomous agents can make good pricing, replenishment, and coordination decisions in these settings, without relying on the simplifying assumptions that make problems tractable but unrealistic.”</p>
-
-        <div class="research-groups">
-          <div>
-            <span class="research-group-label">Decision Making</span>
-            <div class="research-group-terms">Operations Research &middot; Optimization &middot; Markov Decision Processes</div>
-          </div>
-          <div>
-            <span class="research-group-label">Learning</span>
-            <div class="research-group-terms">Reinforcement Learning &middot; Machine Learning</div>
-          </div>
-          <div>
-            <span class="research-group-label">Applications</span>
-            <div class="research-group-terms">Supply Chains &middot; Inventory &middot; Pricing &middot; Resilience</div>
-          </div>
-        </div>
-      </section>
-
       <section id="notebook" class="section notebook-teaser" aria-labelledby="notebook-heading">
         <div class="notebook-head">
           <div>
@@ -256,7 +203,7 @@
 
       <section id="projects" class="section">
         <div class="section-head">
-          <span class="section-num">03</span>
+          <span class="section-num">01</span>
           <h2>Projects</h2>
         </div>
         <ol class="projects-list">
@@ -320,7 +267,7 @@
 
       <section id="publications" class="section">
         <div class="section-head">
-          <span class="section-num">04</span>
+          <span class="section-num">02</span>
           <h2>Publications</h2>
         </div>
         <p class="scholar-note">
@@ -488,7 +435,7 @@
 
       <section id="background" class="section">
         <div class="section-head">
-          <span class="section-num">05</span>
+          <span class="section-num">03</span>
           <h2>Background</h2>
         </div>
         <div class="background-intro">
@@ -665,7 +612,7 @@
 
       <section id="contact" class="section">
         <div class="section-head">
-          <span class="section-num">06</span>
+          <span class="section-num">04</span>
           <h2>Contact</h2>
         </div>
         <p>
