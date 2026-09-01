@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+
+  <title>An interactive counterexample to greedy-degree — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A four-queen counterexample to greedy-degree, made interactive: two queens tie for the highest degree on the board, yet activating one is provably optimal and the other never fully recovers. Proposition 18 of the S-SQEP paper, live in your browser.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+  <style>
+.prop18-widget {
+  margin: 2rem 0;
+  padding: 1.25rem;
+  background: var(--bg-elevated, #1d2229);
+  border: 1px solid var(--rule, #353d49);
+  border-radius: var(--radius-lg, 8px);
+  font-family: var(--font-body, sans-serif);
+}
+.prop18-graph { width: 100%; max-width: 640px; display: block; margin: 0 auto; }
+.prop18-slider-row { display: flex; align-items: center; gap: 12px; margin: 1.35rem 0 1.1rem; }
+.prop18-slider-row label { font-size: 0.8rem; color: var(--text-muted, #9ea8b7); white-space: nowrap; }
+.prop18-slider-row input[type=range] { flex: 1; }
+.prop18-slider-row .pval { font-size: 0.85rem; font-weight: 500; min-width: 42px; text-align: right; color: var(--text-primary, #f2f4f8); }
+.prop18-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+.prop18-card { background: var(--bg-soft, #252b34); border-radius: var(--radius, 4px); padding: 0.85rem; text-align: center; border: 1px solid transparent; }
+.prop18-card.is-optimal { background: rgba(111,207,151,0.1); border-color: #6fcf97; }
+.prop18-card .label { font-size: 0.82rem; font-weight: 500; color: var(--text-primary, #f2f4f8); }
+.prop18-card.is-optimal .label { color: #6fcf97; }
+.prop18-card .sub { font-size: 0.7rem; color: var(--text-muted, #9ea8b7); margin: 2px 0 6px; }
+.prop18-card.is-optimal .sub { color: #6fcf97; }
+.prop18-card .val { font-size: 1.3rem; font-weight: 500; color: var(--text-primary, #f2f4f8); }
+.prop18-card.is-optimal .val { color: #6fcf97; }
+.prop18-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.prop18-panel { background: var(--bg-soft, #252b34); border-radius: var(--radius, 4px); padding: 0.95rem 1.15rem; }
+.prop18-panel.is-optimal { background: rgba(111,207,151,0.08); }
+.prop18-panel h4 { font-size: 0.85rem; font-weight: 500; margin: 0 0 0.65rem; color: var(--text-primary, #f2f4f8); }
+.prop18-panel.is-optimal h4 { color: #6fcf97; }
+.prop18-row { display: flex; justify-content: space-between; gap: 8px; font-size: 0.78rem; padding: 0.4rem 0; border-top: 1px solid var(--rule, #353d49); }
+.prop18-panel.is-optimal .prop18-row { border-top-color: rgba(111,207,151,0.25); }
+.prop18-row .rl { color: var(--text-muted, #9ea8b7); flex: 1; }
+.prop18-row .rp { color: var(--text-muted, #9ea8b7); min-width: 34px; text-align: right; }
+.prop18-row .rv { color: var(--text-primary, #f2f4f8); min-width: 68px; text-align: right; }
+.prop18-panel.is-optimal .rv { color: #6fcf97; }
+.prop18-note { font-size: 0.7rem; color: var(--text-muted, #9ea8b7); margin: -3px 0 5px; }
+.prop18-total { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; padding: 0.65rem 0 0; border-top: 1px solid var(--rule-strong, #444f5e); margin-top: 0.45rem; color: var(--text-primary, #f2f4f8); }
+.prop18-panel.is-optimal .prop18-total { border-top-color: #6fcf97; color: #6fcf97; }
+.prop18-caption { font-size: 0.8rem; color: var(--text-muted, #9ea8b7); margin: 0.9rem 0 0; }
+.prop18-gap { text-align: center; font-size: 0.8rem; color: var(--text-muted, #9ea8b7); margin: 1.1rem 0 0; }
+.prop18-gap strong { color: var(--text-primary, #f2f4f8); font-weight: 500; }
+  </style>
+  <!-- MathJax, for the formulas in this post only -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body class="notes">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="brand-name">Artin Kavoosi</span>
+      </a>
+
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner">
+
+        <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+        <article class="post-article">
+      <span class="note-kicker">Companion · Counterexample</span>
+
+      <header class="post-article-header">
+        <span class="post-meta">September 2026<span class="series-badge">SQEP series &middot; Part 3</span></span>
+        <h1>An interactive counterexample to greedy-degree</h1>
+      </header>
+
+      <div class="note-abstract">
+        <span class="note-abstract-label">Abstract</span>
+        <p>Two queens tie for the highest degree on a four-queen board. Activating one of them is exactly optimal; activating the other is strictly worse for every kill probability \(p\), even under otherwise-optimal play. Proposition 18 of the main paper proves this in closed form. This post lets you drag \(p\) and watch it happen.</p>
+        <div class="note-abstract-tags">
+            <span class="tag-pill">Markov Decision Processes</span>
+            <span class="tag-pill">Greedy algorithms</span>
+            <span class="tag-pill">Interactive</span>
+          <span class="tag-pill">~3 min read</span>
+        </div>
+      </div>
+
+      <details class="note-toc" id="note-toc">
+        <summary>Contents</summary>
+        <ol class="note-toc-list" id="note-toc-list"></ol>
+      </details>
+
+          <div class="post-article-body">
+
+            <p>
+              The <a href="sqep.html">main post</a> shows Adaptive Coverage Greedy (ACG) tracking the exact
+              optimal value \(V^{*}(s_0)\) closely, while a plain greedy-by-degree rule falls further behind as
+              \(p\) drops. That raises a fair question: why isn't "activate whichever queen currently threatens
+              the most others" already optimal? Degree feels like the right signal to chase. Proposition 18
+              answers this with the smallest instance that breaks greedy: four queens, one blocked pair, and a
+              tie in degree that greedy has no way to resolve correctly.
+            </p>
+
+            <p>
+              Place four queens at \(A=(1,1)\), \(B=(1,2)\), \(C=(3,2)\), \(D=(4,2)\). The attack graph is a path
+              \(A - B - C - D\): three unblocked conflicts, \(\kappa(s_0) = 3\). There's a fourth pair sharing a
+              line, \(B\) and \(D\), but \(C\) sits directly between them, so that pair is blocked for as long as
+              \(C\) survives. Counting only unblocked kill-neighbors, \(B\) and \(C\) both have degree 2, the
+              maximum on the board; \(A\) and \(D\) each have degree 1. Greedy-by-degree has to choose between
+              \(B\) and \(C\), and on degree alone there's nothing to choose between them.
+            </p>
+
+            <p>
+              There should be, though. Activating \(C\) achieves the true optimum, \(V^{*}(s_0) = 3/p\).
+              Activating \(B\) instead — an equally defensible tie-break under greedy-by-degree — commits you to
+              \(V^{\pi_G}(s_0) = \dfrac{7-3p}{p(2-p)}\), strictly worse for every \(p \in (0,1)\), even granting
+              optimal play from that point on. Two choices, identical under the only signal greedy consults, and
+              one of them is a permanent mistake.
+            </p>
+
+            <p>
+              The panel below plays out both choices side by side. Drag \(p\); every number on it — the four
+              activation costs, the branch probabilities, both running totals — is live.
+            </p>
+
+<div class="prop18-widget">
+  <svg class="prop18-graph" viewBox="0 0 680 200" role="img" aria-label="Attack graph for the four-queen counterexample: a path A-B-C-D, with B and D also attacking each other along a line blocked by C">
+    <path d="M290,104 Q430,30 570,104" fill="none" stroke="var(--rule-strong, #444f5e)" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="430" y="40" text-anchor="middle" font-size="11" fill="var(--text-muted, #9ea8b7)">blocked while C survives</text>
+    <line x1="176" y1="130" x2="264" y2="130" stroke="var(--text-muted, #9ea8b7)" stroke-width="1"/>
+    <line x1="316" y1="130" x2="404" y2="130" stroke="var(--text-muted, #9ea8b7)" stroke-width="1"/>
+    <line x1="456" y1="130" x2="544" y2="130" stroke="var(--text-muted, #9ea8b7)" stroke-width="1"/>
+    <g><circle cx="150" cy="130" r="26" fill="var(--bg-soft, #252b34)" stroke="var(--rule-strong, #444f5e)" stroke-width="1"/><text x="150" y="131" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="500" fill="var(--text-primary, #f2f4f8)">A</text></g>
+    <g><circle cx="290" cy="130" r="26" fill="var(--bg-soft, #252b34)" stroke="var(--rule-strong, #444f5e)" stroke-width="1"/><text x="290" y="131" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="500" fill="var(--text-primary, #f2f4f8)">B</text></g>
+    <g><circle cx="430" cy="130" r="26" fill="var(--bg-soft, #252b34)" stroke="var(--rule-strong, #444f5e)" stroke-width="1"/><text x="430" y="131" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="500" fill="var(--text-primary, #f2f4f8)">C</text></g>
+    <g><circle cx="570" cy="130" r="26" fill="var(--bg-soft, #252b34)" stroke="var(--rule-strong, #444f5e)" stroke-width="1"/><text x="570" y="131" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="500" fill="var(--text-primary, #f2f4f8)">D</text></g>
+    <text x="150" y="172" text-anchor="middle" font-size="11" fill="var(--text-muted, #9ea8b7)">degree 1</text>
+    <text x="290" y="172" text-anchor="middle" font-size="11" fill="var(--text-muted, #9ea8b7)">degree 2</text>
+    <text x="430" y="172" text-anchor="middle" font-size="11" fill="var(--text-muted, #9ea8b7)">degree 2</text>
+    <text x="570" y="172" text-anchor="middle" font-size="11" fill="var(--text-muted, #9ea8b7)">degree 1</text>
+  </svg>
+
+  <div class="prop18-slider-row">
+    <label for="prop18-p">Kill probability p</label>
+    <input type="range" id="prop18-p" min="0.05" max="0.95" step="0.01" value="0.5">
+    <span class="pval" id="prop18-pval">0.50</span>
+  </div>
+
+  <div class="prop18-cards">
+    <div class="prop18-card">
+      <div class="label">Activate A</div>
+      <div class="sub">degree 1</div>
+      <div class="val" id="val-A">8.00</div>
+    </div>
+    <div class="prop18-card">
+      <div class="label">Activate B</div>
+      <div class="sub">degree 2</div>
+      <div class="val" id="val-B">7.33</div>
+    </div>
+    <div class="prop18-card is-optimal">
+      <div class="label">Activate C</div>
+      <div class="sub">degree 2 &middot; optimal</div>
+      <div class="val" id="val-C">6.00</div>
+    </div>
+    <div class="prop18-card">
+      <div class="label">Activate D</div>
+      <div class="sub">degree 1</div>
+      <div class="val" id="val-D">10.00</div>
+    </div>
+  </div>
+
+  <div class="prop18-panels">
+    <div class="prop18-panel">
+      <h4>Activate B first</h4>
+      <div class="prop18-row"><span class="rl">Kill A and C</span><span class="rp" id="b1-prob">25%</span><span class="rv" id="b1-val">then 2.00</span></div>
+      <div class="prop18-note">B&ndash;D unblocks: 1 conflict remains even here</div>
+      <div class="prop18-row"><span class="rl">Kill only A</span><span class="rp" id="b2-prob">25%</span><span class="rv" id="b2-val">then 4.00</span></div>
+      <div class="prop18-row"><span class="rl">Kill only C</span><span class="rp" id="b3-prob">25%</span><span class="rv" id="b3-val">then 4.00</span></div>
+      <div class="prop18-total"><span>Expected total</span><span id="b-total">7.33</span></div>
+    </div>
+    <div class="prop18-panel is-optimal">
+      <h4>Activate C first</h4>
+      <div class="prop18-row"><span class="rl">Kill B and D</span><span class="rp" id="c1-prob">25%</span><span class="rv" id="c1-val">then 0.00</span></div>
+      <div class="prop18-note">board fully clears</div>
+      <div class="prop18-row"><span class="rl">Kill only B</span><span class="rp" id="c2-prob">25%</span><span class="rv" id="c2-val">then 2.00</span></div>
+      <div class="prop18-row"><span class="rl">Kill only D</span><span class="rp" id="c3-prob">25%</span><span class="rv" id="c3-val">then 4.00</span></div>
+      <div class="prop18-total"><span>Expected total</span><span id="c-total">6.00</span></div>
+    </div>
+  </div>
+  <p class="prop18-gap">C beats B by <strong id="gap-val">1.33</strong> expected conflicts at this p &mdash; for every p in (0,1).</p>
+  <p class="prop18-caption">
+    Both totals are exact closed-form expected values, not simulation averages — there's no sampling noise
+    hiding in either number.
+  </p>
+</div>
+
+<script>
+(function () {
+  var slider = document.getElementById('prop18-p');
+  var pval = document.getElementById('prop18-pval');
+  function fmt(x) { return x.toFixed(2); }
+  function update() {
+    var p = parseFloat(slider.value);
+    pval.textContent = fmt(p);
+    var qA = 4 / p;
+    var qB = (7 - 3 * p) / (p * (2 - p));
+    var qC = 3 / p;
+    var qD = 5 / p;
+    document.getElementById('val-A').textContent = fmt(qA);
+    document.getElementById('val-B').textContent = fmt(qB);
+    document.getElementById('val-C').textContent = fmt(qC);
+    document.getElementById('val-D').textContent = fmt(qD);
+    document.getElementById('b-total').textContent = fmt(qB);
+    document.getElementById('c-total').textContent = fmt(qC);
+    document.getElementById('gap-val').textContent = fmt(qB - qC);
+
+    var pctBoth = Math.round(p * p * 100) + '%';
+    var pctOne = Math.round(p * (1 - p) * 100) + '%';
+    document.getElementById('b1-prob').textContent = pctBoth;
+    document.getElementById('b2-prob').textContent = pctOne;
+    document.getElementById('b3-prob').textContent = pctOne;
+    document.getElementById('c1-prob').textContent = pctBoth;
+    document.getElementById('c2-prob').textContent = pctOne;
+    document.getElementById('c3-prob').textContent = pctOne;
+
+    document.getElementById('b1-val').textContent = 'then ' + fmt(1 / p);
+    document.getElementById('b2-val').textContent = 'then ' + fmt(2 / p);
+    document.getElementById('b3-val').textContent = 'then ' + fmt(2 / p);
+    document.getElementById('c1-val').textContent = 'then 0.00';
+    document.getElementById('c2-val').textContent = 'then ' + fmt(1 / p);
+    document.getElementById('c3-val').textContent = 'then ' + fmt(2 / p);
+  }
+  slider.addEventListener('input', update);
+  update();
+})();
+</script>
+
+            <h2>Why the tie breaks the wrong way</h2>
+            <p>
+              Follow what happens after each activation. \(B\)'s two kill-neighbors are \(A\) and \(C\);
+              \(C\)'s are \(B\) and \(D\). If \(C\) activates and kills both neighbors, the board is left with
+              only \(A\) and \(C\) — which don't attack each other — so it clears completely, \(\kappa = 0\),
+              done. If \(B\) activates and kills both of its neighbors instead, the board is left with \(B\)
+              and \(D\)... and the \(B\)-\(D\) line is no longer blocked, because the queen that was blocking
+              it, \(C\), is one of the two that just died. Even \(B\)'s best possible roll leaves one conflict
+              standing, resurrected from a pair that used to be safely screened off.
+            </p>
+            <p>
+              Degree, as greedy computes it, only counts how many queens you can hit on the board right now.
+              It has no way to see that removing \(C\) doesn't just delete two edges — it also switches a
+              third one back on. \(C\) doesn't have this problem: nothing \(C\) can kill was ever screening
+              off some other pair. That asymmetry, invisible to a single number, is the entire counterexample.
+            </p>
+
+            <h2>What to look for</h2>
+            <ul>
+              <li>
+                Drag \(p\) across the whole range. \(C\) stays strictly ahead of \(B\) throughout — the gap
+                narrows as \(p \to 1\), since both policies converge toward resolving everything in one
+                round, but it never closes.
+              </li>
+              <li>
+                Compare \(B\) to \(A\) and \(D\): despite tying \(C\) on degree, activating \(B\) still beats
+                both degree-1 options across the slider's whole range. The greedy mistake here is subtle, not
+                catastrophic — it loses only to the one queen it couldn't distinguish itself from.
+              </li>
+              <li>
+                Watch the note under \(B\)'s first row. Even the best possible outcome for \(B\) — both
+                neighbors die — is exactly the outcome that reopens \(B\)-\(D\). There's no version of
+                activating \(B\) that clears the board the way activating \(C\) can.
+              </li>
+            </ul>
+
+            <p>
+              This board is small on purpose — Proposition 18 only needs the smallest instance that breaks
+              greedy, not a realistic one. But the failure mode it exposes isn't small: any time removing one
+              queen unblocks a line between two others, a rule that only ever looks at current degree has no
+              way to see it coming. That's the gap the main post's Adaptive Coverage Greedy is built to close.
+            </p>
+
+          </div>
+
+        </article>
+
+      <nav class="series-nav" aria-label="SQEP series navigation">
+        <span class="series-nav-label">SQEP Series</span>
+        <ol class="series-nav-parts">
+          <li><span class="series-part-num">01</span><a href="sqep.html">Overview</a></li>
+          <li><span class="series-part-num">02</span><a href="sqep-interactive.html">Interactive companion</a></li>
+          <li class="is-current"><span class="series-part-num">03</span><span>Counterexample, interactively</span></li>
+        </ol>
+        <div class="series-nav-pager">
+          <a href="sqep-interactive.html">&larr; Previous: Interactive companion</a>
+          <span class="series-nav-none">Next &rarr;</span>
+        </div>
+      </nav>
+
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (2026). &ldquo;Stochastic Queens Elimination.&rdquo; SSRN Working Paper. https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7091398</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@article{kavoosi2026sqep,
+  title   = {Stochastic Queens Elimination},
+  author  = {Kavoosi, Artin},
+  year    = {2026},
+  url     = {https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7091398}
+}</pre>
+        </div>
+        <p class="note-cite-note">Working paper on SSRN.</p>
+      </div>
+
+      <div class="note-related">
+        <h3>Continue reading</h3>
+        <div class="note-related-grid">
+          <a class="note-related-card" href="sqep.html">
+            <span class="note-related-kicker">Research Note</span>
+            <span class="note-related-title">Stochastic Queens Elimination</span>
+          </a>
+          <a class="note-related-card" href="mdp.html">
+            <span class="note-related-kicker">Seminar Note</span>
+            <span class="note-related-title">An introduction to MDP</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="../notes.js" defer></script>
+</body>
+
+</html>
