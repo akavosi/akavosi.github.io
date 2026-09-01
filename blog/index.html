@@ -61,11 +61,11 @@
 
       <div class="blog-hero-bar">
         <div class="blog-stats" id="blog-stats">
-          <span><strong id="stat-notes">7</strong> notes</span>
+          <span><strong id="stat-notes">8</strong> notes</span>
           <span class="blog-stats-sep">&middot;</span>
           <span><strong id="stat-series">3</strong> series</span>
           <span class="blog-stats-sep">&middot;</span>
-          <span><strong id="stat-interactive">1</strong> interactive</span>
+          <span><strong id="stat-interactive">2</strong> interactive</span>
         </div>
         <button class="surprise-btn" id="surprise-btn" type="button" title="Jump to a random note">
           <i class="fas fa-shuffle" aria-hidden="true"></i>
@@ -178,6 +178,7 @@
           <ol class="series-parts">
             <li><span class="series-part-num">01</span><a href="posts/sqep.html">Overview</a></li>
             <li><span class="series-part-num">02</span><a href="posts/sqep-interactive.html">Interactive companion</a></li>
+            <li><span class="series-part-num">03</span><a href="posts/sqep-counterexample.html">Counterexample, interactively</a></li>
           </ol>
           <a class="series-explore" href="posts/sqep.html">Explore series →</a>
         </article>
@@ -195,6 +196,15 @@
             <p>Don't just read about Random-admissible, Greedy-degree, and Adaptive Coverage Greedy — step
               through them yourself on the same n=8 board as the main post, and watch the cumulative
               conflict cost race against the exact optimal value.</p>
+            <span class="interactive-card-cta">Launch companion <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+          </div>
+        </a>
+
+        <a class="interactive-card" href="posts/sqep-counterexample.html">
+          <div class="interactive-card-text">
+            <span class="interactive-card-kicker"><i class="fas fa-shuffle" aria-hidden="true"></i> Interactive companion</span>
+            <h3>An interactive counterexample to greedy-degree</h3>
+            <p>Two queens tie for the highest degree on a four-queen board and activating one of them is exactly optimal.</p>
             <span class="interactive-card-cta">Launch companion <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
           </div>
         </a>
@@ -222,14 +232,17 @@
         <div class="archive-year-group" data-year="2026">
           <div class="archive-year">2026</div>
           <ul class="archive-list">
+            <li class="archive-row" data-tags="integer-programming,markov-decision-processes,companion,interactive,combinatorial-optimization">
+              <a href="posts/sqep-counterexample.html"><span class="archive-month">Sep</span><span class="archive-title">Counterexample, interactively</span><span class="archive-type">SQEP · 3/3</span></a>
+            </li>
             <li class="archive-row" data-tags="simulated-annealing,metaheuristics">
               <a href="posts/simulated-annealing.html"><span class="archive-month">Aug</span><span class="archive-title">Simulated Annealing</span><span class="archive-type">OR Visualizations · 3/3</span></a>
             </li>
             <li class="archive-row" data-tags="markov-decision-processes,combinatorial-optimization,approximation-guarantees">
-              <a href="posts/sqep.html"><span class="archive-month">Jul</span><span class="archive-title">Stochastic Queens Elimination</span><span class="archive-type">SQEP · 1/2</span></a>
+              <a href="posts/sqep.html"><span class="archive-month">Jul</span><span class="archive-title">Stochastic Queens Elimination</span><span class="archive-type">SQEP · 1/3</span></a>
             </li>
-            <li class="archive-row" data-tags="integer-programming,markov-decision-processes,companion,interactive">
-              <a href="posts/sqep-interactive.html"><span class="archive-month">Jul</span><span class="archive-title">An interactive S-SQEP policy simulator</span><span class="archive-type">SQEP · 2/2</span></a>
+            <li class="archive-row" data-tags="integer-programming,markov-decision-processes,companion,interactive,combinatorial-optimization">
+              <a href="posts/sqep-interactive.html"><span class="archive-month">Jul</span><span class="archive-title">An interactive S-SQEP policy simulator</span><span class="archive-type">SQEP · 2/3</span></a>
             </li>
             <li class="archive-row" data-tags="ant-colony-optimization,metaheuristics">
               <a href="posts/ant-colony-optimization.html"><span class="archive-month">Jul</span><span class="archive-title">Ant Colony Optimization</span><span class="archive-type">OR Visualizations · 2/3</span></a>
