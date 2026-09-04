@@ -206,7 +206,7 @@ body.notes .blog-hero p { color: var(--text-muted); font-size: 1.02rem; max-widt
 .post-article-body ul, .post-article-body ol { margin: 0 0 1.2rem; padding-left: 1.4rem; color: var(--text-body); }
 .post-article-body li { margin-bottom: 0.4rem; }
 .post-article-body img { max-width: 100%; border-radius: var(--radius); border: 1px solid var(--rule); margin: 1.5rem 0; display: block; }
-.post-article-body figcaption { font-family: var(--font-body); font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: -1rem; margin-bottom: 1.5rem; }
+.post-article-body figcaption { font-family: var(--font-body); font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.75rem; margin-bottom: 1.5rem; }
 .post-article-body blockquote { margin: 1.5rem 0; padding: 0.2rem 1.2rem; border-left: 2px solid var(--accent); color: var(--text-muted); font-style: italic; }
 .post-article-body code { font-family: var(--font-mono); font-size: 0.87em; background: var(--bg-soft); border: 1px solid var(--rule); padding: 0.1em 0.4em; border-radius: 3px; color: var(--accent); }
 .post-article-body pre { background: var(--bg-elevated); border: 1px solid var(--rule); border-radius: var(--radius); padding: 1rem 1.2rem; overflow-x: auto; margin: 0 0 1.2rem; }
