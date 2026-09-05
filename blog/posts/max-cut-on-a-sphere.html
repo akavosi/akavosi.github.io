@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+
+  <title>Max-Cut on a Sphere — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Why relaxing a graph-partitioning problem from the two-point set {-1, +1} to the whole sphere turns an NP-hard problem convex, and why slicing that sphere with one random plane recovers a cut worth at least 0.878567 of the optimum.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body class="notes">
+
+  <script>
+    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-ready');
+    }
+  </script>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="brand-name">Artin Kavoosi</span>
+      </a>
+
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner">
+
+      <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+      <article class="post-article">
+
+        <div class="post-hero">
+          <div class="post-hero-art">
+            <img src="../assets/max-cut-on-a-sphere/mcs_hero_poster.png" alt="A ten-vertex Petersen graph drawn as gold and navy points on the surface of a sphere, with a translucent gold disc slicing through the sphere as a random separating hyperplane and thick gold edges tracing the resulting cut.">
+          </div>
+          <div class="post-hero-text">
+            <span class="post-meta">Technical Note &middot; Combinatorial Optimization / Convex Relaxation<span class="series-badge">Geometry of Optimization series</span></span>
+            <h1>Max-Cut on a Sphere</h1>
+            <p class="post-tagline">A graph, a sphere, and one random plane.</p>
+          </div>
+        </div>
+
+        <div class="note-abstract">
+          <span class="note-abstract-label">Abstract</span>
+          <p>Max-Cut is NP-hard, but relaxing its two-point constraint \(x_i \in \{-1, +1\}\) to a
+            unit-sphere constraint \(v_i \in S^{d-1}\) turns it into a semidefinite program that can be
+            solved exactly in polynomial time. Slicing the resulting sphere with a single uniformly
+            random hyperplane and reading off the sign of each vertex recovers a graph cut whose
+            expected value is provably at least \(\alpha_{GW} \approx 0.878567\) times the true
+            optimum &mdash; the Goemans&ndash;Williamson algorithm. This note derives the relaxation, proves the
+            exact geometry behind the rounding step, verifies \(\alpha_{GW}\) numerically rather than
+            quoting it, and runs the whole pipeline on the Petersen graph to keep every claim checked
+            against a real, exactly-solved instance.</p>
+          <div class="note-abstract-tags">
+            <span class="tag-pill">Semidefinite Programming</span>
+            <span class="tag-pill">Approximation Algorithms</span>
+            <span class="tag-pill">~11 min read</span>
+          </div>
+        </div>
+
+        <details class="note-toc" id="note-toc">
+          <summary>Contents</summary>
+          <ol class="note-toc-list" id="note-toc-list"></ol>
+        </details>
+
+        <div class="post-article-body">
+
+          <p>
+            Max-Cut asks a simple question: given a graph, split its vertices into two groups so that
+            as much total edge weight as possible crosses between them. It is also, in the technical
+            sense, hopeless &mdash; one of Karp's original twenty-one NP-complete problems, with no known
+            polynomial-time algorithm and (assuming P &ne; NP) no way to find the exact optimum on a
+            large graph before the heat death of the universe. And yet in 1995, Goemans and Williamson
+            showed you can get provably, quantifiably close to the optimum in polynomial time, using an
+            idea that has nothing to do with graphs at first glance: forget the two-point constraint
+            \(x_i \in \{-1, +1\}\) entirely, let each vertex become a point anywhere on a high-dimensional
+            sphere, solve a convex program over that continuum, and then slice the sphere in half with a
+            single random plane.
+          </p>
+
+          <p>
+            This note walks through why that works, end to end: the exact combinatorial problem, the
+            relaxation that turns it convex, the geometric fact that makes random rounding
+            analyzable at all, and the numeric constant \(\alpha_{GW} \approx 0.878567\) that the whole
+            argument earns. Every number below is computed, not quoted &mdash; the
+            <a href="#code-and-reproducibility">code repository</a> reruns the entire pipeline and
+            reproduces every figure.
+          </p>
+
+          <h2>The problem, exactly</h2>
+          <p>
+            Fix a graph \(G = (V, E)\) with \(n = |V|\) vertices and non-negative edge weights \(w_{ij}\)
+            for \((i,j) \in E\). A <strong>cut</strong> is a partition of \(V\) into two sets; write it as
+            a labeling \(x \in \{-1, +1\}^n\), where \(x_i\) records which side vertex \(i\) is on. An
+            edge \((i,j)\) is <strong>cut</strong> exactly when its endpoints disagree, i.e. \(x_i \ne
+            x_j\), and the indicator \((1 - x_i x_j)/2\) is \(1\) precisely in that case and \(0\)
+            otherwise. Summed over all edges, this gives the cut's total weight:
+          </p>
+
+          <div class="thm-box">
+            <span class="thm-label">Max-Cut, as a quadratic program</span>
+            <p>
+              \[
+              \text{maximize} \quad \sum_{(i,j) \in E} w_{ij} \, \frac{1 - x_i x_j}{2}
+              \qquad \text{subject to} \quad x_i \in \{-1, +1\} \ \ \forall i.
+              \]
+            </p>
+          </div>
+
+          <p>
+            This is exactly Max-Cut, restated as a quadratic optimization over a discrete set. The
+            discreteness is what makes it hard: with \(n\) vertices there are \(2^n\) sign
+            assignments, and flipping every sign at once leaves the cut value unchanged (swapping the
+            labels of the two sides doesn't change which edges cross between them), so there are
+            \(2^{n-1}\) genuinely distinct candidate cuts to search over &mdash; exponential in \(n\), and no
+            known shortcut through that exponential for general graphs.
+          </p>
+
+          <p>
+            For the small instance used throughout this note (10 vertices, hence 512 candidate cuts)
+            exhaustive enumeration is trivial and exact. That number won't stay small for long: a
+            35-vertex graph already has more candidate cuts than atoms estimated in the observable
+            universe. The relaxation below is what makes the problem tractable well past the point
+            where brute force stops being an option.
+          </p>
+
+          <h2>From two points to a sphere</h2>
+          <p>
+            The constraint \(x_i \in \{-1, +1\}\) is really a constraint on where \(x_i\) is allowed to
+            live: two isolated points on the real line, i.e. the sphere \(S^0\). The relaxation asks
+            what happens if each \(x_i\) is allowed to be a point anywhere on a much bigger sphere
+            instead &mdash; a unit vector \(v_i \in S^{d-1} \subset \mathbb{R}^d\), for \(d\) as large as
+            \(n\) if needed. The product \(x_i x_j\), a scalar in \([-1, 1]\), becomes the inner product
+            \(v_i \cdot v_j\), which lives in exactly the same range and reduces to the original product
+            whenever every vector happens to collapse onto a single line through the origin (the
+            rank-1 case, which is exactly the original \(\{-1,+1\}\) problem in disguise).
+          </p>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/max-cut-on-a-sphere/mcs_discrete_to_continuous.png" alt="Three spheres side by side: the first shows only a navy point at the north pole and a gold point at the south pole (the discrete +/-1 constraint); the second shows those two points plus a modest scattering of gray points anywhere on the sphere's surface; the third shows a denser scattering of gray points covering the whole sphere, illustrating the relaxed constraint v_i in S^(d-1).">
+            <figcaption>
+              Relaxing \(x_i \in \{-1, +1\}\) (two points) to \(v_i \in S^{d-1}\) (the whole sphere).
+              The two original labels survive as the north and south poles; every other point on the
+              sphere is a new, fractional-feeling assignment that the discrete problem never allowed.
+            </figcaption>
+          </figure>
+
+          <p>
+            Substituting \(v_i \cdot v_j\) for \(x_i x_j\) in the objective gives a new optimization
+            problem over unit vectors instead of signs:
+          </p>
+
+          <div class="thm-box">
+            <span class="thm-label">The vector relaxation</span>
+            <p>
+              \[
+              \text{maximize} \quad \sum_{(i,j) \in E} w_{ij} \, \frac{1 - v_i \cdot v_j}{2}
+              \qquad \text{subject to} \quad v_i \in S^{d-1} \ \ \forall i.
+              \]
+            </p>
+          </div>
+
+          <p>
+            This is still, on the face of it, a nonconvex problem &mdash; a sphere is not a convex set, and
+            neither is the product of \(n\) of them. The move that makes it tractable is to stop
+            tracking the vectors \(v_i\) directly and track only their pairwise inner products, packaged
+            as the Gram matrix \(X_{ij} = v_i \cdot v_j\). Any collection of unit vectors produces a
+            symmetric, positive semidefinite matrix with \(X_{ii} = 1\) on the diagonal; conversely, by a
+            standard fact of linear algebra (every PSD matrix has a square root), <em>any</em> symmetric
+            PSD matrix with unit diagonal can be factored back into vectors \(v_i\) whose inner products
+            reproduce it exactly, via eigendecomposition of \(X\). So optimizing over Gram matrices is
+            equivalent to optimizing over the vectors, and the constraint set for \(X\) &mdash; symmetric,
+            PSD, unit diagonal &mdash; <em>is</em> convex, because positive semidefiniteness is a convex
+            constraint (the PSD cone) and the diagonal constraints are linear. This gives the Max-Cut
+            <strong>semidefinite relaxation</strong>:
+          </p>
+
+          <div class="thm-box">
+            <span class="thm-label">SDP relaxation</span>
+            <p>
+              \[
+              \text{maximize} \quad \sum_{(i,j) \in E} w_{ij} \, \frac{1 - X_{ij}}{2}
+              \qquad \text{subject to} \quad X \succeq 0, \ \ X_{ii} = 1 \ \ \forall i.
+              \]
+            </p>
+            <p>
+              The feasible set is convex and the objective is linear in \(X\), so this is a genuine
+              semidefinite program, solvable to arbitrary precision in polynomial time by interior-point
+              methods. Because every feasible rank-1 solution corresponds exactly to a \(\{-1,+1\}\)
+              assignment, and the relaxation only <em>adds</em> feasible points (every rank-1 solution
+              was already feasible; higher-rank ones are new), the SDP's optimal value can only be
+              greater than or equal to the true integral optimum &mdash; it's an upper bound, not an
+              estimate.
+            </p>
+          </div>
+
+          <p>
+            Solving the SDP hands back an optimal Gram matrix \(X^\star\), which is factored via
+            eigendecomposition into unit vectors \(v_1, \ldots, v_n \in \mathbb{R}^d\) &mdash; one point on a
+            high-dimensional sphere per vertex, encoding exactly how compatible or opposed the SDP
+            "wants" each pair of vertices to be, through the angle between their vectors.
+          </p>
+
+          <h2>A concrete instance: the Petersen graph</h2>
+          <p>
+            To keep every claim in this note checkable against ground truth rather than merely
+            plausible, everything below runs on one fixed, small, exactly-solvable graph: the
+            <strong>Petersen graph</strong> &mdash; ten vertices, an outer pentagon and an inner pentagram
+            connected by five spokes, three-regular and triangle-free.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/max-cut-on-a-sphere/mcs_original_graph.png" alt="The Petersen graph drawn as a pentagon of five outer vertices connected to a pentagram of five inner vertices by five spokes, all edges in light gray, ten navy circular nodes labeled 0 through 9.">
+            <figcaption>
+              The hero instance: the Petersen graph, 10 vertices, 15 edges, 3-regular, triangle-free,
+              girth 5.
+            </figcaption>
+          </figure>
+
+          <p>
+            The Petersen graph was not the single highest-scoring candidate in the search that produced
+            it &mdash; a scoring pass over a dozen graphs (circulants, random geometric graphs, two-cluster
+            graphs, several seeds each) ranked instances by a composite of integrality gap, rounding
+            variance, and probability of hitting the true optimum, and a two-cluster instance with 13
+            vertices scored marginally higher. The Petersen graph was chosen anyway, deliberately
+            overriding the raw ranking: it is a canonical, instantly-recognizable named graph whose
+            pentagon-and-pentagram layout draws with almost no edge clutter, which matters enormously
+            for a note whose entire point is to be looked at. The full leaderboard is checked into the
+            repository's <code>data/candidate_scores.json</code> for anyone who wants to see the
+            comparison, along with the graph-generation code for every candidate considered.
+          </p>
+
+          <p>
+            Exhaustive enumeration over its \(2^9 = 512\) distinct cuts gives an exact optimum of
+            <strong>12</strong> (out of 15 total edge weight) &mdash; three edges necessarily survive
+            uncut in any partition. Solving the SDP relaxation on the same graph gives a value of
+            <strong>12.5</strong>, confirming \(\text{SDP} \ge \text{OPT}\) as the theory demands, with an
+            integrality gap ratio of <strong>1.0417</strong>. The gap is real: no rounding procedure can
+            recover 12.5 from a graph whose true optimum is 12, so its existence is itself informative
+            about how much slack the relaxation leaves on the table.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/max-cut-on-a-sphere/mcs_exact_cut.png" alt="The same Petersen graph as before, now with vertices colored gold or navy according to the exact optimal partition, and the seven cut edges thickened and colored gold while the eight uncut edges remain thin and gray.">
+            <figcaption>
+              The exact optimal cut, found by brute force over all 512 distinct partitions: 12 units
+              of edge weight crossed, 3 edges necessarily left uncut.
+            </figcaption>
+          </figure>
+
+          <h2>What the SDP solution actually looks like</h2>
+          <p>
+            Solving the relaxation on the Petersen graph (CVXPY, CLARABEL solver) produces a Gram
+            matrix whose numerical rank is <strong>4</strong>, not 3 &mdash; the SDP vectors \(v_i\) do not,
+            in general, live on an ordinary sphere in three dimensions that could be drawn without
+            distortion. This is worth stating plainly rather than glossing over: any 3D picture of
+            these vectors is necessarily a projection, and every embedding figure in this note
+            discloses that fact directly in its caption. The specific projection used is a PCA
+            projection onto the top three principal components of the vectors, followed by
+            renormalization back to unit length purely so the points can be drawn plausibly on a
+            drawable sphere. For this instance, that projection captures only 75% of the vectors'
+            variance (\([0.25, 0.25, 0.25]\) across the three retained components) &mdash; a meaningful
+            loss, not a rounding artifact.
+          </p>
+
+          <p>
+            The discipline this note follows throughout: <strong>every numerical claim &mdash; every
+            angle, every probability, every rounding decision &mdash; is computed from the true,
+            full-dimensional SDP vectors, never from the projected coordinates used for drawing.</strong>
+            The picture below is illustrative; the numbers quoted anywhere in this note are not derived
+            from it.
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/max-cut-on-a-sphere/mcs_sdp_embedding.png" alt="A sphere with ten navy points scattered across its surface at various latitudes and longitudes, one gold line segment connecting two adjacent points near the bottom, with a caption noting this is a PCA projection to R^3 for display only, capturing 75.0% of variance." loading="lazy">
+            <figcaption>
+              The SDP's optimal vectors \(v_i\), PCA-projected to three dimensions purely for display.
+              The true solution has rank 4 and only 75% of its variance survives this projection &mdash; a
+              disclosure this note repeats on every embedding figure rather than making once and
+              hoping it's remembered.
+            </figcaption>
+          </figure>
+
+          <h2>Rounding: cutting the sphere with a random plane</h2>
+          <p>
+            The SDP hands back vectors, not a cut &mdash; something has to turn a sphere full of continuous
+            points back into a discrete \(\{-1, +1\}\) assignment. Goemans and Williamson's insight is
+            to do this with a single random hyperplane through the origin: sample a uniformly random
+            unit direction \(r \in \mathbb{R}^d\), and set
+          </p>
+          <div class="thm-box">
+            <span class="thm-label">Random-hyperplane rounding</span>
+            <p>
+              \[
+              x_i = \operatorname{sign}(v_i \cdot r) \qquad \text{for a uniformly random } r \in S^{d-1}.
+              \]
+            </p>
+            <p>
+              Geometrically, \(r\) is the normal vector of a hyperplane through the sphere's center;
+              every \(v_i\) on one side of that hyperplane gets \(+1\), every \(v_i\) on the other side
+              gets \(-1\). The random plane is what converts a continuous relaxation back into a genuine
+              graph cut.
+            </p>
+          </div>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/max-cut-on-a-sphere/mcs_hyperplane_frame_0.png" alt="A sphere with ten points (gold and navy, colored by which side of a random cutting plane they fall on) and a translucent gold disc slicing through the sphere at an angle, with a caption reading cut weight = 11." loading="lazy">
+            <img src="../assets/max-cut-on-a-sphere/mcs_hyperplane_frame_1.png" alt="The same sphere with a different random cutting plane at a different angle, splitting the ten points differently, with a caption reading cut weight = 11." loading="lazy">
+            <img src="../assets/max-cut-on-a-sphere/mcs_hyperplane_frame_2.png" alt="The same sphere with yet another random cutting plane, this one happening to split the points into the exact optimal partition, with a caption reading cut weight = 12." loading="lazy">
+            <figcaption>
+              Three independent random draws of the hyperplane, same SDP vectors each time (shown here
+              via the same PCA display projection described above). Different planes produce different
+              cuts &mdash; two land at 11, the third happens to land on the true optimum of 12.
+            </figcaption>
+          </figure>
+
+          <p>
+            The animation below shows the whole pipeline end to end: the Petersen graph's ordinary 2D
+            layout deforming as its vertices lift onto the full unit sphere, a random hyperplane
+            sweeping in, and the resulting cut resolving into gold and navy.
+          </p>
+
+          <figure class="post-figure figure-wide" id="hero-animation-figure">
+            <video
+              controls
+              preload="none"
+              poster="../assets/max-cut-on-a-sphere/mcs_hero_poster.png"
+              aria-label="Animation: the Petersen graph's flat 2D layout gradually lifts its ten vertices onto the surface of a sphere, a translucent gold plane sweeps in and rotates to a random orientation, and the graph's edges are recolored gold or navy according to which side of the plane each vertex falls on, tracing out the resulting random-hyperplane cut.">
+              <source src="../assets/max-cut-on-a-sphere/mcs_hero.mp4" type="video/mp4">
+              Your browser does not support embedded video. A static frame from the same animation,
+              showing the final cut on the sphere, is shown above in the poster image, and the full
+              video file is available in the attachments below.
+            </video>
+            <figcaption>
+              The full pipeline, animated: 2D graph &rarr; vertices lifted onto the unit sphere &rarr; a
+              random hyperplane sweeping in &rarr; the resulting cut. Paused by default and requires a
+              click to play; degrades to the static poster frame if
+              <code>prefers-reduced-motion</code> is set (see the note in
+              <a href="#code-and-reproducibility">the repository</a> on how this is enforced in the
+              render pipeline itself, not just in this page's markup).
+            </figcaption>
+          </figure>
+
+          <p>
+            An MP4 and a WebP fallback are both available in the repository; the animation itself
+            is not set to autoplay, precisely so it respects a visitor's motion preferences by default
+            rather than requiring JavaScript to detect and override them.
+          </p>
+
+          <h2>Why this rounding step is analyzable: the exact 2D argument</h2>
+          <p>
+            The random-hyperplane trick would just be a heuristic without the following fact, which is
+            exact geometry, not an approximation: for any two unit vectors \(v_i, v_j\) at angle
+            \(\theta_{ij}\), a uniformly random hyperplane normal \(r\) separates them &mdash; puts them on
+            opposite sides &mdash; with probability exactly \(\theta_{ij} / \pi\), regardless of the
+            ambient dimension \(d\).
+          </p>
+          <p>
+            The reason the ambient dimension drops out entirely is itself worth stating: \(v_i\) and
+            \(v_j\) span a 2-dimensional subspace no matter how large \(d\) is, and the projection of an
+            isotropic (rotationally symmetric) random direction in \(\mathbb{R}^d\) onto any fixed
+            2-plane is again isotropic within that plane. So the question of whether \(r\) separates
+            \(v_i\) and \(v_j\) is really a question that lives entirely inside a single 2D disk, and can
+            be answered by looking at that disk directly:
+          </p>
+
+          <figure class="post-figure">
+            <img src="../assets/max-cut-on-a-sphere/mcs_angle_proof.png" alt="A circle with two navy arrows from the center labeled v_6 and v_8, an angle theta_ij marked between them, and the circle's interior shaded gold in exactly the two opposite wedges swept out between the two arrows, with a caption stating the separating-normal probability equals theta_ij over pi, approximately 0.732 for this pair." loading="lazy">
+            <figcaption>
+              The exact 2D geometry behind random-hyperplane rounding. A line through the origin
+              (a hyperplane restricted to this 2-plane) separates \(v_i\) from \(v_j\) exactly when it
+              falls in one of the two shaded wedges, which together sweep out \(\theta_{ij}\) radians
+              out of \(\pi\) possible line-directions &mdash; lines, not rays, since \(r\) and \(-r\) cut
+              identically. For the edge (6, 8) drawn here, on the actual full-dimensional SDP vectors
+              for this graph, \(\theta_{ij} \approx 2.3005\) radians and \(\theta_{ij}/\pi \approx 0.7323\).
+            </figcaption>
+          </figure>
+
+          <p>
+            This is checked directly against simulation, not just asserted: sampling 200,000 random
+            directions in the true ambient dimension and measuring how often they actually separate
+            this pair of vectors gives an empirical separation probability of
+            <strong>0.733305</strong>, against the formula's predicted <strong>0.732280</strong> &mdash; an
+            absolute error of about \(0.001\), consistent with ordinary Monte Carlo noise at that
+            sample size and not a systematic discrepancy.
+          </p>
+
+          <h2>The Goemans&ndash;Williamson guarantee</h2>
+          <p>
+            The \(\theta/\pi\) law connects the rounding step directly back to the SDP objective. Each
+            edge \((i,j)\) contributes \(w_{ij}(1 - v_i \cdot v_j)/2 = w_{ij}(1-\cos\theta_{ij})/2\) to
+            the SDP's value, but contributes \(w_{ij} \cdot \theta_{ij}/\pi\) to the <em>expected</em>
+            value of the rounded cut (since it's cut with exactly that probability). Comparing these two
+            per-edge quantities as a function of the angle alone gives the ratio that the whole
+            approximation guarantee rests on:
+          </p>
+          <div class="thm-box">
+            <span class="thm-label">The pointwise ratio</span>
+            <p>
+              \[
+              r(\theta) = \frac{\theta / \pi}{(1 - \cos\theta)/2}, \qquad \theta \in (0, \pi].
+              \]
+            </p>
+            <p>
+              If \(r(\theta) \ge \alpha\) for every angle that can occur, then summing over all edges
+              gives \(\mathbb{E}[\text{cut value}] \ge \alpha \cdot \text{SDP value} \ge \alpha \cdot
+              \text{OPT}\) &mdash; an approximation guarantee that holds for <em>every</em> graph, not just
+              this one, because it never depended on which graph produced the angles in the first
+              place.
+            </p>
+          </div>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/max-cut-on-a-sphere/mcs_approximation_curve.png" alt="Two panels side by side. Left: two curves from 0 to pi, the SDP per-edge contribution (1-cos theta)/2 as a smooth navy S-curve and the rounded contribution theta/pi as a straight gold line, crossing at theta=pi/2 and meeting at the endpoints. Right: the ratio of the two curves, a U-shaped navy curve with a minimum near theta=2.33 marked with a gold dot at height approximately 0.87857, labeled alpha_GW." loading="lazy">
+            <figcaption>
+              Left: the SDP's per-edge contribution (navy) against the rounded expectation (gold) as a
+              function of the angle between two SDP vectors. Right: their ratio, minimized numerically
+              (not read off a table or hardcoded) at \(\theta^\star \approx 2.3311\) radians, where it
+              equals \(\alpha_{GW} \approx 0.878567\).
+            </figcaption>
+          </figure>
+
+          <p>
+            This constant is located here by direct numerical minimization of \(r(\theta)\) over
+            \((0, \pi]\) (SciPy's bounded scalar minimizer), not hardcoded from the literature: the
+            minimizer found is \(\theta^\star \approx 2.331122\) radians, with \(\alpha_{GW} \approx
+            0.8785672058\). This matches the published Goemans&ndash;Williamson constant \(\alpha_{GW}
+            \approx 0.878567\) to six decimal places &mdash; a genuine cross-check against the literature,
+            performed after the fact, rather than the source of the number.
+          </p>
+
+          <h2>Checking the guarantee against the actual experiment</h2>
+          <p>
+            All of the theory above makes a claim about an <em>expectation</em>. To see it hold up
+            empirically, the pipeline runs 20,000 independent rounds of random-hyperplane rounding on
+            the Petersen graph's actual SDP vectors, seeded for reproducibility, and records the full
+            distribution of resulting cut values.
+          </p>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/max-cut-on-a-sphere/mcs_rounding_distribution.png" alt="A histogram of 20,000 rounded cut values, mostly concentrated between 9 and 12.5, with a dashed line at the mean of 10.98, a solid gold line at the exact optimum of 12, and a dotted navy line at the SDP value of 12.5." loading="lazy">
+            <figcaption>
+              The empirical distribution of 20,000 independent rounding trials. The mean (10.98) sits
+              comfortably above \(\alpha_{GW} \cdot \text{OPT} \approx 10.54\), the exact optimum (12)
+              is reached in a sizable fraction of trials, and the SDP's value (12.5) is never reached by
+              any single rounding, since 12.5 is not an achievable integer cut on this graph.
+            </figcaption>
+          </figure>
+
+          <p>
+            Three different quantities are at stake here, and it matters that they never get
+            conflated: the <strong>exact optimum</strong> (12, found by brute-force enumeration, the
+            only one of the three that is a hard combinatorial fact), the <strong>SDP relaxation
+            value</strong> (12.5, an upper bound obtained by convex optimization, not achievable by any
+            actual cut), and the <strong>empirical rounding outcome</strong> (mean 10.9787, standard
+            deviation 0.7831, over 20,000 trials on this specific instance). The empirical mean-to-exact
+            ratio here is \(10.9787 / 12 \approx 0.9149\), comfortably above the \(\alpha_{GW} \approx
+            0.8786\) worst-case floor the theorem guarantees &mdash; exactly what the theorem predicts,
+            since \(\alpha_{GW}\) is a guaranteed lower bound on performance across all graphs, not a
+            typical-case prediction for any one of them. Over the 20,000 trials, the best single
+            rounding found the true optimum outright (ratio 1.0 to the exact value), and the exact
+            optimum was hit in 25.4% of all trials &mdash; unusually high for such a small graph, and part
+            of why the Petersen graph makes a legible teaching example rather than a typical one.
+          </p>
+
+          <h2>A real bug, and why it didn't change any published number</h2>
+          <p>
+            An early version of the function computing \(r(\theta)\) special-cased its behavior as
+            \(\theta \to 0\) to the finite value \(2/\pi\), on the assumption that the \(0/0\) form at
+            \(\theta = 0\) was a removable singularity of the ordinary \(\sin(\theta)/\theta \to 1\)
+            variety. It is not: near \(\theta = 0\), the numerator \(\theta/\pi\) vanishes linearly while
+            the denominator \((1-\cos\theta)/2 = \sin^2(\theta/2)\) vanishes quadratically, so the true
+            ratio diverges to \(+\infty\), not to \(2/\pi\). A unit test that checked \(r(\theta)\)'s
+            behavior directly at small \(\theta\) caught the discrepancy immediately. The fix rewrites
+            the denominator using the numerically stable half-angle identity \(\sin^2(\theta/2)\) and
+            returns \(+\infty\) at \(\theta = 0\) rather than a finite, incorrect placeholder. Because
+            \(\alpha_{GW}\)'s actual minimizer sits at \(\theta^\star \approx 2.33\) radians &mdash; nowhere
+            near the mis-specified branch near zero &mdash; this bug never altered any number quoted
+            in this note or stored in <code>results/results.json</code>. It's documented here rather
+            than silently dropped, since it was a real bug in intermediate code, not a synthetic
+            teaching example.
+          </p>
+
+          <h2>Strengths, limits, and what's next</h2>
+          <p>
+            The strengths of this approach are exactly what motivated using it: the SDP relaxation is
+            solvable to high precision in polynomial time regardless of how the underlying Max-Cut
+            instance is structured, the \(\theta/\pi\) rounding analysis is exact rather than an
+            approximation of an approximation, and the resulting \(0.878567\) guarantee is a genuine
+            worst-case bound over <em>every</em> graph, not a typical-case observation. Karloff later
+            showed this bound is tight for the algorithm as stated &mdash; there exist graphs on which no
+            choice of hyperplane distribution does better &mdash; and separately, Khot, Kindler, Mossel and
+            O'Donnell showed that beating \(\alpha_{GW}\) at all is NP-hard assuming the Unique Games
+            Conjecture, which is about as strong a "this is essentially the best you can do with this
+            style of argument" result as exists in the field.
+          </p>
+          <p>
+            The limits are equally real for this specific note: everything here runs on a single
+            10-vertex instance, chosen in part for how well it draws, not for statistical breadth across
+            graph families; the SDP solve itself, while polynomial, scales noticeably worse than
+            first-order methods once \(n\) reaches the thousands, which is why large-scale Max-Cut
+            solvers often use SDP-derived vectors as a bound and a fast local-search or spectral method
+            for the actual cut found in practice. A natural extension worth trying next: repeat this
+            exact pipeline on a family of instances (say, several random Erdős&ndash;Rényi graphs
+            at different densities) and check whether the empirical mean-to-exact ratio stays as far
+            above \(\alpha_{GW}\) as it does here, or whether the Petersen graph's generosity is
+            somewhat special to its symmetry.
+          </p>
+
+          <h2 id="code-and-reproducibility">Code and reproducibility</h2>
+          <p>
+            A full reference implementation &mdash; the exact solver, the CVXPY-based SDP relaxation, the
+            random-hyperplane rounding experiment, the exact angle-proof geometry, the numerical
+            \(\alpha_{GW}\) search, every render script used to produce every figure and the hero
+            animation in this note, and a pytest suite covering the core numerics (64 tests) &mdash; is
+            available at
+            <a href="https://github.com/akavosi/max-cut-on-a-sphere" target="_blank" rel="noopener">github.com/akavosi/max-cut-on-a-sphere</a>.
+            Every number quoted in this note is read directly out of the repository's
+            <code>results/results.json</code>, produced by a single deterministic, seeded pipeline run
+            &mdash; nothing here was hand-typed from a separate calculation.
+          </p>
+
+          <h2>References</h2>
+          <ol>
+            <li>Goemans, M. X., &amp; Williamson, D. P. (1995). Improved approximation algorithms for maximum cut and satisfiability problems using semidefinite programming. <em>Journal of the ACM</em>, 42(6), 1115&ndash;1145.</li>
+            <li>Karp, R. M. (1972). Reducibility among combinatorial problems. In R. E. Miller &amp; J. W. Thatcher (Eds.), <em>Complexity of Computer Computations</em> (pp. 85&ndash;103). Plenum Press.</li>
+            <li>Karloff, H. J. (1999). How good is the Goemans&ndash;Williamson MAX CUT algorithm? <em>SIAM Journal on Computing</em>, 29(1), 336&ndash;350.</li>
+            <li>Khot, S., Kindler, G., Mossel, E., &amp; O'Donnell, R. (2007). Optimal inapproximability results for MAX-CUT and other 2-variable CSPs? <em>SIAM Journal on Computing</em>, 37(1), 319&ndash;357.</li>
+          </ol>
+
+          <h2>Open questions</h2>
+          <p>
+            Two things left unresolved by this note specifically: whether the empirical rounding gap
+            (mean-to-exact ratio \(\approx 0.915\) here) tracks graph symmetry in a way that could be
+            predicted without running 20,000 trials, and whether a cheap, structure-aware initial guess
+            for the random hyperplane (rather than a fully uniform draw) could shrink the number of
+            rounding attempts needed to reliably hit the true optimum on graphs like this one, without
+            sacrificing the worst-case guarantee that makes the uniform version provable in the first
+            place.
+          </p>
+
+        </div>
+
+        <div class="post-attachments">
+          <h3>Attachments</h3>
+          <a class="attachment-link" href="../assets/max-cut-on-a-sphere/mcs_hero.mp4" target="_blank" rel="noopener">
+            <i class="fas fa-paperclip" aria-hidden="true"></i>
+            <span>mcs_hero.mp4 (full-resolution hero animation)</span>
+          </a>
+        </div>
+
+      </article>
+
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (2026). &ldquo;Max-Cut on a Sphere.&rdquo; <em>Research notes</em>. https://akavosi.github.io/blog/posts/max-cut-on-a-sphere.html</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@misc{kavoosi2026maxcutsphere,
+  author = {Kavoosi, Artin},
+  title  = {Max-Cut on a Sphere},
+  year   = {2026},
+  note   = {Personal research notes, informal, not peer-reviewed},
+  url    = {https://akavosi.github.io/blog/posts/max-cut-on-a-sphere.html}
+}</pre>
+        </div>
+        <p class="note-cite-note">Informal research notes — not peer-reviewed.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin (Alireza) Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="../notes.js" defer></script>
+</body>
+
+</html>
