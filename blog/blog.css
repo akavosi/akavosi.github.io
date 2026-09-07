@@ -239,11 +239,20 @@ body.notes .blog-hero p { color: var(--text-muted); font-size: 1.02rem; max-widt
    read as figures rather than full-bleed images, and stay centered. */
 .post-figure { margin: 1.8rem 0; }
 .post-article-body .post-figure img {
-  max-width: 480px;
+  max-width: 580px;
   width: 100%;
   margin: 0 auto;
 }
 
+/* Ensures videos fit their containers and match image styling */
+.post-article-body video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--rule);
+}
 /* =========================================================
    Post heading — image + title/tagline, for posts that have
    a hero image (currently just SQEP). A little bigger than
