@@ -1,0 +1,14 @@
+{
+  "method": "scenario-tree-MIP-ortools-scip",
+  "optimal_expected_profit": 257.867188,
+  "first_order": 22.000000,
+  "nodes": 255,
+  "order_decisions": 127,
+  "variables": 4572,
+  "constraints": 4445,
+  "solve_seconds": 37.682590,
+  "fifo_violations_under_free_issuing": 21,
+  "expected_units_wasted": 1.398438,
+  "expected_units_lost": 1.101562,
+  "expected_order_days": 3.296875
+}

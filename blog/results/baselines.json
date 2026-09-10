@@ -1,0 +1,62 @@
+{
+  "exact_optimum": 257.867188,
+  "ss": {
+    "s": 7,
+    "S": 25,
+    "value": 213.953125,
+    "expected_waste": 0.9688,
+    "expected_lost": 3.9375,
+    "expected_sold": 60.0625,
+    "expected_order_days": 3.125,
+    "gap_pct": 17.0297
+  },
+  "q_learning": {
+    "runs": [
+      {
+        "seed": 20260911,
+        "value": 243.324219,
+        "states": 55015,
+        "expected_waste": 1.4141,
+        "expected_lost": 1.1562,
+        "expected_order_days": 3.7344
+      },
+      {
+        "seed": 20260912,
+        "value": 217.664062,
+        "states": 55251,
+        "expected_waste": 1.1875,
+        "expected_lost": 3.6406,
+        "expected_order_days": 3.7188
+      },
+      {
+        "seed": 20260913,
+        "value": 222.167969,
+        "states": 54230,
+        "expected_waste": 0.9453,
+        "expected_lost": 4.1562,
+        "expected_order_days": 3.6719
+      },
+      {
+        "seed": 20260914,
+        "value": 219.175781,
+        "states": 54749,
+        "expected_waste": 0.9922,
+        "expected_lost": 3.9844,
+        "expected_order_days": 3.7188
+      },
+      {
+        "seed": 20260915,
+        "value": 235.902344,
+        "states": 53744,
+        "expected_waste": 0.9922,
+        "expected_lost": 1.6875,
+        "expected_order_days": 4.0156
+      }
+    ],
+    "best_value": 243.324219,
+    "mean_value": 227.646875,
+    "best_gap_pct": 5.6397,
+    "mean_gap_pct": 11.7193
+  },
+  "rl_vs_ss_pct": 13.7278
+}

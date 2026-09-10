@@ -1,0 +1,21 @@
+{
+    "solve_seconds": 6.93,
+    "method": "scenario-tree-MIP",
+    "order_decisions": 127,
+    "variables": 4572,
+    "expected_setup": 131.875,
+    "expected_purchase": 182.25,
+    "scenarios": 128,
+    "expected_units_lost": 1.1016,
+    "fifo_violations_under_free_issuing": 14,
+    "expected_wastage": 11.1875,
+    "expected_holding": 39.1953,
+    "expected_shortage": 6.6094,
+    "optimal_expected_profit": 257.867188,
+    "nodes": 255,
+    "expected_order_days": 3.2969,
+    "expected_units_wasted": 1.3984,
+    "expected_units_sold": 62.8984,
+    "first_order": 22,
+    "expected_revenue": 628.9844
+}

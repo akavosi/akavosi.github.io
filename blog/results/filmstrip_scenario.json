@@ -1,0 +1,163 @@
+{
+  "demand_path": [
+    14,
+    18,
+    4,
+    3,
+    2,
+    2,
+    2
+  ],
+  "days": [
+    {
+      "day": 1,
+      "order": 22,
+      "demand": 14,
+      "end_age": [
+        17,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sales_by_age": [
+        5,
+        0,
+        4,
+        5,
+        0
+      ],
+      "lost": 0,
+      "waste": 0
+    },
+    {
+      "day": 2,
+      "order": 0,
+      "demand": 18,
+      "end_age": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sales_by_age": [
+        0,
+        17,
+        0,
+        0,
+        0
+      ],
+      "lost": 1,
+      "waste": 0
+    },
+    {
+      "day": 3,
+      "order": 22,
+      "demand": 4,
+      "end_age": [
+        18,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sales_by_age": [
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      "lost": 0,
+      "waste": 0
+    },
+    {
+      "day": 4,
+      "order": 0,
+      "demand": 3,
+      "end_age": [
+        0,
+        15,
+        0,
+        0,
+        0
+      ],
+      "sales_by_age": [
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      "lost": 0,
+      "waste": 0
+    },
+    {
+      "day": 5,
+      "order": 0,
+      "demand": 2,
+      "end_age": [
+        0,
+        0,
+        13,
+        0,
+        0
+      ],
+      "sales_by_age": [
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      "lost": 0,
+      "waste": 0
+    },
+    {
+      "day": 6,
+      "order": 0,
+      "demand": 2,
+      "end_age": [
+        0,
+        0,
+        0,
+        11,
+        0
+      ],
+      "sales_by_age": [
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      "lost": 0,
+      "waste": 0
+    },
+    {
+      "day": 7,
+      "order": 0,
+      "demand": 2,
+      "end_age": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sales_by_age": [
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "lost": 0,
+      "waste": 9
+    }
+  ],
+  "total_waste": 9,
+  "total_lost": 1,
+  "probability": 0.0078125
+}

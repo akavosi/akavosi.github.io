@@ -1,0 +1,23 @@
+{
+  "method": "exact-stochastic-dp",
+  "optimal_expected_profit": 257.867188,
+  "first_order": 22,
+  "states_evaluated": 262327,
+  "reachable_states_under_optimal_policy": [
+    1,
+    2,
+    4,
+    7,
+    7,
+    8,
+    12,
+    11
+  ],
+  "initial_state": [
+    0,
+    0,
+    4,
+    5,
+    0
+  ]
+}
