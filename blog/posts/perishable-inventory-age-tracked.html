@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+
+  <title>Perishable Inventory: Age-Tracked Dynamics — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An age-tracked inventory model for perishable products with a five-day shelf life, where an exact stochastic dynamic program, two independently written scenario-tree MIPs, and a learned policy all solve the same instance and are checked against each other.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="alternate" type="application/rss+xml" title="Artin Kavoosi — Research Notes" href="../feed.xml">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../blog.css">
+
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js" defer></script>
+</head>
+
+<body class="notes">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="brand-name">Artin Kavoosi</span>
+      </a>
+
+              <nav class="nav-links" aria-label="Primary">
+          <a href="../../index.html#about">About</a>
+          <a href="../index.html" class="active">Notes</a>
+          <a href="../../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+        </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner">
+
+      <a href="../index.html" class="post-back">&larr; Back to all posts</a>
+
+      <article class="post-article">
+
+        <div class="post-hero">
+          <div class="post-hero-art">
+            <img src="../assets/perishable-inventory/age_surface_3d_hero.png" alt="A 3D bar field over a day-by-age grid. Tall pale bars of fresh stock sit along the near edge and step diagonally back and down through the age classes, with dark red bars along the far row marking the units that expired.">
+          </div>
+          <div class="post-hero-text">
+            <span class="post-meta">Technical Note &middot; Polyglot OR Series<span class="series-badge">Polyglot OR series &middot; Part 1 of 3</span></span>
+            <h1>Perishable Inventory</h1>
+            <p class="post-tagline">Five units that expire tonight are not five units.</p>
+          </div>
+        </div>
+
+        <div class="note-abstract">
+          <span class="note-abstract-label">Abstract</span>
+          <p>An age-tracked inventory model for a perishable product with a five-day shelf
+            life, in which stock is carried as a vector of exact ages rather than a single
+            total, and a fixed ordering cost makes replenishment lumpy enough that units
+            genuinely expire. An exact stochastic dynamic program, two independently written
+            deterministic-equivalent integer programs, and a learned policy all solve the
+            same 128-scenario instance, and every claim below is the number they agree on.</p>
+          <div class="note-abstract-tags">
+            <span class="tag-pill">Perishable Inventory</span>
+            <span class="tag-pill">Stochastic Programming</span>
+            <span class="tag-pill">Integer Programming</span>
+            <span class="tag-pill">~9 min read</span>
+          </div>
+        </div>
+
+        <details class="note-toc" id="note-toc">
+          <summary>Contents</summary>
+          <ol class="note-toc-list" id="note-toc-list"></ol>
+        </details>
+
+        <div class="post-article-body">
+
+          <p>
+            A blood bank with forty units on the shelf and a hospital with forty units on the
+            shelf are not in the same position, and the difference is not visible in the
+            number forty. If thirty of those units expire tomorrow, one of them is about to
+            throw away most of its inventory and the other is comfortable. Almost every
+            inventory model in practice reports the total anyway, and almost every
+            replenishment rule in practice reorders off that total.
+          </p>
+
+          <p>
+            This note is about what you get back when you refuse to aggregate. Stock is
+            carried as a vector \((n_1,\dots,n_5)\) — how many units are one day old, two days
+            old, and so on to the day they are scrapped — and the decision is made against
+            that whole vector. The instance is small on purpose: a five-day shelf life over a
+            seven-day horizon, with two-point demand each day, which is 128 scenarios in
+            total. Small enough that the exact answer is computable, which means every
+            policy in this post can be scored against a provable optimum rather than against
+            whichever policy happened to do best.
+          </p>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/perishable-inventory/age_stack_flagship.png" alt="Three stacked-area panels showing expected inventory by age for the optimal, learned, and base-stock policies, with a lower strip in each panel showing units scrapped and demand missed per day.">
+            <figcaption>
+              Expected end-of-day inventory split by age class, under three policies, as exact
+              expectations over all 128 demand scenarios — there is no sampling anywhere in
+              this figure. The lower strip carries the two failure modes on their own scale,
+              because at roughly one unit against a twenty-unit pile they would otherwise be
+              invisible. The rightmost panel is the whole argument: the base-stock policy
+              holds the <em>smallest</em> pile and still misses the most demand.
+            </figcaption>
+          </figure>
+
+          <h2>What this is</h2>
+          <p>
+            This is a complete, checkable treatment of one small perishable-inventory
+            instance, written for someone comfortable reading a recursion who has never had
+            to defend an inventory number to an auditor. There are no learned components in
+            the baseline and no approximations in the optimum. The interesting content is in
+            the disagreement between the three policies, and specifically in <em>why</em> the
+            standard industrial heuristic loses ground it looks like it should be winning.
+          </p>
+
+          <h2>The model</h2>
+          <p>
+            Shelf life is \(m = 5\) days, horizon \(T = 7\) days, and the lead time is zero: an
+            order placed for day \(t\) is on the shelf that morning as age-1 stock. Demand is
+            non-stationary, peaking midweek and collapsing at the weekend, with two
+            equiprobable outcomes each day. Unmet demand is lost, not backordered — the
+            customer goes elsewhere, which is the right assumption for a product people buy
+            fresh.
+          </p>
+
+          <p>
+            Within a day the sequence is fixed: the order arrives, demand is realised, sales
+            are issued from stock, whatever is left at age \(m\) is scrapped, holding cost is
+            charged on what survives, and everything ages by one day. Writing \(s_{a,t}\) for
+            units of age \(a\) sold on day \(t\):
+          </p>
+
+          <div class="thm-box">
+            <span class="thm-label">Age dynamics</span>
+            <p>
+              Arrivals enter at age one and everything else is yesterday's leftovers, one day
+              older:
+              \[
+                n_{1,t} = q_t, \qquad
+                n_{a,t} = n_{a-1,t-1} - s_{a-1,t-1} \quad (a = 2,\dots,m)
+              \]
+              Sales cannot exceed stock or demand, the shortfall is lost, and age-\(m\) stock
+              cannot be carried:
+              \[
+                \textstyle\sum_a s_{a,t} + \ell_t = D_t, \qquad
+                s_{a,t} \le n_{a,t}, \qquad
+                w_t = n_{m,t} - s_{m,t}
+              \]
+              Daily profit charges a fixed cost \(K\) on any day an order is placed:
+              \[
+                g_t = r\textstyle\sum_a s_{a,t} \;-\; cq_t \;-\; K\mathbb{1}[q_t > 0]
+                      \;-\; h\textstyle\sum_{a\lt m} n_{a,t}^{\text{end}} \;-\; p\,\ell_t \;-\; \omega\,w_t
+              \]
+            </p>
+          </div>
+
+          <p>
+            The fixed cost is not decoration, and getting to it took three passes at the
+            instance. Without \(K\), the optimal policy on a five-day shelf life simply orders
+            close to just-in-time every single day, nothing ever reaches age five, and
+            expected wastage is exactly zero — a perishable inventory model in which
+            perishability never binds. A parameter sweep confirmed this held across every
+            cost ratio tried: shortage penalties from 2 to 6 and wastage costs from 4 to 12
+            all produced the same degenerate answer. Charging \(K = 40\) per replenishment
+            forces batching, stock gets built ahead of the midweek peak, and units that miss
+            the peak can genuinely die. Only then is there a tradeoff worth drawing.
+          </p>
+
+          <h2>What is actually computed</h2>
+          <ol>
+            <li><strong>The exact optimum, by backward recursion</strong> over the age-vector
+              state, evaluating 262,327 distinct \((t,\text{state})\) pairs. Demand support is
+              finite, so \(\mathbb{E}_D\) is an exact finite sum, not a sample average.</li>
+            <li><strong>The same optimum, twice more, by integer programming.</strong> The
+              deterministic equivalent is written out on the full demand tree — 255 nodes, 127
+              order decisions, 4,572 integer variables — and solved to proven optimality by two
+              separately written models running on two different solvers.</li>
+            <li><strong>The best possible \((s,S)\) policy</strong>, found by exhaustive grid
+              search over all \(0 \le s \lt S \le 36\), each candidate scored by full enumeration
+              of all 128 scenarios. This is the strongest base-stock rule that exists on this
+              instance, not a strawman.</li>
+            <li><strong>A learned policy</strong>, tabular over the age vector, trained from
+              sampled episodes with no access to the transition model, across five seeds.</li>
+            <li><strong>Every policy scored identically</strong>, by exact enumeration of all
+              128 scenarios with their exact probabilities. No reported number in this post
+              carries Monte Carlo error.</li>
+          </ol>
+
+          <h3>Three methods, one number</h3>
+          <p>
+            The dynamic program and the two integer programs are genuinely independent: a
+            backward recursion over states on one side, a flat deterministic equivalent over a
+            scenario tree on the other, written twice against different modelling layers. They
+            agree to six decimal places on an optimal expected profit of
+            <strong>257.867188</strong>, on a first-day order of 22 units, and on the resulting
+            1.3984 units spoiled and 1.1016 units of demand missed. Building both integer
+            programs was worth it for exactly one reason: the first version of the scenario
+            tree returned <code>238.445312</code>, which is <em>below</em> the dynamic program's
+            answer and therefore impossible, since a correct deterministic equivalent must
+            match it. The bug was an off-by-one in how initial stock was aged before day one,
+            and nothing but a second exact method would have caught it.
+          </p>
+
+          <div class="thm-box">
+            <span class="thm-label">Oldest-first issuing is proved here, not assumed</span>
+            <p>
+              Both integer programs leave issuing completely free: sales are chosen per age
+              class and no FIFO constraint appears anywhere in either model. Their feasible
+              sets therefore strictly contain every oldest-first plan, so their optimum must be
+              at least the dynamic program's, which does force oldest-first. Both return
+              <em>exactly</em> the dynamic program's value — a slack of \(+0.000000\). Freedom to
+              issue any age buys nothing, which is a proof that oldest-first is optimal on this
+              instance rather than a modelling convenience. The solver does report 14 and 21
+              nodes respectively where it sold a younger unit while an older one went unsold;
+              those are ties on an alternate optimum, not improvements.
+            </p>
+          </div>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/perishable-inventory/convergence_chart.png" alt="Left: three stacked columns decomposing gross revenue into acquisition, fixed ordering, holding, shortage and spoilage costs down to net profit. Right: horizontal bars showing each policy's percentage shortfall below the proven optimum.">
+            <figcaption>
+              Left, where the money goes: each column is gross revenue eaten downward by each
+              cost, with the navy block the net that survives. Right, every run measured
+              against the proven optimum — five learning seeds shown individually rather than
+              averaged, because the spread from 5.64% to 15.59% is the honest result.
+            </figcaption>
+          </figure>
+
+          <h2>The result, and why the heuristic loses</h2>
+          <p>
+            The best \((s,S)\) policy on this instance is \((7, 25)\) and earns 213.95, which is
+            17.03% below optimal. The best of five learned policies earns 243.32, or 5.64%
+            below optimal — <strong>13.73% better than the best base-stock rule that exists
+            here</strong>. Averaged over all five seeds the learned policy earns 227.65, still
+            comfortably ahead of the heuristic but with a spread wide enough that reporting
+            only the best seed would be dishonest.
+          </p>
+
+          <p>
+            The mechanism is the part worth keeping. Read the spoilage numbers and the
+            base-stock policy looks like the careful one: it scraps 0.9688 units against the
+            optimal policy's 1.3984. It wastes <em>less</em> than optimal play. It also misses
+            3.9375 units of demand against the optimal policy's 1.1016 — nearly four times the
+            shortage — and that is where the 17% goes. Watching only a single scalar of on-hand
+            stock, it cannot distinguish a shelf holding twenty fresh units from a shelf
+            holding twenty units that expire within two days. Its only defence against
+            spoilage is to hold less, so it holds less, and then it is empty in the middle of
+            the week when demand realises high. The optimal policy accepts more spoilage on
+            purpose, because a unit thrown away costs 8 while a sale missed costs 6 in penalty
+            plus 10 in forgone revenue.
+          </p>
+
+          <figure class="post-figure figure-wide">
+            <img src="../assets/perishable-inventory/filmstrip.png" alt="Seven small panels, one per day, each showing the shelf as bars across five age classes, with a batch of stock visibly stepping one age class to the right each day until nine units are scrapped on day seven.">
+            <figcaption>
+              One of the 128 demand paths, probability 1/128, selected by a search over all of
+              them for the path that best shows the mechanism. A 22-unit order on day three
+              meets a collapse to four units of demand; you can watch that batch march one age
+              class to the right per day and lose nine units on day seven. Even optimal play
+              spoils stock — the optimum is not zero waste.
+            </figcaption>
+          </figure>
+
+          <h2>References</h2>
+          <ol>
+            <li>Nahmias, S. (1982). <em>Perishable Inventory Theory: A Review</em>. Operations Research, 30(4), 680-708.</li>
+            <li>Karaesmen, I. Z., Scheller-Wolf, A., &amp; Deniz, B. (2011). <em>Managing Perishable and Aging Inventories: Review and Future Research Directions</em>. In Planning Production and Inventories in the Extended Enterprise, 393-436.</li>
+            <li>Birge, J. R., &amp; Louveaux, F. (2011). <em>Introduction to Stochastic Programming</em> (2nd ed.). Springer.</li>
+          </ol>
+
+        </div>
+
+      </article>
+
+      <div class="note-cite">
+        <h3>Cite this note</h3>
+        <p class="note-cite-line">Kavoosi, A. (2026). &ldquo;Perishable Inventory: Age-Tracked Dynamics Under Non-Stationary Demand.&rdquo; <em>Research notes</em>. https://akavosi.github.io/blog/posts/perishable-inventory-age-tracked.html</p>
+        <div class="note-cite-box">
+          <button class="note-cite-copy" type="button">Copy</button>
+          <pre>@misc{kavoosi2026perishable,
+  author = {Kavoosi, Artin},
+  title  = {Perishable Inventory: Age-Tracked Dynamics Under Non-Stationary Demand},
+  year   = {2026},
+  note   = {Personal research notes, informal, not peer-reviewed},
+  url    = {https://akavosi.github.io/blog/posts/perishable-inventory-age-tracked.html}
+}</pre>
+        </div>
+        <p class="note-cite-note">Informal research notes — not peer-reviewed.</p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin (Alireza) Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+  <script src="../notes.js" defer></script>
+</body>
+
+</html>
