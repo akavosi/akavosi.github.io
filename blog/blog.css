@@ -578,3 +578,103 @@ body.notes .blog-hero p { color: var(--text-muted); font-size: 1.02rem; max-widt
   .interactive-card:hover .interactive-card-cta i { transform: translateX(3px); }
   .surprise-btn:hover i { transform: rotate(50deg); }
 }
+
+/* =========================================================
+   Soft Computing course file library
+   ========================================================= */
+body.notes .course-page-hero {
+  margin-top: 0.25rem;
+  margin-bottom: 2.2rem;
+}
+.course-materials {
+  max-width: 780px;
+  margin: 0 auto 3rem;
+}
+.course-materials > .notes-section-head {
+  margin-bottom: 1.05rem;
+}
+.course-empty-state {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.35rem 1.4rem;
+  background: var(--bg-soft);
+  border: 1px dashed var(--accent-line);
+  border-radius: var(--radius-lg);
+}
+.course-empty-mark {
+  display: grid;
+  place-items: center;
+  flex: 0 0 2.7rem;
+  width: 2.7rem;
+  height: 2.7rem;
+  border: 1px solid var(--accent-line);
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+.course-empty-title {
+  margin: 0 0 0.25rem;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.course-empty-description {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.course-file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.course-file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 0.4rem;
+  border-top: 1px solid var(--rule);
+}
+.course-file-item:first-child { border-top: 0; }
+.course-file-type {
+  flex: 0 0 3.2rem;
+  min-width: 3.2rem;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-align: center;
+  text-transform: uppercase;
+}
+.course-file-link {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 1rem;
+  color: var(--text-primary);
+  background: none;
+}
+.course-file-link:hover .course-file-name { color: var(--accent); }
+.course-file-name { overflow-wrap: anywhere; }
+.course-file-action {
+  flex: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .course-empty-state { align-items: flex-start; padding: 1.1rem; }
+  .course-file-item { align-items: flex-start; gap: 0.6rem; }
+  .course-file-link { flex-wrap: wrap; gap: 0.25rem 0.7rem; }
+  .course-file-action { flex-basis: 100%; }
+}
