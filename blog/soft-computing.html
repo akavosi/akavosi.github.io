@@ -1,0 +1,102 @@
+---
+layout: null
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Soft Computing Course Files — Artin Kavoosi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Course files and materials for Soft Computing, shared by Artin Kavoosi.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="canonical" href="https://akavosi.github.io/blog/soft-computing.html">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
+  <link rel="shortcut icon" type="image/png" href="../favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="blog.css">
+</head>
+
+<body class="notes">
+  <script>
+    if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.add('js-ready');
+    }
+  </script>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../index.html" class="branding" aria-label="Artin Kavoosi — home">
+        <span class="monogram" aria-hidden="true">A·K</span>
+        <span class="brand-name">Artin Kavoosi</span>
+      </a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="../index.html#about">About</a>
+        <a href="index.html">Notes</a>
+        <a href="../cv.pdf" class="nav-primary" target="_blank" rel="noopener" aria-label="Curriculum Vitae (PDF, opens in new tab)">CV ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page" id="main">
+    <div class="page-inner">
+      <a href="../index.html" class="post-back">&larr; Back to homepage</a>
+
+      <div class="blog-hero course-page-hero">
+        <span class="blog-hero-eyebrow">Course materials</span>
+        <h1>Soft Computing</h1>
+        <p>A dedicated collection of files for the Soft Computing course.</p>
+      </div>
+
+      <section class="course-materials" aria-labelledby="course-files-heading">
+        <div class="notes-section-head">
+          <h2 id="course-files-heading">Course files</h2>
+        </div>
+
+        <!-- Upload course files to blog/files/soft-computing/ in the repository.
+             GitHub Pages (Jekyll) automatically lists the files in this section. -->
+        {% assign course_files = site.static_files | where_exp: "file", "file.path contains 'blog/files/soft-computing/'" | where_exp: "file", "file.name != '.gitkeep'" | sort: "name" %}
+        {% if course_files.size > 0 %}
+          <ul class="course-file-list">
+            {% for file in course_files %}
+              <li class="course-file-item">
+                <span class="course-file-type" aria-hidden="true">{{ file.extname | remove_first: '.' | upcase }}</span>
+                <a class="course-file-link" href="{{ file.path | relative_url }}" target="_blank" rel="noopener">
+                  <span class="course-file-name">{{ file.name | escape }}</span>
+                  <span class="course-file-action">Open / download ↗</span>
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <div class="course-empty-state" role="status">
+            <span class="course-empty-mark" aria-hidden="true">SC</span>
+            <div>
+              <p class="course-empty-title">No files posted yet</p>
+              <p class="course-empty-description">Soft Computing course materials will appear here as they are added.</p>
+            </div>
+          </div>
+        {% endif %}
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Artin (Alireza) Kavoosi</span>
+    <span class="footer-disclaimer">Opinions are my own.</span>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
