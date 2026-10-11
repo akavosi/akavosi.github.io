@@ -67,6 +67,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://akavosi.github.io/blog/soft-computing.html</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://akavosi.github.io/cv.pdf</loc>
     <lastmod>2026-08-05</lastmod>
     <changefreq>monthly</changefreq>
