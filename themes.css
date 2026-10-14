@@ -1,0 +1,553 @@
+/* ==========================================================================
+   Site themes — press T anywhere (or use the palette button in the header)
+   ==========================================================================
+
+   Closely modeled on the theme picker on omarchy.org. The 22 palettes are
+   the Omarchy website palettes; "original" is this site's own design.
+
+   How it fits together
+   1. A tiny boot script in every page's <head> sets
+        <html data-theme="tokyo-night" data-scheme="dark">
+      before first paint, so there is never a flash of the wrong theme.
+   2. Each [data-theme="…"] block below defines raw palette tokens (--t-*).
+   3. The mapping layer translates --t-* into the tokens style.css and
+      blog.css already use (--bg-base, --accent, --rule, …), so every
+      component on every page follows along without per-component rules.
+   4. "original" is excluded from the mapping, so it renders exactly as
+      authored in style.css / blog.css (navy home page, red notes).
+
+   Adding a theme: add a [data-theme="id"] palette block below and an entry
+   in THEMES (themes.js), then run `python3 tools/theme-previews.py id`.
+   Adding a page: start from blog/posts/_template.html (already wired), or
+   run `python3 tools/wire-themes.py path/to/page.html`.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Palettes
+   -------------------------------------------------------------------------- */
+[data-theme="original"]{--t-bg-deep:#f6f6f4;--t-bg:#ffffff;--t-surface:#ffffff;--t-surface-2:#f6f6f4;--t-border-subtle:#e3e2dd;--t-border-strong:#cac9c1;--t-text:#1c1c1a;--t-text-secondary:#3a3a36;--t-text-muted:#75756e;--t-brand:#2f3d63;--t-brand-soft:#2f3d6314;--t-brand-ink:#ffffff;--t-field-hover:#4d5f96;--t-selection:#2f3d6329;--t-scroll-thumb:#0000002e;--t-img-outline:#0000001a;color-scheme:light}
+[data-theme="catppuccin"]{--t-bg-deep:#161622;--t-bg:#1e1e2e;--t-surface:#282839;--t-surface-2:#313244;--t-border-subtle:#313244;--t-border-strong:#585b70;--t-text:#cdd6f4;--t-text-secondary:#cdd6f4;--t-text-muted:#9399b2;--t-brand:#89b4fa;--t-brand-soft:#89b4fa1f;--t-brand-ink:#0c0e10;--t-field-hover:#accafc;--t-selection:#45475a;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="catppuccin-latte"]{--t-bg-deep:#e3e4e8;--t-bg:#eff1f5;--t-surface:#f8f9fb;--t-surface-2:#e3e4e8;--t-border-subtle:#d7d8dc;--t-border-strong:#acb0be;--t-text:#4c4f69;--t-text-secondary:#53556f;--t-text-muted:#5c5f77;--t-brand:#1e66f5;--t-brand-soft:#1e66f51f;--t-brand-ink:#fff;--t-field-hover:#1750bf;--t-selection:#ccd0da;--t-scroll-thumb:#0000002e;--t-img-outline:#0000001a;color-scheme:light}
+[data-theme="ethereal"]{--t-bg-deep:#040816;--t-bg:#060b1e;--t-surface:#0c122c;--t-surface-2:#131a3a;--t-border-subtle:#131a3a;--t-border-strong:#6d7db6;--t-text:#ffcead;--t-text-secondary:#ffcead;--t-text-muted:#b6a6b2;--t-brand:#7d82d9;--t-brand-soft:#7d82d91f;--t-brand-ink:#0c0e10;--t-field-hover:#a4a8e4;--t-selection:#252e56;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="everforest"]{--t-bg-deep:#21272c;--t-bg:#2d353b;--t-surface:#303a40;--t-surface-2:#343f44;--t-border-subtle:#343f44;--t-border-strong:#475258;--t-text:#d3c6aa;--t-text-secondary:#d3c6aa;--t-text-muted:#918f84;--t-brand:#7fbbb3;--t-brand-soft:#7fbbb31f;--t-brand-ink:#0c0e10;--t-field-hover:#a5cfca;--t-selection:#3d484d;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="flexoki-light"]{--t-bg-deep:#f2efe4;--t-bg:#fffcf0;--t-surface:#f9f6ea;--t-surface-2:#f2efe4;--t-border-subtle:#e5e2d8;--t-border-strong:#b7b5ac;--t-text:#100f0f;--t-text-secondary:#454340;--t-text-muted:#555450;--t-brand:#205ea6;--t-brand-soft:#205ea61f;--t-brand-ink:#fff;--t-field-hover:#194981;--t-selection:#cecdc3;--t-scroll-thumb:#0000002e;--t-img-outline:#0000001a;color-scheme:light}
+[data-theme="gruvbox"]{--t-bg-deep:#1e1e1e;--t-bg:#282828;--t-surface:#32302f;--t-surface-2:#3c3836;--t-border-subtle:#3c3836;--t-border-strong:#665c54;--t-text:#d4be98;--t-text-secondary:#d4be98;--t-text-muted:#a89984;--t-brand:#7daea3;--t-brand-soft:#7daea31f;--t-brand-ink:#0c0e10;--t-field-hover:#a4c6bf;--t-selection:#504945;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="hackerman"]{--t-bg-deep:#080910;--t-bg:#0b0c16;--t-surface:#10121f;--t-surface-2:#151828;--t-border-subtle:#151828;--t-border-strong:#2d3450;--t-text:#ddf7ff;--t-text-secondary:#ddf7ff;--t-text-muted:#a4b2ca;--t-brand:#82fb9c;--t-brand-soft:#82fb9c1f;--t-brand-ink:#0c0e10;--t-field-hover:#a8fcba;--t-selection:#1f253a;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="kanagawa"]{--t-bg-deep:#17171e;--t-bg:#1f1f28;--t-surface:#202838;--t-surface-2:#223249;--t-border-subtle:#223249;--t-border-strong:#54546d;--t-text:#dcd7ba;--t-text-secondary:#dcd7ba;--t-text-muted:#a7a492;--t-brand:#dcd7ba;--t-brand-soft:#dcd7ba1f;--t-brand-ink:#0c0e10;--t-field-hover:#e6e3cf;--t-selection:#363646;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="last-horizon"]{--t-bg-deep:#090809;--t-bg:#0c0b0c;--t-surface:#0c0b0c;--t-surface-2:#0c0b0c;--t-border-subtle:#0c0b0c;--t-border-strong:#584e51;--t-text:#fafcfb;--t-text-secondary:#e2dddc;--t-text-muted:#a9a5a6;--t-brand:#b59790;--t-brand-soft:#b597901f;--t-brand-ink:#0c0e10;--t-field-hover:#cbb6b1;--t-selection:#584e51;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="lumon"]{--t-bg-deep:#101b21;--t-bg:#16242d;--t-surface:#182836;--t-surface-2:#1b2d40;--t-border-subtle:#1b2d40;--t-border-strong:#304860;--t-text:#f2fcff;--t-text-secondary:#d6e2ee;--t-text-muted:#a0c1d8;--t-brand:#8bc9eb;--t-brand-soft:#8bc9eb1f;--t-brand-ink:#0c0e10;--t-field-hover:#aed9f1;--t-selection:#243d56;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="lupine"]{--t-bg-deep:#ececec;--t-bg:#fafafa;--t-surface:#fff;--t-surface-2:#ececec;--t-border-subtle:#dedede;--t-border-strong:#9e9e9e;--t-text:#000;--t-text-secondary:#212121;--t-text-muted:#484848;--t-brand:#3264eb;--t-brand-soft:#3264eb1f;--t-brand-ink:#fff;--t-field-hover:#274eb7;--t-selection:#d0d0d0;--t-scroll-thumb:#0000002e;--t-img-outline:#0000001a;color-scheme:light}
+[data-theme="matte-black"]{--t-bg-deep:#0d0d0d;--t-bg:#121212;--t-surface:#181818;--t-surface-2:#1e1e1e;--t-border-subtle:#1e1e1e;--t-border-strong:#333;--t-text:#eaeaea;--t-text-secondary:#bebebe;--t-text-muted:#8a8a8a;--t-brand:#e68e0d;--t-brand-soft:#e68e0d1f;--t-brand-ink:#0c0e10;--t-field-hover:#eeb056;--t-selection:#2a2a2a;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="miasma"]{--t-bg-deep:#191919;--t-bg:#222;--t-surface:#272727;--t-surface-2:#2c2c2c;--t-border-subtle:#2c2c2c;--t-border-strong:#666;--t-text:#c2c2b0;--t-text-secondary:#c2c2b0;--t-text-muted:#8c8c82;--t-brand:#78824b;--t-brand-soft:#78824b1f;--t-brand-ink:#0c0e10;--t-field-hover:#a0a881;--t-selection:#383838;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="nord"]{--t-bg-deep:#222730;--t-bg:#2e3440;--t-surface:#343b49;--t-surface-2:#3b4252;--t-border-subtle:#3b4252;--t-border-strong:#4c566a;--t-text:#d8dee9;--t-text-secondary:#d8dee9;--t-text-muted:#9fa7b4;--t-brand:#81a1c1;--t-brand-soft:#81a1c11f;--t-brand-ink:#0c0e10;--t-field-hover:#a7bdd4;--t-selection:#434c5e;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="osaka-jade"]{--t-bg-deep:#0c1512;--t-bg:#111c18;--t-surface:#1a2a22;--t-surface-2:#23372b;--t-border-subtle:#23372b;--t-border-strong:#53685b;--t-text:#f7e8b2;--t-text-secondary:#c1c497;--t-text-muted:#969978;--t-brand:#509475;--t-brand-soft:#5094751f;--t-brand-ink:#0c0e10;--t-field-hover:#84b49e;--t-selection:#32473b;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="retro-82"]{--t-bg-deep:#031222;--t-bg:#05182e;--t-surface:#081e37;--t-surface-2:#0a2540;--t-border-subtle:#0a2540;--t-border-strong:#2a6b78;--t-text:#f6dcac;--t-text-secondary:#f6dcac;--t-text-muted:#9ab69b;--t-brand:#faa968;--t-brand-soft:#faa9681f;--t-brand-ink:#0c0e10;--t-field-hover:#fcc395;--t-selection:#134e5a;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="ristretto"]{--t-bg-deep:#211b1b;--t-bg:#2c2525;--t-surface:#342a28;--t-surface-2:#3d2f2a;--t-border-subtle:#3d2f2a;--t-border-strong:#72696a;--t-text:#e6d9db;--t-text-secondary:#e6d9db;--t-text-muted:#aca1a2;--t-brand:#f38d70;--t-brand-soft:#f38d701f;--t-brand-ink:#0c0e10;--t-field-hover:#f7af9b;--t-selection:#403e41;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="rose-pine"]{--t-bg-deep:#ede7e1;--t-bg:#faf4ed;--t-surface:#fffaf3;--t-surface-2:#ede7e1;--t-border-subtle:#e1dbd5;--t-border-strong:#cecacd;--t-text:#575279;--t-text-secondary:#5e587d;--t-text-muted:#676284;--t-brand:#56949f;--t-brand-soft:#56949f1f;--t-brand-ink:#fff;--t-field-hover:#43737c;--t-selection:#dfdad9;--t-scroll-thumb:#0000002e;--t-img-outline:#0000001a;color-scheme:light}
+[data-theme="solitude"]{--t-bg-deep:#0c0e10;--t-bg:#101315;--t-surface:#101315;--t-surface-2:#101315;--t-border-subtle:#101315;--t-border-strong:#4b4e55;--t-text:#cacccc;--t-text-secondary:#a5aeb4;--t-text-muted:#8a8d90;--t-brand:#798186;--t-brand-soft:#7981861f;--t-brand-ink:#0c0e10;--t-field-hover:#a1a7aa;--t-selection:#343d41;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="tokyo-night"]{--t-bg-deep:#13141c;--t-bg:#1a1b26;--t-surface:#1f2230;--t-surface-2:#24283b;--t-border-subtle:#24283b;--t-border-strong:#414868;--t-text:#c0caf5;--t-text-secondary:#a9b1d6;--t-text-muted:#8b93b8;--t-brand:#9ece6a;--t-brand-soft:#9ece6a1f;--t-brand-ink:#0c0e10;--t-field-hover:#bbdd97;--t-selection:#292e42;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="vantablack"]{--t-bg-deep:#090909;--t-bg:#000;--t-surface:#0d0d0d;--t-surface-2:#1a1a1a;--t-border-subtle:#1a1a1a;--t-border-strong:#7a7a7a;--t-text:#fff;--t-text-secondary:#fff;--t-text-muted:#a8a8a8;--t-brand:#8d8d8d;--t-brand-soft:#8d8d8d1f;--t-brand-ink:#0c0e10;--t-field-hover:#afafaf;--t-selection:#1a1a1a;--t-scroll-thumb:#ffffff24;--t-img-outline:#ffffff1a;color-scheme:dark}
+[data-theme="white"]{--t-bg-deep:#f5f5f5;--t-bg:#fff;--t-surface:#fff;--t-surface-2:#f5f5f5;--t-border-subtle:#e8e8e8;--t-border-strong:silver;--t-text:#000;--t-text-secondary:#383838;--t-text-muted:#4a4a4a;--t-brand:#6e6e6e;--t-brand-soft:#6e6e6e1f;--t-brand-ink:#fff;--t-field-hover:#565656;--t-selection:silver;--t-scroll-thumb:#0000002e;--t-img-outline:#0000001a;color-scheme:light}
+
+/* --------------------------------------------------------------------------
+   2. Mapping layer — palette tokens → site tokens
+   Specificity (0,2,2) beats both :root (style.css) and body.notes (blog.css).
+   -------------------------------------------------------------------------- */
+/* Screens only: printing always uses the Original design (dark ink on paper). */
+@media screen {
+  html[data-theme]:not([data-theme="original"]),
+  html[data-theme]:not([data-theme="original"]) body {
+    --bg-base:        var(--t-bg);
+    --bg-elevated:    var(--t-surface);
+    --bg-soft:        var(--t-surface-2);
+    --bg-hover:       color-mix(in oklab, var(--t-surface-2) 70%, var(--t-border-strong));
+
+    --text-primary:   var(--t-text);
+    --text-body:      var(--t-text-secondary);
+    --text-muted:     var(--t-text-muted);
+    --text-faint:     color-mix(in oklab, var(--t-text-muted) 72%, var(--t-bg));
+
+    --accent:         var(--t-brand);
+    --accent-bright:  var(--t-field-hover);
+    --accent-soft:    var(--t-brand-soft);
+    --accent-line:    color-mix(in srgb, var(--t-brand) 40%, transparent);
+
+    --rule:           color-mix(in oklab, var(--t-border-strong) 45%, var(--t-bg));
+    --rule-strong:    var(--t-border-strong);
+
+    /* One brand color, Omarchy-style: the gold secondary accent follows it. */
+    --royal-gold:        var(--t-brand);
+    --royal-gold-bright: var(--t-field-hover);
+    --royal-felt:        color-mix(in oklab, var(--t-brand) 14%, var(--t-surface));
+
+    /* Semantic colors, nudged toward the text color so they stay readable on
+       dark palettes (lighter) and light palettes (darker) alike. */
+    --status-published: color-mix(in oklab, #4fae63 72%, var(--t-text));
+    --status-review:    color-mix(in oklab, #d4993a 72%, var(--t-text));
+    --status-submitted: color-mix(in oklab, #a08f6a 70%, var(--t-text));
+    --viz-good:         color-mix(in oklab, #59c283 78%, var(--t-text));
+    --viz-ref:          var(--t-text);       /* reference lines (e.g. exact V*) */
+    --viz-on-accent:    var(--t-brand-ink);  /* labels drawn on brand fills */
+
+    --selection-bg:   var(--t-selection);
+  }
+
+  html[data-theme]:not([data-theme="original"]) {
+    scrollbar-color: var(--t-scroll-thumb) transparent;
+  }
+
+  /* Dark palettes: drop shadows need more weight to read on dark grounds. */
+  html[data-scheme="dark"] body {
+    --shadow-soft: 0 1px 0 rgb(0 0 0 / 0.22), 0 10px 26px -16px rgb(0 0 0 / 0.7);
+    --shadow-lift: 0 22px 46px -22px rgb(0 0 0 / 0.8);
+  }
+
+  /* The home page's dot lattice, re-inked in each palette's brand color. */
+  html[data-theme]:not([data-theme="original"]) body:not(.notes) {
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--t-brand) 11%, transparent) 1px, transparent 1.3px);
+  }
+
+  /* Paper grain multiplies toward black, which only muddies dark palettes. */
+  html[data-scheme="dark"] .grain { opacity: 0; }
+
+  /* Figures are rendered on light paper; on dark palettes, frame them like
+     prints and take the edge off the glare (full brightness on hover). */
+  html[data-scheme="dark"] :is(
+    .post-article-body img, .post-article-body video, .post-hero-art img,
+    .card-thumb img, .featured-note-media img, .interactive-home-card img
+  ) {
+    filter: brightness(0.9) saturate(0.97);
+    transition: filter 0.25s ease;
+  }
+  html[data-scheme="dark"] :is(
+    .post-article-body img, .post-article-body video, .post-hero-art img,
+    .card-thumb img, .featured-note-media img, .interactive-home-card img
+  ):hover { filter: none; }
+  html[data-scheme="dark"] .post-article-body :is(img, video) {
+    border-color: var(--t-img-outline);
+  }
+}
+
+@media print {
+  html[data-theme] { color-scheme: light; }
+}
+
+/* Theme switches are instant — no element-level color transitions. */
+html.tp-no-transitions,
+html.tp-no-transitions *,
+html.tp-no-transitions *::before,
+html.tp-no-transitions *::after { transition: none !important; }
+
+/* No JavaScript, no picker: hide the entry points. */
+html:not([data-theme]) :is(.theme-btn, .footer-theme) { display: none; }
+
+
+/* --------------------------------------------------------------------------
+   3. Entry points — header palette button + footer "Theme" link
+   -------------------------------------------------------------------------- */
+.theme-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 0.15rem 0 0.35rem;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease-out, background-color 0.15s ease-out, transform 0.15s ease-out;
+}
+.theme-btn:hover,
+.theme-btn[aria-expanded="true"] { color: var(--text-primary); background-color: var(--bg-soft); }
+.theme-btn:active { transform: scale(0.96); }
+.theme-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.theme-btn svg { display: block; width: 19px; height: 19px; pointer-events: none; }
+
+.theme-btn-tip {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.32rem 0.38rem 0.32rem 0.65rem;
+  border-radius: 6px;
+  background: var(--text-primary);
+  color: var(--bg-base);
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.3;
+  text-transform: none;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -3px);
+  transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+}
+.theme-btn-tip kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.3rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--bg-base) 18%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+@media (hover: hover) {
+  .theme-btn:hover .theme-btn-tip,
+  .theme-btn:focus-visible .theme-btn-tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+    transition-delay: 0.3s;
+  }
+  .theme-btn[aria-expanded="true"] .theme-btn-tip { opacity: 0; transition-delay: 0s; }
+}
+
+/* Phones: tighten the nav a touch so the palette button fits without
+   wrapping the header (and "CV ↗" never breaks across two lines). */
+@media (max-width: 440px) {
+  .header-inner { gap: 0.6rem; }
+  .nav-links a {
+    margin: 0 0.05rem;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
+    white-space: nowrap;
+  }
+  .nav-links a:hover::after,
+  .nav-links a:focus-visible::after,
+  .nav-links a.active::after { left: 0.35rem; right: 0.35rem; }
+  .nav-links .nav-primary { margin-left: 0.3rem; padding-left: 0.65rem; padding-right: 0.65rem; }
+  .theme-btn { width: 30px; height: 30px; margin: 0 0.05rem; }
+}
+
+.footer-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.footer-theme::before { content: "\2022"; margin-right: 0.15rem; color: var(--rule-strong); }
+.footer-theme:hover,
+.footer-theme:focus-visible { color: var(--accent); }
+.footer-theme:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.footer-theme kbd {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.15rem;
+  height: 1.15rem;
+  padding: 0 0.25rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  font: inherit;
+  font-size: 0.62rem;
+  line-height: 1;
+}
+@media (hover: none) { .footer-theme kbd { display: none; } }
+
+
+/* --------------------------------------------------------------------------
+   4. The picker — screenshot carousel (mirrors omarchy.org's picker)
+   -------------------------------------------------------------------------- */
+.tp-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  isolation: isolate;
+  background: rgb(0 0 0 / 0.55);
+}
+@supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+  .tp-backdrop { -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); }
+}
+
+.tp-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  view-transition-name: theme-picker;
+}
+.tp-dismiss { position: absolute; inset: 0; }
+
+.tp-stage {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.tp-slot,
+.tp-spacer { width: min(68vw, 46rem); }
+@media (min-width: 640px) {
+  .tp-slot,
+  .tp-spacer { width: min(72vw, 46rem); }
+}
+.tp-slot {
+  position: absolute;
+  transition: transform 0.24s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+}
+.tp-spacer { visibility: hidden; aspect-ratio: 16 / 9; }
+
+.tp-card {
+  --card-dim: 0.55;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.tp-card:hover { --card-dim: 0.78; }
+
+/* Parallelogram cards: a 1px zinc edge, or a 3px brand edge when centered. */
+.tp-frame {
+  background: #71717a;
+  clip-path: polygon(2.5% 0%, 100% 0%, 97.5% 100%, 0% 100%);
+}
+.tp-frame.is-active { background: var(--accent); }
+.tp-inner {
+  background: #000;
+  clip-path: polygon(calc(2.5% + 1px) 1px, calc(100% - 1px) 1px, calc(97.5% - 1px) calc(100% - 1px), 1px calc(100% - 1px));
+}
+.tp-frame.is-active .tp-inner {
+  clip-path: polygon(calc(2.5% + 3px) 3px, calc(100% - 3px) 3px, calc(97.5% - 3px) calc(100% - 3px), 3px calc(100% - 3px));
+}
+.tp-inner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  filter: brightness(var(--card-dim));
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.tp-frame.is-active .tp-inner img { filter: none; }
+@media (max-width: 639px) {
+  .tp-spacer,
+  .tp-inner img { aspect-ratio: 4 / 5; }
+}
+
+/* Theme name, drawn in the previewed theme's own colors. */
+.tp-name {
+  position: relative;
+  margin: 0.375rem 0 0;
+  padding: 0.875rem 1rem;
+  border: 0;
+  background: none;
+  text-align: center;
+  cursor: pointer;
+  transition: filter 0.15s ease-out;
+}
+.tp-name:hover { filter: brightness(1.25); }
+.tp-name:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tp-name span {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: -0.025em;
+  color: var(--t-text);
+  -webkit-text-stroke: 2px var(--t-bg);
+  paint-order: stroke fill;
+}
+.tp-name span.is-light {
+  color: var(--t-bg);
+  -webkit-text-stroke: 2px var(--t-text);
+}
+
+.tp-arrow {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 0.15s ease-out;
+}
+.tp-arrow:hover { background: var(--bg-soft); }
+.tp-arrow:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tp-arrow svg { width: 20px; height: 20px; }
+.tp-prev { left: 12px; }
+.tp-next { right: 12px; }
+@media (min-width: 640px) {
+  .tp-prev { left: 24px; }
+  .tp-next { right: 24px; }
+}
+
+.tp-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* --------------------------------------------------------------------------
+   5. First-visit notice — "Change the theme · Press T, or tap here."
+   -------------------------------------------------------------------------- */
+html[data-theme] { --tp-elevation: 0 0 0 1px oklch(0% 0 0 / 0.06), 0 1px 3px oklch(0% 0 0 / 0.05), 0 4px 10px -4px oklch(0% 0 0 / 0.05); }
+html[data-scheme="dark"] { --tp-elevation: 0 0 0 1px oklch(100% 0 0 / 0.07); }
+
+.tp-notice {
+  position: fixed;
+  top: var(--tp-notice-top, 88px);
+  right: 1rem;
+  z-index: 900;
+  width: 18rem;
+  max-width: calc(100vw - 2rem);
+  animation: tp-notice-in 0.3s ease-out both;
+}
+@keyframes tp-notice-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: none; }
+}
+.tp-notice-box {
+  position: relative;
+  background: var(--bg-elevated);
+  box-shadow: var(--tp-elevation), var(--shadow-soft);
+}
+.tp-notice-main {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1rem 2.5rem 1rem 1rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.15s ease-out;
+}
+.tp-notice-main:hover { background: var(--bg-soft); }
+.tp-notice-main:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tp-notice-icon { flex: none; width: 20px; height: 20px; margin-top: 2px; color: var(--accent); }
+.tp-notice-title {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  color: var(--text-primary);
+}
+.tp-notice-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.625;
+  color: var(--text-body);
+}
+.tp-notice-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.15s ease-out;
+}
+.tp-notice-close:hover { color: var(--text-primary); }
+.tp-notice-close:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.tp-notice-close svg { width: 16px; height: 16px; }
+
+
+/* --------------------------------------------------------------------------
+   6. Applying a theme — the split wipe (View Transitions API)
+   The old page (and the picker) part down the middle at a slight angle,
+   revealing the newly themed page underneath. ~200ms, ease-in.
+   -------------------------------------------------------------------------- */
+@property --theme-wipe {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 0px;
+}
+@keyframes theme-split-wipe {
+  from { --theme-wipe: 0px; }
+  to   { --theme-wipe: 80%; }
+}
+
+::view-transition { pointer-events: none; }
+::view-transition-group(root) { animation: none; }
+::view-transition-image-pair(root) { animation: none; }
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  opacity: 1;
+  filter: none;
+}
+::view-transition-new(root) { z-index: 0; }
+::view-transition-old(root) { z-index: 1; }
+::view-transition-old(root),
+::view-transition-old(theme-picker) {
+  -webkit-mask-image: linear-gradient(100deg, #000 0, #000 calc(50% - var(--theme-wipe) + 1px), #0000 calc(50% - var(--theme-wipe) + 1px), #0000 calc(50% + var(--theme-wipe) - 1px), #000 calc(50% + var(--theme-wipe) - 1px), #000 100%);
+          mask-image: linear-gradient(100deg, #000 0, #000 calc(50% - var(--theme-wipe) + 1px), #0000 calc(50% - var(--theme-wipe) + 1px), #0000 calc(50% + var(--theme-wipe) - 1px), #000 calc(50% + var(--theme-wipe) - 1px), #000 100%);
+  -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+  animation: 0.2s cubic-bezier(0.7, 0, 1, 1) both theme-split-wipe;
+}
+:root.theme-wipe-frosted::view-transition-old(root) { filter: blur(4px); }
+::view-transition-group(theme-picker) { z-index: 2; animation: none; }
+::view-transition-image-pair(theme-picker) { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-slot { transition: none; }
+  .tp-notice { animation: none; }
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-old(theme-picker) { animation: none; }
+}
