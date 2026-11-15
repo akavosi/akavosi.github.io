@@ -239,7 +239,7 @@ body.notes .blog-hero p { color: var(--text-muted); font-size: 1.02rem; max-widt
    read as figures rather than full-bleed images, and stay centered. */
 .post-figure { margin: 1.8rem 0; }
 .post-article-body .post-figure img {
-  max-width: 580px;
+  max-width: 100%;
   width: 100%;
   margin: 0 auto;
 }
@@ -526,7 +526,7 @@ body.notes .blog-hero p { color: var(--text-muted); font-size: 1.02rem; max-widt
    earns more room than the standard 480px figure column.
    ========================================================= */
 .post-article-body .post-figure.figure-wide img { max-width: 100%; }
-.post-figure.figure-wide { max-width: 720px; margin-left: 50%; transform: translateX(-50%); }
+.post-figure.figure-wide { max-width: 900px; margin-left: 50%; transform: translateX(-50%); }
 
 /* =========================================================
    Series navigation — on individual article pages, for posts
